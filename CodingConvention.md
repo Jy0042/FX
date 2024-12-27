@@ -154,6 +154,12 @@ git commit - '[Feature]게시판 구현'
 
 back/front 나누기???
 
+/assets : 사용할 아이콘이나 이미지파일
+/components : 사용할 컴포넌트(회원가입창, 차트 등등)
+/hooks : 상태관리를 위해 만들어 놓은 hook 저장
+/pages : main부터 웹페이지 
+/styles : css파일같은 디자인 관련코드(bootstrap이나 tailwind로 할듯함)
+/utils : 정규표현식 패턴이나 공통함수 등 공통으로 사용하는 유틸 파일들이 위치하는 폴더(DB로 부터 데이터 불러오는 함수나 인증을 위한 함수가 주로 들어갈 예정정)
 
 14. Git flow
 
