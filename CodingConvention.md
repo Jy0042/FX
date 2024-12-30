@@ -1,9 +1,8 @@
-2024. 12. 25 
-
-F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide 
-(Javascript 쪽에서 제일 유명한 Airbnb Javascript Style Guide 기반) 
-
-
+2024.12.25  
+F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide  
+(Javascript 쪽에서 제일 유명한 Airbnb Javascript Style Guide 기반)  
+  
+  
 ### Coding Style  
   
 1. 들여쓰기 규칙  
@@ -22,21 +21,22 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
    화살표 함수(() => {})는 간결하고 this 바인딩 문제를 피할 수 있기 때문에 추천  
    일반 함수 선언 대신 화살표 함수를 사용합니다.  
   
-```
-// bad
-if (currentUser) {
-  function test() {
-    console.log('Nope.');
-  }
-}
-// good
-let test;
-if (currentUser) {
-  test = () => {
-    console.log('Yup.');
-  };
-}
-```
+```  
+   // bad  
+   if (currentUser) {  
+     function test() {  
+       console.log('Nope.');  
+     }  
+   }
+  
+   // good  
+   let test;  
+   if (currentUser) {  
+     test = () => {  
+       console.log('Yup.');  
+     };  
+   }  
+```  
   
 4. template literals 사용  
    (문자열이 여러 줄로 이뤄졌거나, 변수를 포함할 때. 한 줄 짜리 단순 문자열은 외따옴표)  
@@ -45,8 +45,8 @@ if (currentUser) {
    가독성을 높이고, 코드가 간결해집니다.  
 
 ```
-  const apiUrl = `https://api.exchangerate-api.com/v4/latest/${selectedCurrency}`;
-  string = 'F(X)'
+   const apiUrl = `https://api.exchangerate-api.com/v4/latest/${selectedCurrency}`;  
+   string = 'F(X)'  
 ```  
 
 5. 클래스와 객체 리터럴  
@@ -55,8 +55,8 @@ if (currentUser) {
   
    객체 리터럴 축약 구문을 사용하여, 코드의 길이를 줄이고 가독성을 높입니다.  
 ```
- = [];
- = {};
+   const a = [];
+   const b = {};
 ```
   
 6. 불필요한 코드 줄이기  
@@ -86,23 +86,23 @@ if (currentUser) {
    import를 사용하여 모듈을 불러오고, 상시로 디스트럭쳐링이 적용될 수 있도록 1개의 모듈이라도 {}로 처리합니다.
   
 ```
-// bad
-const AirbnbStyleGuide = require('./AirbnbStyleGuide');
-module.exports = AirbnbStyleGuide.es6;
-
-// ok
-import AirbnbStyleGuide from './AirbnbStyleGuide';
-export default AirbnbStyleGuide.es6;
-
-// best
-import { es6 } from './AirbnbStyleGuide';
-export default es6;
+   // bad  
+   const AirbnbStyleGuide = require('./AirbnbStyleGuide');  
+   module.exports = AirbnbStyleGuide.es6;  
+  
+   // ok  
+   import AirbnbStyleGuide from './AirbnbStyleGuide';  
+   export default AirbnbStyleGuide.es6;  
+  
+   // best  
+   import { es6 } from './AirbnbStyleGuide';  
+   export default es6;  
 ```
   
-11. 명명규칙  
+11. 명명 규칙  
    폴더, 파일 네이밍  
    파일은 소문자와 언더바(_)로 구성  
-   ex) exchange_calculator.js  
+   ex) exchange_calculator.js
   
    Object, Instance, 그리고 함수는 camel**C**ase 사용  
    Class, constructor(생성자)는 **P**ascal**C**ase 사용  
@@ -110,7 +110,10 @@ export default es6;
    상수는 대문자 + 언더스코어  
    ex) DEFAULT_TIMEOUT  
   
-12. 커밋규칙  
+  
+***  
+  
+### 커밋 규칙  
   
    커밋 메시지  
    형식  
@@ -125,18 +128,8 @@ export default es6;
    예시  
    git commit - '[Feature] 게시판 기능 구현'  
   
-13. 폴더구조  
-   back/front 나누기???  
   
-   /assets: 사용할 아이콘이나 이미지 파일  
-   /components: 사용할 컴포넌트(회원가입 창, 차트 등등)  
-   /hooks: 상태 관리를 위해 만들어 놓은 hook 저장  
-   /pages: main부터 웹페이지  
-   /styles: css 파일같은 디자인 관련 코드(bootstrap이나 tailwind로 할듯함)  
-   /utils: 정규표현식 패턴이나 공통함수 등 공통으로 사용하는 유틸 파일들이 위치하는 폴더  
-   (DB로부터 데이터 불러오는 함수나 인증을 위한 함수가 주로 들어갈 예정)  
-  
-14. Git flow  
+### Git flow  
    git flow init // 처음에 한 번만 하면 됨  
    git checkout develop  
    git pull // develop을 최신 버전으로 만듦. "Alreadt up to Date" 확인하기!  
@@ -149,4 +142,16 @@ export default es6;
    git rebase develop // 혹시 모르니까 다시 rebase하기  
    git push // develop 브랜치에 잘 올라갔는지 확인!  
    git flow feature finish // 피쳐 없애기  
-   
+  
+***  
+  
+### 폴더구조  
+   back/front 나누기???  
+  
+   /assets: 사용할 아이콘이나 이미지 파일  
+   /components: 사용할 컴포넌트(회원가입 창, 차트 등등)  
+   /hooks: 상태 관리를 위해 만들어 놓은 hook 저장  
+   /pages: main부터 웹페이지  
+   /styles: css 파일같은 디자인 관련 코드(bootstrap이나 tailwind로 할듯함)  
+   /utils: 정규표현식 패턴이나 공통함수 등 공통으로 사용하는 유틸 파일들이 위치하는 폴더  
+   (DB로부터 데이터 불러오는 함수나 인증을 위한 함수가 주로 들어갈 예정)  
