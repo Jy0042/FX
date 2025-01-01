@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import { Route, Routes } from "'react-dom/client'";
 
 import '../styles/App.css'
-import Header from "./Header";
-import Body from "./Body";
-import Footer from "./Footer";
+import Header from "../components/Header";
+import Body from "../components/Body";
+import Footer from "../components/Footer";
 import Community from './Community';  // Community 페이지 컴포넌트 import
 
 
