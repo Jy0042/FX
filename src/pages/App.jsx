@@ -4,7 +4,8 @@ import '../styles/App.css'
 import Header from "../components/Header";
 import Body from "../components/Body";
 import Footer from "../components/Footer";
-import Community from './Community_page';  // Community 페이지 컴포넌트 import
+import Community from './Community_page';  
+import WritePage from './Write_page';  
 
 
 
@@ -15,10 +16,11 @@ function App() {
     <>
     <Router>
       <Header/>
-      <div className="main-container" style={{ maxWidth: '1440px', margin: '0 auto' }}>
+      <div>
         <Routes className="col-md-8">
           <Route path="/" element={<Body />} /> {/* 기본 페이지 */}
           <Route path="/community" element={<Community />} /> {/* 커뮤니티 페이지 */}
+          <Route path="/write" element={<WritePage />} /> {/* Writing page route */}
         </Routes>
       </div>
     </Router>
