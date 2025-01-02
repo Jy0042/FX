@@ -1,11 +1,3 @@
-#root {
-  max-width: 1440px;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-
 header {
   position: fixed; /* or `position: sticky;` for a sticky header */
   top: 0;
