@@ -1,16 +1,17 @@
 #root {
   max-width: 1440px;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   text-align: center;
 }
 
-
 header {
-  position: fixed; /* or `position: sticky;` for a sticky header */
+  position: absolute;
+  left: 0;
   top: 0;
   width: 100%;
-  color:  #040303;
+  color: #040303;
   background-color: #fff;
   z-index: 1000; /* Ensure it's above other content */
+  height: 40px;
 }
