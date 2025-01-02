@@ -1,6 +1,6 @@
 import { Component } from "react";
 // import { Route } from "react-router-dom";
-import D3 from './chart'
+import D3 from './chart/chart'
 // import lineChart from '../components/linechart'
 
 const Body = () =>{
