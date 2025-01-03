@@ -6,8 +6,6 @@ import Body from "../components/Body";
 import Footer from "../components/Footer";
 import Community from './Community_page';  
 import WritePage from './Write_page';  
-import Users from '../components/board/users';
-import UserDetail from '../components/board/userdetail';
 
 
 function App() {

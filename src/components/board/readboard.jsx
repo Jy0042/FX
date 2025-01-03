@@ -6,8 +6,8 @@ const ReadBoardList = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [postsPerPage] = useState(10); // 페이지 당 보여질 포스트 수
+    const [currentPage, setCurrentPage] = useState(1);  // 현재 포스트
+    const [postsPerPage] = useState(10);                // 페이지 당 보여질 포스트 수
     const [query, setQuery] = useState('');
 
     const { userId } = useParams();
@@ -33,7 +33,7 @@ const ReadBoardList = () => {
         };
     fetchPosts();
     // },[query]);
-    },[userId]);
+    },[]);
 
     useEffect(() => {
       console.log('Updated posts:', posts);
