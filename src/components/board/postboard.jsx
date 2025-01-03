@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import review from '../../assets/review.png'
 import good from '../../assets/good.png'
 import author from '../../assets/author.png'
 
-const Board = ({ post }) => {
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.contents);
+const PostBoard = async() => {
 
-  const postTime = new Date(); //작성시간
+  const response = await fetch(`http://127.0.0.1:5500/api/posts`);
+    const data = await response.json(); 
+    console.log("data : ",data);
+    
+
 
   return (
     <div className="row align-items-start  bg-dark text-light"> {/* Flex container */}
@@ -16,24 +18,19 @@ const Board = ({ post }) => {
     <div className="col-md-8"> {/* 게시글 영역 */}
       <input
         type="text"
-        placeholder="제목을 입력하세요"
+        placeholder={data.title}
         className="form-control mb-3 bg-dark text-light border-secondary" // 가로 길이를 늘림
-        value={title}
+
       />
       <textarea
-        placeholder="내용을 입력하세요"
+        placeholder={data.content}
         className="form-control mb-3 bg-dark text-light border-secondary"
         rows="3" // 높이를 조정
-        value={content}
+
       ></textarea>
       <div className="d-flex align-items-center mb-2">
         <img src={author} alt="작성자 아이콘" className="me-2"/>
-          <span>작성자</span>
-          <span>Time </span>
-          {new Date(
-            postTime.getTime() + 9 * 60 * 60 * 1000
-          ).toLocaleString('ko-KR')}
-          {/* 우선 현재시간 표시 작성시간 기준으로 ~시간전으로 표시 예정 */}
+        작성자
       </div>
       <div className="d-flex align-items-center">
         <img src={good} alt="좋아요 아이콘" className="me-1" />
@@ -56,8 +53,4 @@ const Board = ({ post }) => {
   );
 };
 
-Board.propTypes = {
-  setMessage: PropTypes.func.isRequired, // setMessage가 반드시 함수여야 함
-};
-
-export default Board;
+export default PostBoard;
