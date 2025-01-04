@@ -50,7 +50,7 @@ const ViewBoard = () => {
                 // className="form-control mb-3 text-light border-secondary" // 가로 길이를 늘림
                 // value={post.title}
                 type="text"
-                className="form-control mb-3 text-light border-secondary"
+                className="form-control mb-3 text-dark border-secondary"
                 value={post.title} // 제목 데이터 바인딩
                 readOnly
             />
@@ -61,7 +61,7 @@ const ViewBoard = () => {
                 style={{ maxWidth: '100%', height: 'auto' }}
             />
             <textarea
-                className="form-control mb-3 text-light border-secondary"
+                className="form-control mb-3 text-dark border-secondary"
                 rows="8" // 높이를 조정
                 value={post.contents}
                 readOnly
@@ -69,7 +69,7 @@ const ViewBoard = () => {
         </div>
 
         <div className="col-md-4 d-flex justify-content-center">
-            <DeleteBoard/>
+            <DeleteBoard post={post}/>
             <UpdateBoard/>
         </div>
     </div>
