@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate  } from 'react-router-dom';
 import Board from './board';
 
 const ReadBoardList = () => {
@@ -11,6 +11,7 @@ const ReadBoardList = () => {
     const [query, setQuery] = useState('');
 
     const { userId } = useParams();
+    const navigate = useNavigate(); // useNavigate 훅 사용
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -18,7 +19,6 @@ const ReadBoardList = () => {
             // const res = await fetch(`/api/board?query=${encodeURIComponent(query)}`);
             // const res = await fetch(`http://localhost:3000/api/users/${userId}`);
             const res = await fetch(`http://localhost:3000/community`);
-            // const res = 0;
             if (!res.ok) {
               throw new Error('Failed to fetch posts');
             }
@@ -32,24 +32,34 @@ const ReadBoardList = () => {
           }
         };
     fetchPosts();
-    // },[query]);
     },[]);
 
     useEffect(() => {
       console.log('Updated posts:', posts);
-      // console.log('posts id:', posts[0].id);
     }, [posts]);
 
+    // const handleClick = (e) => {
+    //   navigate(`/view`); // 원하는 경로로 페이지 전환
+    // };
+    
+    const handleClick = (postId) => {
+      navigate(`/post/${postId}`); // 게시물 ID를 포함한 경로로 이동
+      console.log(postId);
+    };
+    
     return (
         <div>
           <p>게시글: {posts.id}</p>
           <ul>
             {posts.map((post) => (
-              <li key={post.id}>
-              {/* <h2>{post.title}</h2>
-              <p>{post.contents}</p> */}
-              <Board key={post.id} post={post}/>
-             </li>
+            <li key={post.id}>
+              <div 
+                onClick = {() => handleClick(post.id)}
+                style={{ cursor: "pointer" }}
+                >
+                <Board key={post.id} post={post}/>
+              </div>
+            </li>
             ))}
           </ul>
         </div>

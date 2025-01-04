@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import Board from '../components/board/board'
-import ReadBoardList from '../components/board/readboard';
+import ReadBoardList from '../components/board/read_board';
 import SearchBox from '../components/board/search_box'
 import { useNavigate } from 'react-router-dom';
 
