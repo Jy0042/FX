@@ -1,9 +1,9 @@
-import React, { useState, useRoute } from "react";
+import React, { useState } from "react";
 // import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 
-const PostBoard =  () => {
+const CreateBoard =  () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -41,15 +41,14 @@ const PostBoard =  () => {
     });
 
     console.log("리스폰스", res);
-    // const data = await res.json();
-    
-    // console.log("data : ", data);
   
+
+    //////////////////////////////////////////////////////////////
+
     if (!title.trim() || !content.trim()) {
       setErrorMessage("제목과 내용을 모두 입력해주세요.");
       return;
     }
-  
     if (res.ok) {
       alert("게시글이 작성되었습니다.");
       window.location.reload(); // Refresh the page after creating a post
@@ -59,6 +58,9 @@ const PostBoard =  () => {
 
   return (
     <form onSubmit={handleSubmit} className="mb-4">
+      {errorMessage && (
+        <p className='mb-2 text-sm'>{errorMessage}</p>
+      )}
       <input
         type="text"
         value={title}
@@ -81,4 +83,4 @@ const PostBoard =  () => {
   );
 };
 
-export default PostBoard;
+export default CreateBoard;
