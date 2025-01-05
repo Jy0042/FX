@@ -1,15 +1,32 @@
+/* 
 require('dotenv').config({ path: '.env.development' });
 const express = require('express');
 const morgan = require('morgan');
 const debug = require('debug');
+ */
+
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.development' });
+import express from 'express';
+import morgan from 'morgan';
+import debug from 'debug';
 
 // Router
 // const fxRouter = require('./routes/fxRouter');
+/* 
 const usersRouter = require('./routes/usersRouter');
 const authRouter = require('./routes/authRouter');
 const postsRouter = require('./routes/postsRouter');
 const commentsRouter = require('./routes/commentsRouter');
 const repliesRouter = require('./routes/repliesRouter');
+ */
+
+// import fxRouter from './routes/fxRouter';
+import usersRouter from './routes/usersRouter';
+import authRouter from './routes/authRouter';
+import postsRouter from './routes/postsRouter';
+import commentsRouter from './routes/commentsRouter';
+import repliesRouter from './routes/repliesRouter';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
