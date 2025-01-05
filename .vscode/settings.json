@@ -1,9 +1,12 @@
 {
-  "eslint.autoFixOnSave": true,
-  "editor.formatOnSave": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
+    "source.fixAll": true
   },
-  "prettier.requireConfig": true,
-  "eslint.alwaysShowStatus": true
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "eslint.alwaysShowStatus": true,
+  "eslint.autoFixOnSave": true,
+  "prettier.requireConfig": true
 }
