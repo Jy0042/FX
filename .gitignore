@@ -7,16 +7,27 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+node_modules/
 dist
 dist-ssr
 *.local
-backend
 
+# 개발중 생성되는 각종 중간 산출물 제외
+*.txt
+*.csv
+
+# DB 파일 예외
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+
+# Credentials
 .env
 
 # Editor directories and files
 .vscode/*
+!.vscode/settings.json
 !.vscode/extensions.json
 .idea
 .DS_Store
