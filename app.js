@@ -1,32 +1,17 @@
-/* 
-require('dotenv').config({ path: '.env.development' });
-const express = require('express');
-const morgan = require('morgan');
-const debug = require('debug');
- */
-
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.development' });
+import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import debug from 'debug';
 
 // Router
-// const fxRouter = require('./routes/fxRouter');
-/* 
-const usersRouter = require('./routes/usersRouter');
-const authRouter = require('./routes/authRouter');
-const postsRouter = require('./routes/postsRouter');
-const commentsRouter = require('./routes/commentsRouter');
-const repliesRouter = require('./routes/repliesRouter');
- */
-
 // import fxRouter from './routes/fxRouter';
-import usersRouter from './routes/usersRouter';
-import authRouter from './routes/authRouter';
-import postsRouter from './routes/postsRouter';
-import commentsRouter from './routes/commentsRouter';
-import repliesRouter from './routes/repliesRouter';
+import usersRouter from './routes/usersRouter.js';
+import authRouter from './routes/authRouter.js';
+import postsRouter from './routes/postsRouter.js';
+import commentsRouter from './routes/commentsRouter.js';
+import repliesRouter from './routes/repliesRouter.js';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -39,10 +24,17 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
+// 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
+console.log(`import.meta.dirname: ${import.meta.dirname}`);
+console.log(`import.meta.filename: ${import.meta.filename}`);
+// 해결책 2. path.resolve() 메서드 사용
+// const __dirname = path.resolve();
 
-// Routes - 
+// Routes
 app.get('/', (req, res) => {
-  res.sendFile('index.html');
+  // res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(import.meta.dirname, 'index.html'));
 });
 
 // 환율 계산
