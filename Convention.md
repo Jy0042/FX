@@ -1,4 +1,3 @@
-2024.12.25  
 F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide  
 (Javascript 쪽에서 제일 유명한 Airbnb Javascript Style Guide 기반)  
   
@@ -11,10 +10,10 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
    const: 값이 변경되지 않을 변수  
    let: 값이 변경될 수 있는 변수  
   
-   ※ let 사용 최소화: **되도록이면 const를 사용하여 불변성 유지**  
+   ※ let 사용 최소화: **재할당이 필요하지 않으면 const를 사용하여 불변성 유지**  
   
 2. 화살표 함수 사용  
-   화살표 함수(() => {})는 간결하고 this 바인딩 문제를 피할 수 있기 때문에 추천  
+   화살표 함수( ( ) => { } )는 간결하고 this 바인딩 문제를 피할 수 있기 때문에 추천  
    일반 함수 선언 대신 화살표 함수를 사용합니다.  
   
 ```  
@@ -34,25 +33,36 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
    }  
 ```  
   
-3. Template Literals (back tick(`)) 사용  
+3. Template Literals (back tick( ` )) 사용  
    (문자열이 여러 줄로 이뤄졌거나, 변수를 포함할 때. 한 줄 짜리 단순 문자열은 외따옴표)  
   
-   문자열을 **+**로 연결하기보다는 템플릿 리터럴(`)을 사용합니다.  
+   문자열을 **+** 연산자로 연결하기보다는 템플릿 리터럴( ` )을 사용합니다.  
    가독성을 높이고, 코드가 간결해집니다.  
-
+  
 ```
-   const apiUrl = `https://api.exchangerate-api.com/v4/latest/${selectedCurrency}`;  
-   string = 'F(X)'  
-```  
-
-4. 객체 리터럴 사용 권장
-   클래스는 큰 규모의 애플리케이션에서 주로 사용하고, 간단하게 사용할 때는 객체 리터럴을 주로 사용합니다.
+   const apiUrl = `https://api.exchangerate-api.com/v4/latest/${selectedCurrency}`;
+   const query = `
+     SELECT *
+     FROM user_currency
+     WHERE user_id = ?
+   `;
+   const projectName = 'F(x).com';
+```
+  
+4. 객체 리터럴 사용 권장  
+   클래스는 큰 규모의 애플리케이션에서 주로 사용하고, 간단하게 사용할 때는 객체 리터럴을 주로 사용합니다.  
    (객체 리터럴로 데이터 구조를 정의하는 것이 간편합니다.)  
    객체 리터럴 축약 구문을 사용하여, 코드의 길이를 줄이고 가독성을 높입니다.  
-```
-   const a = [];
-   const b = {};
-```
+```  
+   const userCurrency = {  
+     from: src,  
+     to: dst,  
+   }  
+   const tmpArr = [];  
+```  
+   **※ 객체의 마지막 속성이 있는 줄 끝에도 comma(,)를 넣습니다.**  
+   추후 (아랫에) 새 속성을 추가할 일이 생기면 해당 줄 끝에도 comma를 추가할 수밖에 없는데,  
+   이렇게 되면 commit 변경사항에 해당 줄까지 변경된 것으로 나와서 헷갈릴 수 있기 때문입니다.  
   
 5. 에러 처리  
    **try/catch**로 에러 처리를 제대로 해주는 것이 좋습니다.  
@@ -63,7 +73,7 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
   
 7. 주석 처리  
    ※ 기본 원칙은 함수, 클래스, 주요 로직 등에는 간단한 설명을 추가합니다.  
-   단, 꼭 필요한 부분에만 달고, **"왜 이 코드를 썼는지"**를 설명합니다.  
+   단, 꼭 필요한 부분에만 달고, "왜 이 코드를 썼는지"를 설명합니다.  
    불필요한 주석은 피하고, 코드 자체로 의도를 명확히 전달합니다.  
   
    처리 방식  
@@ -77,7 +87,7 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
      ~ logic ~
    }
 
-   # TO-DO: 나중에 추가할 기능은 TO-DO로 표기
+   // TO-DO: 나중에 추가할 기능은 TO-DO로 표기
    ```
   
 8. 불필요한 코드 줄이기  
@@ -88,7 +98,7 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
    컴포넌트 간 책임 분리를 명확히 하고, 기능별로 폴더 구조를 나누어 관리합니다.  
   
 10. 모듈 불러오기  
-   import를 사용하여 모듈을 불러오고, 상시로 구조 분해 할당(디스트럭쳐링)이 적용될 수 있도록 1개의 모듈이라도 {}로 처리합니다.  
+   import를 사용하여 모듈을 불러오고, 상시로 구조 분해 할당(디스트럭쳐링)이 적용될 수 있도록 1개의 모듈이라도 { } (중괄호)로 처리합니다.  
   
 ```
    // bad  
@@ -105,17 +115,21 @@ F(x).com 맞춤형 환율 조회 프로젝트 Convention Guide
 ```
   
 11. 명명 규칙  
-   폴더, 파일 네이밍  
-   파일은 소문자와 언더바(_)로 구성  
-   ex) exchange_calculator.js
+   폴더, 파일:  소문자 snake case (언더바/언더스코어( _ )로 구성)  
+   예) node_module 폴더, exchange_calculator.js 파일
+  
+   DB 테이블, 컬럼: 소문자 snake case (테이블은 복수형)  
+   예) user_currencies 테이블, author_id 컬럼  
+  
+   소스 코드 규칙:
   
 |종류|규칙|예시|
 |---|:---|:---|
 |**변수**|camel**C**ase 사용| exchangeRate, userProfile|
 |**함수**|동사 + 명사로 구성된 camel**C**ase|getExchangeRate, setUserCurrency|
 |Class|**P**ascal**C**ase|ExchangeRateConverter|
-|**상수**|대문자 + 언더스코어(_)|DEFAULT_INTERVAL|
-
+|**상수**|전체 대문자 + 언더스코어( **_** )|DEFAULT_INTERVAL|
+  
 12. 들여쓰기 규칙  
    들여쓰기: 탭 (2칸 공백으로 설정)  
    VS Code 확장인 Prettier로 설정  
