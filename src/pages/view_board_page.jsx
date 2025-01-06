@@ -1,13 +1,13 @@
-import {useState} from "react";
-import ViewBoard from "../components/board/view_board";
+import { useState } from 'react';
+import ReadBoard from '../components/board/ReadPost';
 
 const ViewBoardPage = () => {
-    return(
-        <body>
-            게시글 보기
-            <ViewBoard/>
-        </body>
-    );
-}
+  return (
+    <body>
+      게시글 보기
+      <ReadBoard />
+    </body>
+  );
+};
 
 export default ViewBoardPage;

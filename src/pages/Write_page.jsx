@@ -1,5 +1,5 @@
 import {useState} from "react";
-import CreateBoard from "../components/board/create_board";
+import CreateBoard from "../components/board/CreatePost";
 
 const WritePage = () => {
     return(
