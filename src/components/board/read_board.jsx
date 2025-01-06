@@ -32,7 +32,7 @@ const ReadBoardList = () => {
           }
         };
     fetchPosts();
-    },[]);
+    },[userId]);
 
     useEffect(() => {
       console.log('Updated posts:', posts);

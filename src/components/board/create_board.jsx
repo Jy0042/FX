@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 const CreateBoard =  () => {
   const [title, setTitle] = useState("");
-  const [contents, setContent] = useState("");
+  const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   let [inputCount, setInputCount] = useState(0);
@@ -29,7 +29,7 @@ const CreateBoard =  () => {
     e.preventDefault();
 
     console.log("title",title);
-    console.log('contents',contents);
+    console.log('content',content);
 
 
     const res = await fetch(`http://localhost:3000/api/writepost`, {
@@ -37,7 +37,7 @@ const CreateBoard =  () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, contents })
+      body: JSON.stringify({ title, content })
     });
 
     console.log("리스폰스", res);
@@ -45,7 +45,7 @@ const CreateBoard =  () => {
 
     //////////////////////////////////////////////////////////////
 
-    if (!title.trim() || !contents.trim()) {
+    if (!title.trim() || !content.trim()) {
       setErrorMessage("제목과 내용을 모두 입력해주세요.");
       return;
     }
@@ -70,8 +70,8 @@ const CreateBoard =  () => {
       />
       <h6>{inputCount}/100</h6>
       <textarea
-        placeholder="Write your contents here..."
-        value={contents}
+        placeholder="Write your content here..."
+        value={content}
         className="form-control mb-3 "
         rows="10" // 높이를 조정
         onChange={(e) =>textCounter(e.target.value)}

@@ -61,7 +61,7 @@ const D3 = () => {
       const yAxis = (g) =>
         g
           .attr('transform', `translate(${margin.left}, 0)`)
-          .call(d3.axisLeft(y).tickValues([0, 20, 40, 60, 80, 100]).tickSize(-width))
+          .call(d3.axisLeft(y).tickValues([0, 20, 40, 60, 80, 100]))
           .call((g) => g.select('.domain').remove())
           .attr('class', 'grid');
   

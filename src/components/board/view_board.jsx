@@ -6,13 +6,15 @@ import good from '../../assets/good.png';
 
 const ViewBoard = () => {
 //   const [title, setTitle] = useState(post.title);
-//   const [content, setContent] = useState(post.contents);
+//   const [content, setContent] = useState(post.content);
 
   const postTime = new Date(); //작성시간
     const { postId } = useParams(); // URL에서 게시물 ID를 가져옴
     const [post, setPost] = useState(null); // 게시물 데이터 저장
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -31,7 +33,6 @@ const ViewBoard = () => {
         };
         fetchPost();
       }, [postId]);
-    //   }, [postId]);
     
     useEffect(() => {
         console.log('link post:', post);
@@ -41,10 +42,60 @@ const ViewBoard = () => {
       if (error) return <p>Error: {error}</p>;
       if (!post) return <p>No post found</p>;
 
+      const handleSave = (updatedPost) => {
+        setPost(updatedPost); // 업데이트된 데이터를 반영
+        setIsEditing(false); // 읽기 모드로 복귀
+      };
+
   return (
     <div>
         <div className="col-md-8"> 
+          {isEditing ? (
+            <form >수정중
+              <input
+                  type="text"
+                  className="form-control mb-3 text-dark border-secondary"
+                  value={post.title} // 제목 데이터 바인딩
+                  // onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
+                  onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
+              />
+              <img
+                  src="https://via.placeholder.com/150"
+                  alt="게시글 이미지"
+                  className="img-fluid"
+                  style={{ maxWidth: '100%', height: 'auto' }}
+              />
+              <textarea
+                  className="form-control mb-3 text-dark border-secondary"
+                  rows="8" // 높이를 조정
+                  value={post.content}
+                  onChange={(e) => setPost({ ...post, content: e.target.value })} // 수정 중 데이터 반영
+              ></textarea>
+              <UpdateBoard post={post} onSave={handleSave}/>
+            </form>
+          ) :(
+          <div>기본
             <input
+            type="text"
+            className="form-control mb-3 text-dark border-secondary"
+            value={post.title} // 제목 데이터 바인딩
+            readOnly
+        />
+        <img
+            src="https://via.placeholder.com/150"
+            alt="게시글 이미지"
+            className="img-fluid"
+            style={{ maxWidth: '100%', height: 'auto' }}
+        />
+        <textarea
+            className="form-control mb-3 text-dark border-secondary"
+            rows="8" // 높이를 조정
+            value={post.content}
+            readOnly
+        ></textarea>
+        </div>
+          )}
+            {/* <input
                 // type="text"
                 // placeholder="제목을 입력하세요"
                 // className="form-control mb-3 text-light border-secondary" // 가로 길이를 늘림
@@ -63,14 +114,15 @@ const ViewBoard = () => {
             <textarea
                 className="form-control mb-3 text-dark border-secondary"
                 rows="8" // 높이를 조정
-                value={post.contents}
+                value={post.content}
                 readOnly
-            ></textarea>
+            ></textarea> */}
         </div>
 
         <div className="col-md-4 d-flex justify-content-center">
             <DeleteBoard post={post}/>
-            <UpdateBoard/>
+            <button onClick= {() => setIsEditing(true)}>수정</button>
+            {/* <UpdateBoard post={post} onClick={() => setIsEditing(true)}/> */}
         </div>
     </div>
   );

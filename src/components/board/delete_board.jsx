@@ -5,17 +5,17 @@
   const DeleteBoard = ({ post }) => {
 
       const [title, setTitle] = useState(post.title);
-      const [contents, setContent] = useState(post.contents);
+      const [content, setContent] = useState(post.content);
 
       console.log(post);
       const handleDelete = async () => {
           if (confirm('정말 삭제하시겠습니까?')) {
             const res = await fetch(`http://localhost:3000/api/posts/${post.id}`, {
               method: 'delete',
-              // headers: {
-              //   'Content-Type': 'application/json',
-              // },
-              // body: JSON.stringify({ id: post.id }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ id: post.id }),
             });
       
             if (res.ok) {
@@ -39,7 +39,7 @@
     post: PropTypes.shape({
       id: PropTypes.number.isRequired,
       title: PropTypes.string,
-      contents: PropTypes.string,
+      content: PropTypes.string,
     }).isRequired,
   };
 

@@ -6,7 +6,7 @@ import author from '../../assets/author.png'
 
 const Board = ({ post }) => {
   const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.contents);
+  const [content, setContent] = useState(post.content);
 
   const postTime = new Date(); //작성시간
 
