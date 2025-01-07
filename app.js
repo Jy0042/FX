@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import debug from 'debug';
 
 // Router
-// import fxRouter from './routes/fxRouter';
+import fxRouter from './routes/fxRouter';
 import usersRouter from './routes/usersRouter.js';
 import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
