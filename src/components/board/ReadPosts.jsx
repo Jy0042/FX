@@ -43,7 +43,7 @@ const ReadPosts = () => {
   // };
 
   const handleClick = (postId) => {
-    navigate(`/post/${postId}`); // 게시물 ID를 포함한 경로로 이동
+    navigate(`/v1/posts/${postId}`); // 게시물 ID를 포함한 경로로 이동
     console.log(postId);
   };
 

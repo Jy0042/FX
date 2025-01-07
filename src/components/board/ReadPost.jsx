@@ -4,7 +4,7 @@ import UpdatePost from './UpdatePost';
 import DeletePost from './DeletePost';
 import good from '../../assets/good.png';
 
-const ReadBoard = () => {
+const ReadPost = () => {
   //   const [title, setTitle] = useState(post.title);
   //   const [content, setContent] = useState(post.content);
 
@@ -18,7 +18,7 @@ const ReadBoard = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/posts/${postId}`); // API 호출
+        const res = await fetch(`http://localhost:3000/api/v1/posts/${postId}`); // API 호출
         if (!res.ok) {
           throw new Error('Failed to fetch post');
         }
@@ -107,4 +107,4 @@ const ReadBoard = () => {
   );
 };
 
-export default ReadBoard;
+export default ReadPost;

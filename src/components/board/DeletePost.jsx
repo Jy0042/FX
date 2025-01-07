@@ -9,7 +9,7 @@ const DeletePost = ({ post }) => {
   console.log(post);
   const handleDelete = async () => {
     if (confirm('정말 삭제하시겠습니까?')) {
-      const res = await fetch(`http://localhost:3000/api/posts/${post.id}`, {
+      const res = await fetch(`http://localhost:3000/api/v1/posts/${post.id}`, {
         method: 'delete',
         headers: {
           'Content-Type': 'application/json',

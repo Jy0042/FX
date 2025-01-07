@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Post from '../components/board/Post';
 import ReadPosts from '../components/board/ReadPosts';
-import SearchBox from '../components/board/SearchBox';
+import SearchForm from '../components/board/SearchForm';
 import { useNavigate } from 'react-router-dom';
 
 const Community = () => {
@@ -9,7 +9,8 @@ const Community = () => {
   const navigate = useNavigate();
 
   const toWritePage = () => {
-    navigate('/write');
+    console.log('페이지 이동');
+    navigate('/post');
   };
 
   return (
@@ -19,7 +20,7 @@ const Community = () => {
     >
       <div className="position-absolute top-0 start-50 translate-middle-x">
         <h1 className="display-4 font-weight-bold text-center mt-5">커뮤니티 페이지</h1>
-        <SearchBox />
+        <SearchForm />
         <div className="container">
           {/* <Board/> */}
           <ReadPosts />

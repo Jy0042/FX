@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-const CreateBoard = () => {
+const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -32,7 +32,7 @@ const CreateBoard = () => {
     console.log('title', title);
     console.log('content', content);
 
-    const res = await fetch(`http://localhost:3000/api/writepost`, {
+    const res = await fetch(`http://localhost:3000/api/v1/posts`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -79,4 +79,4 @@ const CreateBoard = () => {
   );
 };
 
-export default CreateBoard;
+export default CreatePost;
