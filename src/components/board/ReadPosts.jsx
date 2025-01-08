@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Post from './Post';
+import { useInView } from 'react-intersection-observer';
+import { Colors } from 'chart.js';
 
 const ReadPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -9,13 +11,18 @@ const ReadPosts = () => {
   const [page, setPage] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(3); // 페이지 당 보여질 포스트 수
+  const [postsPerPage] = useState(10); // 페이지 당 보여질 포스트 수
 
   const [isLoading, setIsLoading] = useState(false);
   const [postArr, setPostArr] = useState([]);
 
+  const { ref, inView } = useInView();
+
   const { userId } = useParams();
   const navigate = useNavigate(); // useNavigate 훅 사용
+
+  // useEffect(() => {
+  // }, [inView]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -34,7 +41,11 @@ const ReadPosts = () => {
       }
     };
     fetchPosts();
-  }, [userId]);
+    console.log('화면에 있습니까?', inView);
+
+    paginate(currentPage + 1);
+    // }, [userId]);
+  }, [inView]);
 
   useEffect(() => {
     console.log('Updated posts:', posts);
@@ -43,10 +54,13 @@ const ReadPosts = () => {
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const lastPage = 2;
 
   // 페이지 변경 함수
   const paginate = (pageNumber) => {
-    if (pageNumber < 1) {
+    console.log('페이지번호 : ', pageNumber);
+    // if (pageNumber < 1) {
+    if (pageNumber < 1 || lastPage < pageNumber) {
       pageNumber = 1;
     } else if (pageNumber > Math.ceil(posts.length / postsPerPage)) {
       pageNumber = Math.ceil(posts.length / postsPerPage);
@@ -62,6 +76,22 @@ const ReadPosts = () => {
     navigate(`/v1/posts/${postId}`); // 게시물 ID를 포함한 경로로 이동
     console.log(postId);
   };
+
+  // const useGetPost = () => {
+  //   return useInfiniteQuery({
+  //     queryKey: ['top-board'],
+  //     queryFn: ({ pageParam }) => {
+  //       return fetchBoard(pageParam);
+  //     },
+  //     getNextPageParam: (last) => {
+  //       if (last.page < last.total_pages) {
+  //         return last.page + 1;
+  //       }
+  //       return undefined;
+  //     },
+  //     initialPageParam: 1,
+  //   });
+  // };
 
   return (
     <div>
@@ -136,6 +166,9 @@ const ReadPosts = () => {
           </div>
         ))}
       </ul>
+      <h1 className="color:white;" ref={ref}>
+        load data
+      </h1>
     </div>
   );
 };

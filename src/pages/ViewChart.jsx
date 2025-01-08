@@ -5,9 +5,11 @@ import Apex from '../components/chart/BarChart';
 const ViewChart = () => {
   return (
     <div>
-      <h1>그래프 상세 페이지</h1>
-      <Apex />
-      {/* <Table /> */}
+      <ul>
+        <h1>그래프 상세 페이지</h1>
+        <Apex />
+        {/* <Table /> */}
+      </ul>
     </div>
   );
 };
