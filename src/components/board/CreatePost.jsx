@@ -6,15 +6,13 @@ const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [imgFile, setImgFile] = useState('');
 
   let [inputCount, setInputCount] = useState(0);
   let [textCount, setTextareaCount] = useState(0);
 
   const inputCounter = (e) => {
     //input에 입력한 글자 세는 함수
-    // title = e.target.value;
-    // setTitle(e.target.value); // 입력된 값을 상태에 저장
-    // setInputCount(e.target.value.replace(/[\0-\x7f]|([0-\u07ff]|(.))/g, "$&$1$2").length);
     setTitle(e); // 입력된 값을 상태에 저장
     setInputCount(e.replace(/[\0-\x7f]|([0-\u07ff]|(.))/g, '$&$1$2').length);
   };
@@ -48,7 +46,7 @@ const CreatePost = () => {
     }
     if (res.ok) {
       alert('게시글이 작성되었습니다.');
-      window.location.reload(); // Refresh the page after creating a post
+      window.location.reload(); //게시글 작성후 페이지 새로고침
     }
   };
 
@@ -71,6 +69,13 @@ const CreatePost = () => {
         onChange={(e) => textCounter(e.target.value)}
       />
       <h6>{textCount}words</h6>
+
+      {/* <ImgWrapStyle>
+        <PreviewImgWrapStyle>
+          <PreviewImg src={previewImgUrl} alt="이미지 미리보기" />
+          <DeleteImgBtn type="button" onClick={deleteImgHandler} />
+        </PreviewImgWrapStyle>
+      </ImgWrapStyle> */}
       <button className="btn btn-outline-secondary">Cancel</button>
       <button type="submit" className="btn btn-primary">
         Publish

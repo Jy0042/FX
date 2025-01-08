@@ -56,7 +56,6 @@ const ReadPost = () => {
               type="text"
               className="form-control mb-3 text-dark border-secondary"
               value={post.title} // 제목 데이터 바인딩
-              // onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
               onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
             />
             <img

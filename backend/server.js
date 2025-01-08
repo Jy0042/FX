@@ -104,7 +104,7 @@ app.delete('/api/v1/posts/:id', (req, res) => {
   res.json({ success: true });
 });
 
-app.put('/api/v1/posts/:id', (req, res) => {
+app.patch('/api/v1/posts/:id', (req, res) => {
   const id = req.params.id;
   const { title, content } = req.body;
 

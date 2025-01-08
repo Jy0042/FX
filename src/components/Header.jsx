@@ -1,13 +1,11 @@
 import React from 'react';
-// import { NavLink } from "react-router-dom";
-import { Link } from 'react-router-dom'; // Link를 import합니다.
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
     <header className="header">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
-          {/* <a className="navbar-brand" href="#">FX</a> */}
           <Link className="navbar-brand" to="/">
             FX
           </Link>
@@ -30,7 +28,6 @@ const Header = () => {
                 </a>
               </li>
               <li className="nav-item">
-                {/* <a className="nav-link" to="/community" href="#">커뮤니티</a> */}
                 <Link className="nav-link" to="/community">
                   커뮤니티
                 </Link>
