@@ -24,6 +24,7 @@ function App() {
             <Route path="/write" element={<WritePage />} /> {/* 글쓰기 페이지 라우팅 */}
             {/* <Route path="/view" element={<ViewBoardPage />} /> 글쓰기 페이지 라우팅 */}
             <Route path="/post/:postId" element={<ViewBoard />} /> {/* 게시물 상세 */}
+            <Route path="/chart" element={<ViewChart />} />
           </Routes>
         </body>
       </Router>
