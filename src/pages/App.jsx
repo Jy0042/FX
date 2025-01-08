@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import '../styles/App.css';
 import '../styles/CurrencyConverter.css';
 
@@ -10,12 +11,9 @@ import Community from './community_page';
 import WritePage from './write_page';
 import ViewBoardPage from './view_board_page';
 import ViewBoard from '../components/board/view_board';
-import CurrencyConverter from '../components/CurrencyConverter';
-// import { Route, Routes } from "'react-dom/client'";
+import CurrencyConverter from '../components/converter/CurrencyConverter';
 
 function App() {
-  // const [count, setCount] = useState(0)
-
   return (
     <>
       <Router>

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const ConversionResult = ({ amount, fromCurrency, toCurrency, exchangeRate }) => {
   const convertedAmount = (amount * exchangeRate).toFixed(2);
@@ -12,7 +12,7 @@ const ConversionResult = ({ amount, fromCurrency, toCurrency, exchangeRate }) =>
         {convertedAmount} {toCurrency}
       </h2>
       <p className="text-muted">
-        1 {fromCurrency} = {(1 * exchangeRate).toFixed(6)} {toCurrency} <br />1 {toCurrency} ={" "}
+        1 {fromCurrency} = {(1 * exchangeRate).toFixed(6)} {toCurrency} <br />1 {toCurrency} ={' '}
         {(1 / exchangeRate).toFixed(6)} {fromCurrency}
       </p>
       <p className="text-muted">Last updated: Jan 2, 2025, 12:46 UTC</p>

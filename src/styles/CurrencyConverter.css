@@ -13,10 +13,12 @@
 
 /* 중앙 정렬 및 크기 조정 */
 .currency-converter {
-  max-width: 800px;
-  margin: 0 auto;
+  /* max-width: 1200px; */
+  width: 100%;
+  /* margin: 0 auto; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: red;
 }
