@@ -1,9 +1,14 @@
 import { Component, useState } from 'react';
 // import { Route } from "react-router-dom";
+<<<<<<< HEAD
 import D3 from './chart/Chart';
 import ChartJsExample from './chart/LineChart';
 import { useNavigate } from 'react-router-dom';
 import Apex from './chart/BarChart';
+=======
+import D3 from './chart/chart'
+// import lineChart from '../components/linechart'
+>>>>>>> 20a5e6cec8c5e6f88fe7d8b9504530efc8ab052e
 
 const Body = () => {
   const [chartState, setChartState] = useState(true);
