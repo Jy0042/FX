@@ -28,7 +28,7 @@ const Apex = ({ type }) => {
   ];
 
   return (
-    <div>
+    <div >
       {/* <h2>Bar Chart</h2>
       <ReactApexChart options={chartOptions} series={data} type="bar" height={350} />
 

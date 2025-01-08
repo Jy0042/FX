@@ -4,6 +4,7 @@ import D3 from './chart/Chart';
 import ChartJsExample from './chart/LineChart';
 import { useNavigate } from 'react-router-dom';
 import Apex from './chart/BarChart';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Body = () => {
   const [chartState, setChartState] = useState(true);
@@ -20,21 +21,24 @@ const Body = () => {
   };
 
   return (
-    <div>
-      <button onClick={changeChart}>변경</button>
-
-      <div onClick={handleClick}>
-        {/* <D3 /> */}
-        {chartState ? (
+    <div className="ml-auto">
+      <div>
+        <button onClick={changeChart}>변경</button>
+        <div onClick={handleClick}>
+          {/* <D3 /> */}
           <div>
-            {/* <D3 /> */}
-            <Apex type={'bar'} />
+            {chartState ? (
+              <div className="d-flex justify-content-center align-items-center">
+                {/* <D3 /> */}
+                <Apex type={'bar'} />
+              </div>
+            ) : (
+              <div className="d-flex justify-content-center align-items-center">
+                <Apex type={'line'} />
+              </div>
+            )}
           </div>
-        ) : (
-          <div>
-            <Apex type={'line'} />
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
