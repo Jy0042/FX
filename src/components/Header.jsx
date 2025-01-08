@@ -1,3 +1,5 @@
+import React from 'react';
+// import { NavLink } from "react-router-dom";
 import { Link } from 'react-router-dom'; // Link를 import합니다.
 
 const Header = () => {
