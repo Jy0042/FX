@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import debug from 'debug';
 
 // Router
-// import fxRouter from './routes/fxRouter';
+import fxRouter from './routes/fxRouter';
 import usersRouter from './routes/usersRouter.js';
 import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
@@ -26,8 +26,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
-console.log(`import.meta.dirname: ${import.meta.dirname}`);
-console.log(`import.meta.filename: ${import.meta.filename}`);
 // 해결책 2. path.resolve() 메서드 사용
 // const __dirname = path.resolve();
 
