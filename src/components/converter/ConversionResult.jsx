@@ -4,8 +4,8 @@ const ConversionResult = ({ amount, fromCurrency, toCurrency, exchangeRate }) =>
   const convertedAmount = (amount * exchangeRate).toFixed(2);
 
   return (
-    <div className="mt-4 p-3 bg-light rounded">
-      <h4 className="mb-3">
+    <div className="conversion-result text-center mt-4">
+      <h4 className="text-muted">
         {amount.toLocaleString()} {fromCurrency} =
       </h4>
       <h2 className="text-primary fw-bold">
