@@ -9,7 +9,8 @@ import PropTypes from 'prop-types';
 //   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 // };
 
-const Apex = () => {
+const Apex = ({ type }) => {
+  console.log('type: ', type);
   const chartOptions = {
     xaxis: {
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -28,11 +29,12 @@ const Apex = () => {
 
   return (
     <div>
-      <h2>Bar Chart</h2>
+      {/* <h2>Bar Chart</h2>
       <ReactApexChart options={chartOptions} series={data} type="bar" height={350} />
 
       <h2>Line Chart</h2>
-      <ReactApexChart options={chartOptions} series={data} type="line" height={350} />
+      <ReactApexChart options={chartOptions} series={data} type="line" height={350} /> */}
+      <ReactApexChart options={chartOptions} series={data} type={type} height={350} key={type} />
     </div>
   );
 };

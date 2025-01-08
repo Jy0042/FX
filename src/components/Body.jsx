@@ -3,7 +3,7 @@ import { Component, useState } from 'react';
 import D3 from './chart/Chart';
 import ChartJsExample from './chart/LineChart';
 import { useNavigate } from 'react-router-dom';
-// import Apex from './chart/BarChart';
+import Apex from './chart/BarChart';
 
 const Body = () => {
   const [chartState, setChartState] = useState(true);
@@ -27,11 +27,12 @@ const Body = () => {
         {/* <D3 /> */}
         {chartState ? (
           <div>
-            <D3 />
+            {/* <D3 /> */}
+            <Apex type={'bar'} />
           </div>
         ) : (
           <div>
-            <ChartJsExample />
+            <Apex type={'line'} />
           </div>
         )}
       </div>
