@@ -1,6 +1,4 @@
 import { useState } from 'react';
-
-import D3 from '../components/chart/Chart';
 import Apex from '../components/chart/BarChart';
 // import Table from '../components/chart/Table';
 

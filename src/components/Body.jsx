@@ -1,6 +1,5 @@
 import { Component, useState } from 'react';
 // import { Route } from "react-router-dom";
-import D3 from './chart/Chart';
 import ChartJsExample from './chart/LineChart';
 import { useNavigate } from 'react-router-dom';
 import Apex from './chart/BarChart';
@@ -24,10 +23,8 @@ const Body = () => {
       <button onClick={changeChart}>변경</button>
 
       <div onClick={handleClick}>
-        {/* <D3 /> */}
         {chartState ? (
           <div>
-            {/* <D3 /> */}
             <Apex type={'bar'} />
           </div>
         ) : (
