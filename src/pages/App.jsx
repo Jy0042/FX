@@ -17,7 +17,7 @@ function App() {
     <>
       <Router>
         <Header />
-        <CurrencyConverter />
+        {/* <CurrencyConverter /> */}
         <body>
           <Routes className="col-md-8">
             <Route path="/" element={<Body />} /> {/* 기본 페이지 */}

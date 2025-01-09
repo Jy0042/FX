@@ -11,7 +11,7 @@ node_modules/
 dist
 dist-ssr
 *.local
-backend
+backend/
 
 # 개발중 생성되는 각종 중간 산출물 제외
 *.txt
