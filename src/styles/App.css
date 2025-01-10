@@ -1,3 +1,4 @@
+/* 전체 레이아웃 */
 #root {
   min-width: 1440px;
   margin: 0;
@@ -5,11 +6,263 @@
   text-align: center;
   align-items: center;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* 컨테이너 */
+.container {
+  max-width: 1200px; /* 실제 콘텐츠 영역 */
+  width: calc(100% - 240px); /* 1440px 기준으로 좌우 여백 포함 */
+  margin: 0 auto;
+  padding: 0 20px; /* 내부 여백 */
+  transition: width 0.3s ease-in-out;
+}
+
+@media (max-width: 1440px) {
+  .container {
+    width: calc(100% - 80px); /* 브라우저가 줄어들면 여백 줄이기 */
+  }
+}
+
+@media (max-width: 1200px) {
+  .container {
+    width: 100%; /* 모바일에서는 전체 너비 사용 */
+    padding: 0 15px;
+  }
+}
+
+/* 헤더 */
+.header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 1.5rem 0;
+}
+
 header {
   position: fixed; /* or `position: sticky;` for a sticky header */
   top: 0;
-  width: 100%;
-  color:  #040303;
-  background-color: #fff;
-  z-index: 1000; /* Ensure it's above other content */
+  z-index: 1000;
+  padding: 1.5rem 0;
+}
+
+.header .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header .navbar-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #002d62;
+  text-decoration: none;
+}
+
+.header .navbar-brand:hover {
+  color: #0056b3;
+}
+
+.header .navbar-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.header .navbar-nav .nav-link {
+  color: #002d62;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.header .navbar-nav .nav-link:hover {
+  color: #0056b3;
+}
+
+/* 버튼 스타일 */
+.header .auth-buttons .btn {
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+}
+
+.header .btn-outline-primary {
+  color: #002d62;
+  border: 1px solid #002d62;
+  background: none;
+}
+
+.header .btn-outline-primary:hover {
+  background-color: #002d62;
+  color: #fff;
+}
+
+.header .btn-primary {
+  background-color: #002d62;
+  color: #fff;
+  border: none;
+}
+
+.header .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* 탭 스타일 */
+.nav-tabs {
+  margin-top: 1.5rem;
+  border-bottom: 2px solid #eaeaea;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-tabs .nav-link {
+  color: #002d62;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  margin: 0 0.5rem;
+  text-align: center;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #002d62;
+  color: #fff;
+  border-radius: 5px 5px 0 0;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #0056b3;
+}
+
+/* Currency Converter */
+.currency-converter {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Currency Input */
+.currency-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.currency-input .swap-btn {
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  position: relative;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: transform 0.2s ease-in-out;
+}
+
+.currency-input .swap-btn:hover {
+  transform: rotate(180deg);
+}
+
+/* Conversion Result */
+.conversion-result {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  margin-top: 1.5rem;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.conversion-result h4 {
+  font-size: 1.25rem;
+  color: #002d62;
+  margin-bottom: 0.5rem;
+}
+
+.conversion-result h2 {
+  font-size: 2rem;
+  color: #0056b3;
+  font-weight: bold;
+}
+
+.conversion-result p {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
+}
+
+/* Guide Section */
+.site-guide {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin: 4rem 0;
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.guide-item {
+  text-align: center;
+  flex: 1;
+}
+
+.guide-item .guide-icon {
+  font-size: 2rem;
+  color: #002d62;
+  margin-bottom: 0.5rem;
+}
+
+.guide-item h3 {
+  font-size: 1.1rem;
+  color: #002d62;
+  font-weight: bold;
+}
+
+.guide-item p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Footer */
+footer {
+  background-color: #002d62;
+  color: #ffffff;
+  padding: 2rem 0;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
 }
