@@ -65,13 +65,14 @@ const ReadPost = () => {
               value={post.content}
               onChange={(e) => setPost({ ...post, content: e.target.value })} // 수정 중 데이터 반영
             ></textarea>
+            <Uploader />
             <UpdatePost post={post} onSave={handleSave} />
-            <img
+            {/* <img
               src="https://via.placeholder.com/150"
               alt="게시글 이미지"
               className="img-fluid"
               style={{ maxWidth: '100%', height: 'auto' }}
-            />
+            /> */}
           </form>
         ) : (
           <div>
@@ -88,13 +89,13 @@ const ReadPost = () => {
               value={post.content}
               readOnly
             ></textarea>
-            <img
+            {/* <img
               // src="https://via.placeholder.com/150"
               // alt="게시글 이미지"
               // className="img-fluid"
               style={{ maxWidth: '100%', height: 'auto' }}
-            />
-            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+            /> */}
+            {/* <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" /> */}
             <Uploader />
           </div>
         )}

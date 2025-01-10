@@ -17,7 +17,7 @@ function App() {
     <>
       <Router>
         <Header />
-        <body>
+        <body className="d-flex justify-content-center align-items-center rounded p-3">
           <Routes className="col-md-8">
             <Route path="/" element={<Body />} /> {/* 기본 페이지 */}
             <Route path="/community" element={<Community />} /> {/* 커뮤니티 페이지 */}

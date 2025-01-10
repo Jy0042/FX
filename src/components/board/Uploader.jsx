@@ -1,17 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { MdCloudUpload } from 'react-icons/md';
 
 function Uploader() {
   const [image, setImage] = useState(null);
   const [fileName, setFileName] = useState('No Selector file');
+  const [isActive, setActive] = useState(false);
+
+  const imgRef = useRef(null);
+
+  const readImage = (file) => {
+    if (!file) return;
+
+    // const imageFile = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      if (imgRef.current) {
+        imgRef.current.src = e.target.result;
+      }
+      setImage(e.target.result);
+    };
+
+    reader.readAsDataURL(file);
+
+    // reader.addEventListener('load', (e) => {
+    //   if (!e || !e.target) return;
+    //   if (typeof e.target.result !== 'string' || !imgRef.current) return;
+
+    //   imgRef.current.src = e.target.result;
+    // });
+
+    // reader.readAsDataURL(imageFile);
+  };
+  const handleDragStart = () => {
+    setActive(true);
+  };
+  const handleDragEnd = () => {
+    setActive(false);
+  };
+  const handleDragOver = (event) => {
+    event.preventDefault(); // 필수 1
+  };
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    // readImage(file);
+    if (file) {
+      setFileName(file.name);
+      readImage(file);
+    }
+    setActive(false);
+    // 드롭된 파일 핸들링
+    // ...
+  };
 
   return (
     <main>
       <form
         onClick={() => document.querySelector('.input-field').click()}
-        className="d-flex flex-column justify-content-center align-items-center rounded p-3"
+        // className="d-flex flex-column justify-content-center align-items-center rounded p-3"
+        className={`d-flex flex-column justify-content-center align-items-center rounded p-3 ${
+          isActive ? 'active' : ''
+        }`}
+        onDragEnter={handleDragStart} // dragstart 핸들러 추가
+        onDragLeave={handleDragEnd} // dragend 핸들러 추가
+        onDragOver={handleDragOver} // dragover 핸들러 추가
+        onDrop={handleDrop}
         style={{ height: '260px', width: '690px', border: 'dotted gray', cursor: 'pointer' }}
       >
+        {/* <label
+          className={`preview${isActive ? ' active' : ''}`} // isActive 값에 따라 className 제어
+        > */}
         <div>
           <input
             type="file"
@@ -35,6 +94,7 @@ function Uploader() {
             </div>
           )}
         </div>
+        {/* </label> */}
       </form>
     </main>
   );

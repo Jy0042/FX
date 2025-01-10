@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 // import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Uploader from './Uploader';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
@@ -31,6 +32,7 @@ const CreatePost = () => {
     console.log('content', content);
 
     const res = await fetch(`http://localhost:3000/api/v1/posts`, {
+      // const res = await fetch(`54.174.217.176/api/v1/posts`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -57,29 +59,27 @@ const CreatePost = () => {
         type="text"
         value={title}
         placeholder="Enter hour title here..."
-        className="form-control mb-3 " // 가로 길이를 늘림
+        className="form-control" // 가로 길이를 늘림
+        // style="color: black;"
         onChange={(e) => inputCounter(e.target.value)}
       />
-      <h6>{inputCount}/100</h6>
+      <h6 className="d-flex justify-content-end align-items-end">{inputCount}/100</h6>
       <textarea
         placeholder="Write your content here..."
+        color="gray"
         value={content}
         className="form-control mb-3 "
         rows="10" // 높이를 조정
         onChange={(e) => textCounter(e.target.value)}
       />
-      <h6>{textCount}words</h6>
-
-      {/* <ImgWrapStyle>
-        <PreviewImgWrapStyle>
-          <PreviewImg src={previewImgUrl} alt="이미지 미리보기" />
-          <DeleteImgBtn type="button" onClick={deleteImgHandler} />
-        </PreviewImgWrapStyle>
-      </ImgWrapStyle> */}
-      <button className="btn btn-outline-secondary">Cancel</button>
-      <button type="submit" className="btn btn-primary">
-        Publish
-      </button>
+      <h6 className="d-flex justify-content-end align-items-end">{textCount}words</h6>
+      <Uploader />
+      <div className="d-flex justify-content-end align-items-end rounded p-3">
+        <button className="btn btn-outline-secondary">Cancel</button>
+        <button type="submit" className="btn btn-primary">
+          Publish
+        </button>
+      </div>
     </form>
   );
 };

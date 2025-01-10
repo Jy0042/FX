@@ -11,7 +11,10 @@ const Post = ({ post }) => {
   const postTime = new Date(); //작성시간
 
   return (
-    <div className="row align-items-start  bg-dark text-light">
+    <div
+      className="row align-items-start  bg-dark text-light"
+      style={{ height: '250px', width: '1000px' }}
+    >
       {' '}
       {/* Flex container */}
       {/* 왼쪽: 제목, 내용, 작성자, 좋아요/댓글 */}
@@ -47,7 +50,7 @@ const Post = ({ post }) => {
         </div>
       </div>
       {/* 오른쪽: 이미지 */}
-      <div className="col-md-4 d-flex justify-content-center">
+      <div className="col-md-4 d-flex justify-content-end">
         <img
           src="https://via.placeholder.com/150"
           alt="게시글 이미지"

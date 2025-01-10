@@ -95,7 +95,8 @@ const ReadPosts = () => {
 
   return (
     <div>
-      <p>게시글: {posts.id}</p>
+      {/* <p>게시글: {posts.id}</p> */}
+      <span className="input-group-text"></span>
       <ul
         className="pagination"
         style={{

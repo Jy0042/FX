@@ -13,7 +13,7 @@ const Community = () => {
   };
 
   return (
-    <div
+    <form
       className="community-container"
       style={{ maxWidth: '1440px', margin: '0 auto', padding: '20px' }}
     >
@@ -25,7 +25,7 @@ const Community = () => {
           <button onClick={toWritePage}>글쓰기</button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
