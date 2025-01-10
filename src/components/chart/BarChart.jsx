@@ -1,13 +1,4 @@
 import ReactApexChart from 'react-apexcharts';
-import PropTypes from 'prop-types';
-
-// ReactApexChart.propTypes = {
-//   type: PropTypes.string.isRequired,
-//   series: PropTypes.array.isRequired,
-//   options: PropTypes.object.isRequired,
-//   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-//   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-// };
 
 const Apex = ({ type }) => {
   console.log('type: ', type);

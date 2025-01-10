@@ -5,13 +5,16 @@ import good from '../../assets/good.png';
 import author from '../../assets/author.png';
 
 const Post = ({ post }) => {
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.content);
+  // const [title, setTitle] = useState(post.title);
+  // const [content, setContent] = useState(post.content);
 
   const postTime = new Date(); //작성시간
 
   return (
-    <div className="row align-items-start  bg-dark text-light">
+    <div
+      className="row align-items-start  bg-dark text-light"
+      style={{ height: '250px', width: '1000px' }}
+    >
       {' '}
       {/* Flex container */}
       {/* 왼쪽: 제목, 내용, 작성자, 좋아요/댓글 */}
@@ -22,13 +25,15 @@ const Post = ({ post }) => {
           type="text"
           placeholder="제목을 입력하세요"
           className="form-control mb-3 bg-dark text-light border-secondary" // 가로 길이를 늘림
-          value={title}
+          value={post.title}
+          readOnly
         />
         <textarea
           placeholder="내용을 입력하세요"
           className="form-control mb-3 bg-dark text-light border-secondary"
           rows="3" // 높이를 조정
-          value={content}
+          value={post.content}
+          readOnly
         ></textarea>
         <div className="d-flex align-items-center mb-2">
           <img src={author} alt="작성자 아이콘" className="me-2" />
@@ -45,7 +50,7 @@ const Post = ({ post }) => {
         </div>
       </div>
       {/* 오른쪽: 이미지 */}
-      <div className="col-md-4 d-flex justify-content-center">
+      <div className="col-md-4 d-flex justify-content-end">
         <img
           src="https://via.placeholder.com/150"
           alt="게시글 이미지"

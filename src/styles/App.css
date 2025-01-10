@@ -5,6 +5,14 @@
   text-align: center;
 }
 /* 전체 레이아웃 */
+#root {
+  min-width: 1440px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  align-items: center;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -39,6 +47,13 @@ body {
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 1.5rem 0;
+}
+
+header {
+  position: fixed; /* or `position: sticky;` for a sticky header */
   top: 0;
   z-index: 1000;
   padding: 1.5rem 0;

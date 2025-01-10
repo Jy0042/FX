@@ -4,7 +4,7 @@ import Apex from '../components/chart/BarChart';
 
 const ViewChart = () => {
   return (
-    <div >
+    <div>
       <h1>그래프 상세 페이지</h1>
       <Apex />
       {/* <Table /> */}

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Post from '../components/board/Post';
 import ReadPosts from '../components/board/ReadPosts';
 import SearchForm from '../components/board/SearchForm';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +13,7 @@ const Community = () => {
   };
 
   return (
-    <div
+    <form
       className="community-container"
       style={{ maxWidth: '1440px', margin: '0 auto', padding: '20px' }}
     >
@@ -22,12 +21,11 @@ const Community = () => {
         <h1 className="display-4 font-weight-bold text-center mt-5">커뮤니티 페이지</h1>
         <SearchForm />
         <div className="container">
-          {/* <Board/> */}
           <ReadPosts />
           <button onClick={toWritePage}>글쓰기</button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
