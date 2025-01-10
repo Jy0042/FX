@@ -11,7 +11,7 @@ const ReadPosts = () => {
   const [page, setPage] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(10); // 페이지 당 보여질 포스트 수
+  const [postsPerPage] = useState(5); // 페이지 당 보여질 포스트 수
 
   const [isLoading, setIsLoading] = useState(false);
   const [postArr, setPostArr] = useState([]);
@@ -20,9 +20,6 @@ const ReadPosts = () => {
 
   const { userId } = useParams();
   const navigate = useNavigate(); // useNavigate 훅 사용
-
-  // useEffect(() => {
-  // }, [inView]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -65,7 +62,7 @@ const ReadPosts = () => {
     } else if (pageNumber > Math.ceil(posts.length / postsPerPage)) {
       pageNumber = Math.ceil(posts.length / postsPerPage);
     }
-    setCurrentPage(pageNumber);
+    setCurrentPage(pageNumber + 1);
   };
 
   // 현재 페이지 기준으로 표시할 페이지 버튼의 시작과 끝 설정
