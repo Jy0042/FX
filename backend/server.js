@@ -3,7 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const app = express();
 const sqlite3 = require('sqlite3');
-const db = new sqlite3.Database('temp.db');
+const db = new sqlite3.Database('database.db');
 
 db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

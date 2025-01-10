@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import UpdatePost from './UpdatePost';
 import DeletePost from './DeletePost';
 import good from '../../assets/good.png';
+import Uploader from './Uploader';
 
 const ReadPost = () => {
   //   const [title, setTitle] = useState(post.title);
@@ -58,12 +59,6 @@ const ReadPost = () => {
               value={post.title} // 제목 데이터 바인딩
               onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
             />
-            <img
-              src="https://via.placeholder.com/150"
-              alt="게시글 이미지"
-              className="img-fluid"
-              style={{ maxWidth: '100%', height: 'auto' }}
-            />
             <textarea
               className="form-control mb-3 text-dark border-secondary"
               rows="8" // 높이를 조정
@@ -71,6 +66,12 @@ const ReadPost = () => {
               onChange={(e) => setPost({ ...post, content: e.target.value })} // 수정 중 데이터 반영
             ></textarea>
             <UpdatePost post={post} onSave={handleSave} />
+            <img
+              src="https://via.placeholder.com/150"
+              alt="게시글 이미지"
+              className="img-fluid"
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
           </form>
         ) : (
           <div>
@@ -81,18 +82,20 @@ const ReadPost = () => {
               value={post.title} // 제목 데이터 바인딩
               readOnly
             />
-            <img
-              src="https://via.placeholder.com/150"
-              alt="게시글 이미지"
-              className="img-fluid"
-              style={{ maxWidth: '100%', height: 'auto' }}
-            />
             <textarea
               className="form-control mb-3 text-dark border-secondary"
               rows="8" // 높이를 조정
               value={post.content}
               readOnly
             ></textarea>
+            <img
+              // src="https://via.placeholder.com/150"
+              // alt="게시글 이미지"
+              // className="img-fluid"
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
+            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+            <Uploader />
           </div>
         )}
       </div>

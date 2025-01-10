@@ -43,9 +43,9 @@ const ReadPosts = () => {
     fetchPosts();
     console.log('화면에 있습니까?', inView);
 
-    paginate(currentPage + 1);
-    // }, [userId]);
-  }, [inView]);
+    // paginate(currentPage + 1);
+  }, [userId]);
+  // }, [inView]);
 
   useEffect(() => {
     console.log('Updated posts:', posts);
@@ -54,13 +54,13 @@ const ReadPosts = () => {
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-  const lastPage = 2;
+  // const lastPage = 2;
 
   // 페이지 변경 함수
   const paginate = (pageNumber) => {
     console.log('페이지번호 : ', pageNumber);
-    // if (pageNumber < 1) {
-    if (pageNumber < 1 || lastPage < pageNumber) {
+    if (pageNumber < 1) {
+      // if (pageNumber < 1 || lastPage < pageNumber) {
       pageNumber = 1;
     } else if (pageNumber > Math.ceil(posts.length / postsPerPage)) {
       pageNumber = Math.ceil(posts.length / postsPerPage);
