@@ -163,6 +163,7 @@ const ReadPosts = () => {
         {currentPosts.map((post) => (
           <div onClick={() => handleClick(post.id)} style={{ cursor: 'pointer' }}>
             <Post key={post.id} post={post} />
+            <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
           </div>
         ))}
       </ul>
