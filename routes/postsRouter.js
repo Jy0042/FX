@@ -17,6 +17,23 @@ app.use(express.json());
 
 let conn; // MariaDB connection
 
+conn = await pool.getConnection();
+try {
+  const query = `
+    SELECT *
+    FROM users
+    WHERE user_id = ?
+  `;
+  const row = await conn.query(query, [1]);
+  console.log(row);
+} catch (error) {
+  console.log(error);
+} finally {
+  if (conn) {
+    conn.release(); // 커넥션 풀에 반환
+  }
+}
+
 // 게시글 작성
 router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;

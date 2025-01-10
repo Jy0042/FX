@@ -139,7 +139,7 @@ app.get("/:table/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
-  
+
 
   try {
     const user = db.prepare().get(username, password);
