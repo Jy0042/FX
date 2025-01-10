@@ -1,9 +1,9 @@
 import { Component, useState } from 'react';
 // import { Route } from "react-router-dom";
-import D3 from './chart/Chart';
 import ChartJsExample from './chart/LineChart';
 import { useNavigate } from 'react-router-dom';
 import Apex from './chart/BarChart';
+import CurrencyConverter from '../components/converter/CurrencyConverter';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Body = () => {
@@ -21,24 +21,20 @@ const Body = () => {
   };
 
   return (
-    <div className="ml-auto">
-      <div>
-        <button onClick={changeChart}>변경</button>
-        <div onClick={handleClick}>
-          {/* <D3 /> */}
+    <div>
+      <CurrencyConverter />
+      <button onClick={changeChart}>변경</button>
+
+      <div onClick={handleClick}>
+        {chartState ? (
           <div>
-            {chartState ? (
-              <div className="d-flex justify-content-center align-items-center">
-                {/* <D3 /> */}
-                <Apex type={'bar'} />
-              </div>
-            ) : (
-              <div className="d-flex justify-content-center align-items-center">
-                <Apex type={'line'} />
-              </div>
-            )}
+            <Apex type={'bar'} />
           </div>
-        </div>
+        ) : (
+          <div>
+            <Apex type={'line'} />
+          </div>
+        )}
       </div>
     </div>
   );
