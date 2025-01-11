@@ -1,21 +1,10 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env.development' });
 import express from 'express';
-import mariadb from 'mariadb';
 import dbPool from './db.js';
-import morgan from 'morgan';
 
-const app = express();
 const router = express.Router();
-
-if (process.env.NODE_ENV === 'development') {
-  console.log('process.env.NODE_ENV === "development"');
-  app.use(morgan('dev'));
-}
-
-app.use(express.json());
-
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
+
+// 로그인 정보를 읽어와서 회원만 게시글 작성/수정/삭제가 가능하게 해야 함
 try {
   const query = `
     SELECT *
@@ -24,23 +13,22 @@ try {
   `;
   conn = await dbPool.getConnection();
   console.log(`Connected to DB! (id=${conn.threadId})`);
-  const row = await conn.query(query, [1]); // 로그인 기능 제작 전. 일단 1번 사용자 사용
+  const row = await conn.query(query, [1]); // 로그인 기능 제작 전이라서 일단 1번 사용자 사용
   console.log(row);
 } catch (error) {
   console.log(error);
 } finally {
   console.log('in finally');
   conn.release();
-  // dbPool.end();
 }
 
 
-// 게시글 작성
+// 게시글 작성 (수정해야 함)
 router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;
   console.log('POST /');
   try {
-    const conn = await pool.getConnection();
+    const conn = await dbPool.getConnection();
     const query = `
       INSERT INTO posts (author, title, content, image)
       VALUES (?, ?, ?, ?);
@@ -75,7 +63,19 @@ router.route('/:id')
       console.log(row, row[0].title, row[0].content);
       res.status(200).send({
         message: '게시글 조회가 완료되었습니다.',
-        post: [row],
+        post: {
+          post_id: row[0].post_id,
+          author: row[0].author,
+          title: row[0].title,
+          content: row[0].content,
+          image: row[0].image,
+          view_count: row[0].view_count,
+          like_count: row[0].like_count,
+          comment_count: row[0].comment_count,
+          reply_count: row[0].reply_count,
+          created_at: row[0].created_at,
+          updated_at: row[0].updated_at
+        }
       });
     } catch (error) {
       console.log(error);
@@ -87,12 +87,12 @@ router.route('/:id')
       }
     }
   })
-  .put(async (req, res) => { // 게시글 수정
+  .put(async (req, res) => { // 게시글 수정 (수정해야 함)
     const post_id = req.params.id;
     const { title, content, image } = req.body;
     console.log('PUT /');
     try {
-      conn = await pool.getConnection();
+      conn = await dbPool.getConnection();
       const query = `
         UPDATE posts
         SET title = ?,
@@ -113,11 +113,11 @@ router.route('/:id')
       }
     }
   })
-  .delete(async (req, res) => { // 게시글 삭제
+  .delete(async (req, res) => { // 게시글 삭제 (수정해야 함)
     const post_id = req.params.id;
     console.log('DELETE /');
     try {
-      conn = await pool.getConnection();
+      conn = await dbPool.getConnection();
       const query = `
         DELETE FROM posts
         WHERE post_id = ?
