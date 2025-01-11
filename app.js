@@ -6,7 +6,8 @@ import morgan from 'morgan';
 import debug from 'debug';
 
 // Router
-import fxRouter from './routes/fxRouter';
+
+import fxRouter from './routes/fxRouter.js';
 import usersRouter from './routes/usersRouter.js';
 import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
@@ -28,6 +29,7 @@ if (process.env.NODE_ENV === 'development') {
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
 // 해결책 2. path.resolve() 메서드 사용
 // const __dirname = path.resolve();
+
 
 // Routes
 app.get('/', (req, res) => {
