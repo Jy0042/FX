@@ -5,9 +5,6 @@ import good from '../../assets/good.png';
 import author from '../../assets/author.png';
 
 const Post = ({ post }) => {
-  // const [title, setTitle] = useState(post.title);
-  // const [content, setContent] = useState(post.content);
-
   const postTime = new Date(); //작성시간
 
   return (
@@ -15,11 +12,9 @@ const Post = ({ post }) => {
       className="row align-items-start  bg-dark text-light"
       style={{ height: '250px', width: '1000px' }}
     >
-      {' '}
       {/* Flex container */}
       {/* 왼쪽: 제목, 내용, 작성자, 좋아요/댓글 */}
       <div className="col-md-8">
-        {' '}
         {/* 게시글 영역 */}
         <input
           type="text"

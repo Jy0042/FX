@@ -89,13 +89,6 @@ const ReadPost = () => {
               value={post.content}
               readOnly
             ></textarea>
-            {/* <img
-              // src="https://via.placeholder.com/150"
-              // alt="게시글 이미지"
-              // className="img-fluid"
-              style={{ maxWidth: '100%', height: 'auto' }}
-            /> */}
-            {/* <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" /> */}
             <Uploader />
           </div>
         )}
@@ -104,7 +97,6 @@ const ReadPost = () => {
       <div className="col-md-4 d-flex justify-content-center">
         <DeletePost post={post} />
         <button onClick={() => setIsEditing(true)}>수정</button>
-        {/* <UpdateBoard post={post} onClick={() => setIsEditing(true)}/> */}
       </div>
     </div>
   );

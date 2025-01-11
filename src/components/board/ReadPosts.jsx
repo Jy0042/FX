@@ -74,22 +74,6 @@ const ReadPosts = () => {
     console.log(postId);
   };
 
-  // const useGetPost = () => {
-  //   return useInfiniteQuery({
-  //     queryKey: ['top-board'],
-  //     queryFn: ({ pageParam }) => {
-  //       return fetchBoard(pageParam);
-  //     },
-  //     getNextPageParam: (last) => {
-  //       if (last.page < last.total_pages) {
-  //         return last.page + 1;
-  //       }
-  //       return undefined;
-  //     },
-  //     initialPageParam: 1,
-  //   });
-  // };
-
   return (
     <div>
       {/* <p>게시글: {posts.id}</p> */}

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Uploader from './Uploader';
 
 const CreatePost = () => {
@@ -32,7 +30,6 @@ const CreatePost = () => {
     console.log('content', content);
 
     const res = await fetch(`http://localhost:3000/api/v1/posts`, {
-      // const res = await fetch(`54.174.217.176/api/v1/posts`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
