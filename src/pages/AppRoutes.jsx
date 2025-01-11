@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import PageLayout from '../components/layout/PageLayout';
-import Body from '../components/layout/Body';
+import ChartSection from '../components/layout/ChartSection';
 import Community from '../pages/Community';
 import WritePage from '../pages/WritePage';
 import ReadPost from '../components/board/ReadPost';
@@ -14,7 +14,7 @@ const AppRoutes = () => (
       path="/"
       element={
         <MainLayout>
-          <Body />
+          <ChartSection />
         </MainLayout>
       }
     />

@@ -9,8 +9,6 @@ const Header = () => {
           <Link className="navbar-brand" to="/">
             F(X)
           </Link>
-
-          {/* 토글 버튼 */}
           <button
             className="navbar-toggler"
             type="button"

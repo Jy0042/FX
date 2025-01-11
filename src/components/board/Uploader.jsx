@@ -11,7 +11,6 @@ function Uploader() {
   const readImage = (file) => {
     if (!file) return;
 
-    // const imageFile = e.target.files[0];
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -22,15 +21,6 @@ function Uploader() {
     };
 
     reader.readAsDataURL(file);
-
-    // reader.addEventListener('load', (e) => {
-    //   if (!e || !e.target) return;
-    //   if (typeof e.target.result !== 'string' || !imgRef.current) return;
-
-    //   imgRef.current.src = e.target.result;
-    // });
-
-    // reader.readAsDataURL(imageFile);
   };
   const handleDragStart = () => {
     setActive(true);
@@ -58,7 +48,6 @@ function Uploader() {
     <main>
       <form
         onClick={() => document.querySelector('.input-field').click()}
-        // className="d-flex flex-column justify-content-center align-items-center rounded p-3"
         className={`d-flex flex-column justify-content-center align-items-center rounded p-3 ${
           isActive ? 'active' : ''
         }`}
@@ -68,9 +57,6 @@ function Uploader() {
         onDrop={handleDrop}
         style={{ height: '260px', width: '690px', border: 'dotted gray', cursor: 'pointer' }}
       >
-        {/* <label
-          className={`preview${isActive ? ' active' : ''}`} // isActive 값에 따라 className 제어
-        > */}
         <div>
           <input
             type="file"
