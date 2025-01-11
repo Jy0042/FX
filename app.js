@@ -4,9 +4,10 @@ import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import debug from 'debug';
+import dbPool from './routes/db.js';
 
 // Router
-import fxRouter from './routes/fxRouter';
+import fxRouter from './routes/fxRouter.js';
 import usersRouter from './routes/usersRouter.js';
 import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
@@ -18,11 +19,12 @@ const app = express();
 // const debugLog = new debug('log');
 // const debugError = new debug('error');
 
-
 // Middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+app.use(express.json());
+
 
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
@@ -52,6 +54,23 @@ app.use((req, res) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(`F(x) server is running on http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`F(x).com server is running on http://localhost:${PORT}`);
 });
+
+const shutDown = async () => {
+  console.log('Shutting down F(x).com server...');
+  try {
+    await dbPool.end(); // MariaDB Connection Pool 종료 (Resource 반환)
+    console.log('MariaDB Connection Pool closed');
+  } catch (err) {
+    console.log('Error closing MariaDB connection pool!');
+  }
+  server.close(() => {
+    console.log('F(x).com server closed!');
+    process.exit(0);
+  });
+};
+
+process.on('SIGINT', shutDown);  // Ctrl + C로 서버를 중단한 경우
+process.on('SIGTERM', shutDown); // Kill command로 "
