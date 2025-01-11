@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/v1/posts/1
 
 ### 사용자 추가
-POST http://localhost:3000/api/v1/users HTTP/1.1
+POST http://localhost:3000/api/v1/users
 Content-Type: application/json
 
 {

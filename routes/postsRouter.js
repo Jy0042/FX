@@ -44,95 +44,82 @@ router.post('/', async (req, res) => {
   res.status(201).send({ message: '게시글 저장이 완료되었습니다.' }); // To-Do: 게시글 객체도 같이 전송?
 });
 
-
-router.route('/:id')
-  .get(async (req, res) => { // 게시글 조회
-    const post_id = req.params.id;
-    // console.log(`post_id = ${post_id}`);
-    console.log(`GET /api/v1/posts/${post_id}`);
-    try {
-      conn = await dbPool.getConnection();
-      console.log('try 진입 직후 - await conn.query 직전');
-      const row = await conn.query(`
+// 게시글 조회
+router.get('/:id', async (req, res) => {
+  const post_id = req.params.id;
+  try {
+    conn = await dbPool.getConnection();
+    const [row] = await conn.query(`
         SELECT *
         FROM posts
         WHERE post_id = ?
       `, [post_id]);
-
-      console.log('try 내부 - await conn.query 직후');
-      console.log(row, row[0].title, row[0].content);
+    if (row) {
       res.status(200).send({
         message: '게시글 조회가 완료되었습니다.',
-        post: {
-          post_id: row[0].post_id,
-          author: row[0].author,
-          title: row[0].title,
-          content: row[0].content,
-          image: row[0].image,
-          view_count: row[0].view_count,
-          like_count: row[0].like_count,
-          comment_count: row[0].comment_count,
-          reply_count: row[0].reply_count,
-          created_at: row[0].created_at,
-          updated_at: row[0].updated_at
-        }
+        post: row
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      console.log('finally 진입 직후');
-      if (conn) {
-        console.log('connection release 직전');
-        conn.release();
-      }
+    } else {
+      res.status(404).send({ message: `${post_id}번 게시글이 존재하지 않습니다.` });
     }
-  })
-  .put(async (req, res) => { // 게시글 수정 (수정해야 함)
-    const post_id = req.params.id;
-    const { title, content, image } = req.body;
-    console.log('PUT /');
-    try {
-      conn = await dbPool.getConnection();
-      const query = `
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (conn) {
+      await conn.release();
+    }
+  }
+})
+
+// 게시글 수정 (수정해야 함)
+router.put('/:id', async (req, res) => {
+  const post_id = req.params.id;
+  const { title, content, image } = req.body;
+  console.log('PUT /');
+  try {
+    conn = await dbPool.getConnection();
+    const query = `
         UPDATE posts
         SET title = ?,
             content = ?,
             image = ?
         WHERE post_id = ?
       `;
-      const row = await conn.query(query, [title, content, image, post_id]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      res.status(200).send({
-        message: '게시글 수정이 완료되었습니다.',
-        post: row,
-      });
-      if (conn) {
-        conn.release();
-      }
+    const row = await conn.query(query, [title, content, image, post_id]);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    res.status(200).send({
+      message: '게시글 수정이 완료되었습니다.',
+      post: row,
+    });
+    if (conn) {
+      conn.release();
     }
-  })
-  .delete(async (req, res) => { // 게시글 삭제 (수정해야 함)
-    const post_id = req.params.id;
-    console.log('DELETE /');
-    try {
-      conn = await dbPool.getConnection();
-      const query = `
+  }
+})
+
+// 게시글 삭제 (수정해야 함)
+router.delete('/:id', async (req, res) => {
+  const post_id = req.params.id;
+  console.log('DELETE /');
+  try {
+    conn = await dbPool.getConnection();
+    const query = `
         DELETE FROM posts
         WHERE post_id = ?
       `;
-      const row = await conn.query(query, [post_id]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      res.status(200).send({
-        message: '게시글 삭제가 완료되었습니다.'
-      });
-      if (conn) {
-        conn.release();
-      }
+    const row = await conn.query(query, [post_id]);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    res.status(200).send({
+      message: '게시글 삭제가 완료되었습니다.'
+    });
+    if (conn) {
+      conn.release();
     }
-  });
+  }
+});
 
 export default router;
