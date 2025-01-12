@@ -4,7 +4,31 @@ import dbPool from './db.js';
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
-// 회원 가입 (사용자 추가)
+// 아직 로그인 세션 구성이 안 되어 있어서, 임시로 회원 여부를 DB 조회로 판단
+async function getUser(userId) {
+  try {
+    conn = await dbPool.getConnection();
+    const [user] = await conn.query(`
+        SELECT *
+        FROM users
+        WHERE user_id = ?
+      `, [userId]);
+    return user;
+  } catch (error) {
+    console.log(error);
+    if (error.code === 'ER_DUP_ENTRY') {
+      res.status(400).json({
+        message: '이미 가입한 회원입니다.',
+      });
+    }
+  } finally {
+    if (conn) {
+      conn.release(); // 커넥션 풀에 반환
+    }
+  }
+}
+
+// 회원 가입 (사용자 추가) (1차 개발 및 단일 테스트 완료. 통합 테스트 필요)
 router.post('/', async (req, res) => {
   const { email, password, nickname } = req.body;
   try {
@@ -13,14 +37,14 @@ router.post('/', async (req, res) => {
       INSERT INTO users (email, password, nickname)
       VALUES (?, ?, ?);
     `, [email, password, nickname]);
-    res.status(201).send({
-      message: '사용자 추가가 완료되었습니다. (회원 가입 완료)',
+    res.status(201).json({
+      message: '회원 가입이 완료되었습니다',
     });
   } catch (error) {
     console.log(error);
     if (error.code === 'ER_DUP_ENTRY') {
-      res.status(400).send({
-        message: '이미 가입된 사용자입니다.',
+      res.status(400).json({
+        message: '이미 가입한 회원입니다.',
       });
     }
   } finally {
@@ -30,82 +54,87 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.route('/:id')
-  .get(async (req, res) => { // 사용자 정보 조회
-    const post_id = req.params.id;
-    // console.log(`post_id = ${post_id}`);
-    console.log(`GET /api/v1/posts/${post_id}`);
-    try {
-      conn = await dbPool.getConnection();
-      console.log('try 진입 직후 - await conn.query 직전');
-      const row = await conn.query(`
-        SELECT *
-        FROM posts
-        WHERE post_id = ?
-      `, [post_id]);
+// 회원 정보 조회 (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.get('/:id', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await getUser(userId);
+    console.log('GET /user/id 라우터 안', user);
+    if (user?.user_id) {
+      res.status(200).json({
+        message: '회원 정보 조회가 완료되었습니다.',
+        user: user
+      });
+    } else {
+      res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (conn) {
+      await conn.release();
+    }
+  }
+})
 
-      console.log('try 내부 - await conn.query 직후');
-      console.log(row, row[0].title, row[0].content);
-      res.status(200).send({
-        message: '게시글 조회가 완료되었습니다.',
-        post: [row],
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      console.log('finally 진입 직후');
-      if (conn) {
-        console.log('connection release 직전');
-        conn.release();
-      }
-    }
-  })
-  .put(async (req, res) => { // 사용자 정보 수정
-    const post_id = req.params.id;
-    const { title, content, image } = req.body;
-    console.log('PUT /');
-    try {
+// 회원 정보 수정 (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+// 일단 이메일, 비밀번호, 별명만 수정할 수 있도록 해놓음
+// TODO. 프로필 이미지 등도 수정할 수 있게 바꿔야 함
+router.patch('/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { email, password, nickname } = req.body;
+  console.log(userId, req.body);
+  try {
+    const user = await getUser(userId);
+    if (user?.user_id) {
       conn = await dbPool.getConnection();
       const query = `
-        UPDATE posts
-        SET title = ?,
-            content = ?,
-            image = ?
-        WHERE post_id = ?
+      UPDATE users
+      SET email = ?,
+          password = ?,
+          nickname = ?
+      WHERE user_id = ?
       `;
-      const row = await conn.query(query, [title, content, image, post_id]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      res.status(200).send({
-        message: '게시글 수정이 완료되었습니다.',
-        post: row,
+      await conn.query(query, [email, password, nickname, userId]);
+      res.status(200).json({
+        message: '회원 정보 수정이 완료되었습니다.',
+        user: await getUser(userId)
       });
-      if (conn) {
-        conn.release();
-      }
+    } else {
+      res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
     }
-  })
-  .delete(async (req, res) => { // 사용자 정보 삭제
-    const post_id = req.params.id;
-    console.log('DELETE /');
-    try {
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (conn) {
+      conn.release();
+    }
+  }
+})
+
+// 회원 정보 삭제 (회원 탈퇴) (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.delete('/:id', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await getUser(userId);
+    if (user?.user_id) {
       conn = await dbPool.getConnection();
       const query = `
-        DELETE FROM posts
-        WHERE post_id = ?
+        DELETE FROM users
+        WHERE user_id = ?
       `;
-      const row = await conn.query(query, [post_id]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      res.status(200).send({
-        message: '게시글 삭제가 완료되었습니다.'
-      });
-      if (conn) {
-        conn.release();
-      }
+      await conn.query(query, [userId]);
+      res.status(200).json({ message: '회원 정보 삭제 (회원 탈퇴)가 완료되었습니다.' });
+    } else {
+      res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
     }
-  });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (conn) {
+      conn.release();
+    }
+  }
+});
 
 export default router;

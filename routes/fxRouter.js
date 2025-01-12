@@ -21,12 +21,10 @@ router.get('/convert', async (req, res) => {
   } catch (error) {
     // console.log(error);
     if (error.response) {
-      // The request was made and the server responded with a status code that falls out of the range of 2xx
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
     } else if (error.request) {
-      // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and one of http.ClientRequest in node.js
       console.log(error.request);
     } else {
@@ -41,10 +39,12 @@ router.get('/convert', async (req, res) => {
 router.get('/history', async (req, res) => {
   const { currency } = req.query;
   try {
-    // 환율 히스토리 (외부) API 호출
-    // const fxHistory = await axios.get(``);
+    // 히스토리 API는 제공하는 곳이 없음
+    // 일정 기간의 환율 정보를 저장할 DB 스키마 구성 → 테이블 생성 →
+    // Web에서 KRW 과거 환율을 엑셀 등으로 받아서 DB에 직접 입력
+    // /history 엔드포인트에서는 DB 정보 반환
     if (fxHistory) {
-      res.status(200).json({ fxHistory }); // 목표 통화, 환전된 금액
+      res.status(200).json({ fxHistory });
     } else {
       res.status(404).json({ message: `환율 히스토리가 존재하지 않습니다.` });
     }
