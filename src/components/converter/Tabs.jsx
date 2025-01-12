@@ -1,7 +1,8 @@
+// Tabs.js
 import React from 'react';
 
 const Tabs = () => {
-  const tabs = ['Calculator', 'Chart', 'Alerts'];
+  const tabs = ['환율 계산기', '차트', '알림'];
 
   return (
     <ul className="nav nav-tabs mb-4">
