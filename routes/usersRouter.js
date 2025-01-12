@@ -2,13 +2,16 @@ import express from 'express';
 import dbPool from './db.js';
 
 const router = express.Router();
+// DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
+// finally에서 반환하기 위해서 블록 밖에서 선언했고, 값 할당 전이라서 let으로 변수를 생성할 수밖에 없다.
+let conn;
 
 // 회원 정보 조회
 // 아직 로그인 세션 구성이 안 되어 있어서, 임시로 회원 여부를 DB 조회로 판단
 async function getUser(userId) {
   try {
     // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
-    const conn = await dbPool.getConnection();
+    conn = await dbPool.getConnection();
     const [user] = await conn.query(`
       SELECT *
       FROM users
@@ -28,7 +31,7 @@ async function getUser(userId) {
 router.post('/', async (req, res) => {
   const { email, password, nickname } = req.body;
   try {
-    const conn = await dbPool.getConnection();
+    conn = await dbPool.getConnection();
     const result = await conn.query(`
       INSERT INTO users (email, password, nickname)
       VALUES (?, ?, ?);
@@ -82,7 +85,7 @@ router.patch('/:id', async (req, res) => {
   try {
     const user = await getUser(userId);
     if (user?.user_id) {
-      const conn = await dbPool.getConnection();
+      conn = await dbPool.getConnection();
       // const query = `
       await conn.query(`
         UPDATE users
@@ -113,7 +116,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const user = await getUser(userId);
     if (user?.user_id) {
-      const conn = await dbPool.getConnection();
+      conn = await dbPool.getConnection();
       // const query = `
       // `;
       await conn.query(`

@@ -51,7 +51,7 @@ async function getPost(postId) {
 router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;
   try {
-    const conn = await dbPool.getConnection();
+    conn = await dbPool.getConnection();
     const result = await conn.query(`
       INSERT INTO posts (author, title, content, image)
       VALUES (?, ?, ?, ?);
