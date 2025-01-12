@@ -1,12 +1,35 @@
-### 개별 게시글 조회
-GET http://localhost:3000/api/v1/posts/1
-
-### 사용자 추가
-POST http://localhost:3000/api/v1/users HTTP/1.1
+### 회원 가입
+POST http://localhost:3000/api/v1/users
 Content-Type: application/json
 
 {
-  "email": "test1",
-  "password": "test1pw",
-  "nickname": "tester1"
+  "email": "test11@fx.com",
+  "password": "test11pw",
+  "nickname": "tester11"
 }
+
+### 회원 정보 조회
+GET http://localhost:3000/api/v1/users/11
+
+### 회원 정보 수정
+PATCH http://localhost:3000/api/v1/users/11
+Content-Type: application/json
+
+{
+  "email": "test11@fx.com",
+  "password": "test11pw",
+  "nickname": "tester11"
+}
+
+### 회원 정보 삭제 (회원 탈퇴)
+DELETE http://localhost:3000/api/v1/users/11
+
+
+
+### 환전 (Internal)
+GET http://localhost:3000/api/v1/fx/convert?from=USD&amount=100&to=KRW
+
+
+
+### 개별 게시글 조회
+GET http://localhost:3000/api/v1/posts/1

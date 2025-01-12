@@ -31,26 +31,33 @@ app.use(express.json());
 // 해결책 2. path.resolve() 메서드 사용
 // const __dirname = path.resolve();
 
-// Routes
+// Routing
+// Client-side Routing은 React Router에게 위임
 app.get('/', (req, res) => {
-  // res.sendFile(path.join(__dirname, 'index.html'));
   res.sendFile(path.join(import.meta.dirname, 'index.html'));
 });
 
-// 환율 계산
-app.get('/api/v1/convert', (req, res) => {
-  const { from, amount, to } = req.query;
-  // 환율 계산 (외부) API 호출
-});
-
+app.use('/api/v1/fx', fxRouter); // 환율 정보
 app.use('/api/v1/users', usersRouter); // 회원 정보
-app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 소셜로그인, 로그아웃)
+app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 로그아웃, 소셜로그인)
 app.use('/api/v1/posts', postsRouter); // 커뮤니티 게시판 게시글
 app.use('/api/v1/comments', commentsRouter); // 게시글에 대한 댓글
 app.use('/api/v1/replies', repliesRouter); // 댓글에 대한 답글
 
-app.use((req, res) => {
-  res.status(404).send('Not Found');
+app.use((req, res, next) => {
+  // res.status(404).send('Not Found');
+  const error = new Error('Not Found');
+  error.status = 404;
+  next(error); // 에러 처리 미들웨어로 넘김
+});
+
+// 에러 처리
+app.use((err, req, res, next) => {
+  console.error(err);
+  // res.locals.message = err.message;
+  // res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+  res.status(err.status || 500);
+  res.send((process.env.NODE_ENV !== 'production' ? err.message : 'Internal Server Error'));
 });
 
 
