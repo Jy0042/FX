@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Uploader from './Uploader';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [imgFile, setImgFile] = useState('');
 
   let [inputCount, setInputCount] = useState(0);
   let [textCount, setTextareaCount] = useState(0);
 
   const inputCounter = (e) => {
     //input에 입력한 글자 세는 함수
-    // title = e.target.value;
-    // setTitle(e.target.value); // 입력된 값을 상태에 저장
-    // setInputCount(e.target.value.replace(/[\0-\x7f]|([0-\u07ff]|(.))/g, "$&$1$2").length);
     setTitle(e); // 입력된 값을 상태에 저장
     setInputCount(e.replace(/[\0-\x7f]|([0-\u07ff]|(.))/g, '$&$1$2').length);
   };
@@ -48,7 +45,7 @@ const CreatePost = () => {
     }
     if (res.ok) {
       alert('게시글이 작성되었습니다.');
-      window.location.reload(); // Refresh the page after creating a post
+      window.location.reload(); //게시글 작성후 페이지 새로고침
     }
   };
 
@@ -59,22 +56,27 @@ const CreatePost = () => {
         type="text"
         value={title}
         placeholder="Enter hour title here..."
-        className="form-control mb-3 " // 가로 길이를 늘림
+        className="form-control" // 가로 길이를 늘림
+        // style="color: black;"
         onChange={(e) => inputCounter(e.target.value)}
       />
-      <h6>{inputCount}/100</h6>
+      <h6 className="d-flex justify-content-end align-items-end">{inputCount}/100</h6>
       <textarea
         placeholder="Write your content here..."
+        color="gray"
         value={content}
         className="form-control mb-3 "
         rows="10" // 높이를 조정
         onChange={(e) => textCounter(e.target.value)}
       />
-      <h6>{textCount}words</h6>
-      <button className="btn btn-outline-secondary">Cancel</button>
-      <button type="submit" className="btn btn-primary">
-        Publish
-      </button>
+      <h6 className="d-flex justify-content-end align-items-end">{textCount}words</h6>
+      <Uploader />
+      <div className="d-flex justify-content-end align-items-end rounded p-3">
+        <button className="btn btn-outline-secondary">Cancel</button>
+        <button type="submit" className="btn btn-primary">
+          Publish
+        </button>
+      </div>
     </form>
   );
 };

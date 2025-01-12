@@ -1,11 +1,9 @@
 import { Component, useState } from 'react';
-// import { Route } from "react-router-dom";
-import ChartJsExample from './chart/LineChart';
 import { useNavigate } from 'react-router-dom';
-import Apex from './chart/BarChart';
-import CurrencyConverter from '../components/converter/CurrencyConverter';
+import Apex from '../chart/BarChart';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Body = () => {
+const ChartSection = () => {
   const [chartState, setChartState] = useState(true);
   const navigate = useNavigate();
 
@@ -21,7 +19,6 @@ const Body = () => {
 
   return (
     <div>
-      <CurrencyConverter />
       <button onClick={changeChart}>변경</button>
 
       <div onClick={handleClick}>
@@ -39,4 +36,4 @@ const Body = () => {
   );
 };
 
-export default Body;
+export default ChartSection;

@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import Post from '../components/board/Post';
 import ReadPosts from '../components/board/ReadPosts';
 import SearchForm from '../components/board/SearchForm';
 import { useNavigate } from 'react-router-dom';
 
 const Community = () => {
-  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const toWritePage = () => {
@@ -14,18 +12,29 @@ const Community = () => {
   };
 
   return (
-    <div
-      className="community-container"
-      style={{ maxWidth: '1440px', margin: '0 auto', padding: '20px' }}
-    >
-      <div className="position-absolute top-0 start-50 translate-middle-x">
-        <h1 className="display-4 font-weight-bold text-center mt-5">커뮤니티 페이지</h1>
+    <div className="community-container container py-5">
+      {/* 커뮤니티 페이지 제목 */}
+      <h1 className="display-4 font-weight-bold text-center mb-4">커뮤니티 페이지</h1>
+
+      {/* 검색 폼 */}
+      <div className="mb-4">
         <SearchForm />
-        <div className="container">
-          {/* <Board/> */}
-          <ReadPosts />
-          <button onClick={toWritePage}>글쓰기</button>
-        </div>
+      </div>
+
+      {/* 게시글 리스트 */}
+      <div className="mb-4">
+        <ReadPosts />
+      </div>
+
+      {/* 글쓰기 버튼 */}
+      <div className="text-center">
+        <button
+          className="btn btn-primary"
+          onClick={toWritePage}
+          type="button" // 기본 submit 방지
+        >
+          글쓰기
+        </button>
       </div>
     </div>
   );

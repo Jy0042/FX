@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import CurrencyInput from './CurrencyInput';
-import ConversionResult from './ConversionResult';
 import SwapButton from './SwapButton';
+import ConversionResult from './ConversionResult';
 import Tabs from './Tabs';
+import { getRate } from '../../utils/api';
 
-const CurrencyConverter = () => {
+const Converter = () => {
   const [amount, setAmount] = useState(1);
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('KRW');
-  const [exchangeRate, setExchangeRate] = useState(1.22); // 예제 데이터
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleConvert = async () => {
+    try {
+      setError(null); // 이전 오류 초기화
+      setResult(null); // 이전 결과 초기화
+      const { convertedAmount, targetCurrency } = await getRate(fromCurrency, toCurrency, amount);
+      setResult({ convertedAmount, targetCurrency });
+    } catch (err) {
+      setError(err.message); // 오류 메시지 설정
+    }
+  };
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
@@ -17,10 +30,10 @@ const CurrencyConverter = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">Currency Converter</h1>
+      <h1 className="text-center mb-4">환율 계산기</h1>
       <Tabs />
-      <div className="card p-4 shadow-sm">
-        <div className="row g-3 align-items-center">
+      <div className="row justify-content-center">
+        <div className="col-md-8">
           <CurrencyInput
             amount={amount}
             setAmount={setAmount}
@@ -29,19 +42,23 @@ const CurrencyConverter = () => {
             toCurrency={toCurrency}
             setToCurrency={setToCurrency}
           />
-          <div className="col-12 text-center">
-            <SwapButton onClick={handleSwap} />
-          </div>
+          <SwapButton onClick={handleSwap} />
+          <button className="btn btn-primary w-100 mt-3" onClick={handleConvert}>
+            계산하기
+          </button>
+          {error && <div className="text-danger mt-3">오류: {error}</div>}
+          {result && (
+            <ConversionResult
+              amount={amount}
+              fromCurrency={fromCurrency}
+              toCurrency={toCurrency}
+              convertedAmount={result.convertedAmount}
+            />
+          )}
         </div>
-        <ConversionResult
-          amount={amount}
-          fromCurrency={fromCurrency}
-          toCurrency={toCurrency}
-          exchangeRate={exchangeRate}
-        />
       </div>
     </div>
   );
 };
 
-export default CurrencyConverter;
+export default Converter;
