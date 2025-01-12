@@ -1,3 +1,4 @@
+// CurrencyInput.js
 import React from 'react';
 
 const CurrencyInput = ({
@@ -9,10 +10,10 @@ const CurrencyInput = ({
   setToCurrency,
 }) => {
   return (
-    <>
+    <div className="row mb-4">
       <div className="col-md-4">
         <label htmlFor="amount" className="form-label">
-          Amount
+          금액
         </label>
         <input
           type="number"
@@ -24,7 +25,7 @@ const CurrencyInput = ({
       </div>
       <div className="col-md-4">
         <label htmlFor="fromCurrency" className="form-label">
-          From
+          출발 통화
         </label>
         <select
           id="fromCurrency"
@@ -32,14 +33,14 @@ const CurrencyInput = ({
           value={fromCurrency}
           onChange={(e) => setFromCurrency(e.target.value)}
         >
-          <option value="USD">USD - US Dollar</option>
-          <option value="EUR">EUR - Euro</option>
-          <option value="KRW">KRW - South Korean Won</option>
+          <option value="USD">미국 달러 (USD)</option>
+          <option value="KRW">한국 원 (KRW)</option>
+          <option value="EUR">유로 (EUR)</option>
         </select>
       </div>
       <div className="col-md-4">
         <label htmlFor="toCurrency" className="form-label">
-          To
+          도착 통화
         </label>
         <select
           id="toCurrency"
@@ -47,12 +48,12 @@ const CurrencyInput = ({
           value={toCurrency}
           onChange={(e) => setToCurrency(e.target.value)}
         >
-          <option value="USD">USD - US Dollar</option>
-          <option value="EUR">EUR - Euro</option>
-          <option value="KRW">KRW - South Korean Won</option>
+          <option value="USD">미국 달러 (USD)</option>
+          <option value="KRW">한국 원 (KRW)</option>
+          <option value="EUR">유로 (EUR)</option>
         </select>
       </div>
-    </>
+    </div>
   );
 };
 

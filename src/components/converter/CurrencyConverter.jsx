@@ -1,61 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { fetchConversionRate } from '../../utils/api';
+import React, { useState } from 'react';
+import CurrencyInput from './CurrencyInput';
+import SwapButton from './SwapButton';
+import ConversionResult from './ConversionResult';
+import Tabs from './Tabs';
+import { getRate } from '../../utils/api';
 
-const CurrencyConverter = () => {
+const Converter = () => {
   const [amount, setAmount] = useState(1);
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('KRW');
   const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getConversionRate = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { exchangeRate, convertedAmount } = await fetchConversionRate(
-          fromCurrency,
-          toCurrency,
-          amount
-        );
-        setResult({ exchangeRate, convertedAmount });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleConvert = async () => {
+    try {
+      setError(null); // 이전 오류 초기화
+      setResult(null); // 이전 결과 초기화
+      const { convertedAmount, targetCurrency } = await getRate(fromCurrency, toCurrency, amount);
+      setResult({ convertedAmount, targetCurrency });
+    } catch (err) {
+      setError(err.message); // 오류 메시지 설정
+    }
+  };
 
-    getConversionRate();
-  }, [fromCurrency, toCurrency, amount]); // 종속성 배열
+  const handleSwap = () => {
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
+  };
 
   return (
-    <div>
-      <h1>Currency Converter</h1>
-      <div>
-        <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-        <select value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
-          <option value="USD">USD</option>
-          <option value="KRW">KRW</option>
-          <option value="EUR">EUR</option>
-        </select>
-        <select value={toCurrency} onChange={(e) => setToCurrency(e.target.value)}>
-          <option value="USD">USD</option>
-          <option value="KRW">KRW</option>
-          <option value="EUR">EUR</option>
-        </select>
-      </div>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      {result && (
-        <div>
-          <p>Exchange Rate: {result.exchangeRate}</p>
-          <p>Converted Amount: {result.convertedAmount}</p>
+    <div className="container mt-5">
+      <h1 className="text-center mb-4">환율 계산기</h1>
+      <Tabs />
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <CurrencyInput
+            amount={amount}
+            setAmount={setAmount}
+            fromCurrency={fromCurrency}
+            setFromCurrency={setFromCurrency}
+            toCurrency={toCurrency}
+            setToCurrency={setToCurrency}
+          />
+          <SwapButton onClick={handleSwap} />
+          <button className="btn btn-primary w-100 mt-3" onClick={handleConvert}>
+            계산하기
+          </button>
+          {error && <div className="text-danger mt-3">오류: {error}</div>}
+          {result && (
+            <ConversionResult
+              amount={amount}
+              fromCurrency={fromCurrency}
+              toCurrency={toCurrency}
+              convertedAmount={result.convertedAmount}
+            />
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default CurrencyConverter;
+export default Converter;

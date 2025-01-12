@@ -111,26 +111,6 @@
 }
 
 /* ========================= */
-/* 회원가입 페이지 스타일 */
-/* ========================= */
-.signup-container {
-  max-width: 500px;
-  margin: 40px auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.signup-container .form-label {
-  font-weight: 600;
-}
-
-.signup-container .btn-dark {
-  background-color: #002d62;
-}
-
-/* ========================= */
 /* 푸터 스타일 */
 /* ========================= */
 footer ul {
@@ -139,4 +119,15 @@ footer ul {
 
 footer ul li {
   margin-bottom: 0.5rem;
+}
+
+/* ========================= */
+/* 회원 가입 스타일 */
+/* ========================= */
+.register-container {
+  margin: 80px 0;
+}
+
+.text-start {
+  text-align: left;
 }
