@@ -2,13 +2,13 @@ import express from 'express';
 import dbPool from './db.js';
 
 const router = express.Router();
-let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
 // 회원 정보 조회
 // 아직 로그인 세션 구성이 안 되어 있어서, 임시로 회원 여부를 DB 조회로 판단
 async function getUser(userId) {
   try {
-    conn = await dbPool.getConnection();
+    // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
+    const conn = await dbPool.getConnection();
     const [user] = await conn.query(`
       SELECT *
       FROM users
@@ -28,7 +28,7 @@ async function getUser(userId) {
 router.post('/', async (req, res) => {
   const { email, password, nickname } = req.body;
   try {
-    conn = await dbPool.getConnection();
+    const conn = await dbPool.getConnection();
     const result = await conn.query(`
       INSERT INTO users (email, password, nickname)
       VALUES (?, ?, ?);
@@ -82,7 +82,7 @@ router.patch('/:id', async (req, res) => {
   try {
     const user = await getUser(userId);
     if (user?.user_id) {
-      conn = await dbPool.getConnection();
+      const conn = await dbPool.getConnection();
       // const query = `
       await conn.query(`
         UPDATE users
@@ -113,7 +113,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const user = await getUser(userId);
     if (user?.user_id) {
-      conn = await dbPool.getConnection();
+      const conn = await dbPool.getConnection();
       // const query = `
       // `;
       await conn.query(`
