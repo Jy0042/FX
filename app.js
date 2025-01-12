@@ -5,6 +5,7 @@ import express from 'express';
 import morgan from 'morgan';
 import debug from 'debug';
 import dbPool from './routes/db.js';
+import cors from 'cors';
 
 // Router
 import fxRouter from './routes/fxRouter.js';
@@ -14,7 +15,7 @@ import postsRouter from './routes/postsRouter.js';
 import commentsRouter from './routes/commentsRouter.js';
 import repliesRouter from './routes/repliesRouter.js';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5173;
 const app = express();
 // const debugLog = new debug('log');
 // const debugError = new debug('error');
@@ -25,11 +26,19 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use(express.json());
 
-
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
 // 해결책 2. path.resolve() 메서드 사용
 // const __dirname = path.resolve();
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // 프론트엔드의 주소
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
+    allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
+    credentials: true, // 쿠키 허용
+  })
+);
 
 // Routing
 // Client-side Routing은 React Router에게 위임
@@ -57,9 +66,8 @@ app.use((err, req, res, next) => {
   // res.locals.message = err.message;
   // res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
   res.status(err.status || 500);
-  res.send((process.env.NODE_ENV !== 'production' ? err.message : 'Internal Server Error'));
+  res.send(process.env.NODE_ENV !== 'production' ? err.message : 'Internal Server Error');
 });
-
 
 const server = app.listen(PORT, () => {
   console.log(`F(x).com server is running on http://localhost:${PORT}`);
@@ -79,5 +87,5 @@ const shutDown = async () => {
   });
 };
 
-process.on('SIGINT', shutDown);  // Ctrl + C로 서버를 중단한 경우
+process.on('SIGINT', shutDown); // Ctrl + C로 서버를 중단한 경우
 process.on('SIGTERM', shutDown); // Kill command로 "

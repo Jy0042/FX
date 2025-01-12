@@ -8,11 +8,14 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 async function getUser(userId) {
   try {
     conn = await dbPool.getConnection();
-    const [user] = await conn.query(`
+    const [user] = await conn.query(
+      `
         SELECT *
         FROM users
         WHERE user_id = ?
-      `, [userId]);
+      `,
+      [userId]
+    );
     return user;
   } catch (error) {
     console.log(error);
@@ -33,10 +36,13 @@ router.post('/', async (req, res) => {
   const { email, password, nickname } = req.body;
   try {
     conn = await dbPool.getConnection();
-    const result = await conn.query(`
+    const result = await conn.query(
+      `
       INSERT INTO users (email, password, nickname)
       VALUES (?, ?, ?);
-    `, [email, password, nickname]);
+    `,
+      [email, password, nickname]
+    );
     res.status(201).json({
       message: '회원 가입이 완료되었습니다',
     });
@@ -63,7 +69,7 @@ router.get('/:id', async (req, res) => {
     if (user?.user_id) {
       res.status(200).json({
         message: '회원 정보 조회가 완료되었습니다.',
-        user: user
+        user: user,
       });
     } else {
       res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
@@ -75,7 +81,7 @@ router.get('/:id', async (req, res) => {
       await conn.release();
     }
   }
-})
+});
 
 // 회원 정보 수정 (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 // 일단 이메일, 비밀번호, 별명만 수정할 수 있도록 해놓음
@@ -98,7 +104,7 @@ router.patch('/:id', async (req, res) => {
       await conn.query(query, [email, password, nickname, userId]);
       res.status(200).json({
         message: '회원 정보 수정이 완료되었습니다.',
-        user: await getUser(userId)
+        user: await getUser(userId),
       });
     } else {
       res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
@@ -110,7 +116,7 @@ router.patch('/:id', async (req, res) => {
       conn.release();
     }
   }
-})
+});
 
 // 회원 정보 삭제 (회원 탈퇴) (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.delete('/:id', async (req, res) => {
