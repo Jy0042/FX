@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
   res.status(201).send({ message: '게시글 저장이 완료되었습니다.' }); // To-Do: 게시글 객체도 같이 전송?
 });
 
-// 게시글 조회
+// 게시글 조회 (개발 및 단일 테스트 완료. 통합 테스트 필요)
 router.get('/:id', async (req, res) => {
   const post_id = req.params.id;
   try {
@@ -55,12 +55,12 @@ router.get('/:id', async (req, res) => {
         WHERE post_id = ?
       `, [post_id]);
     if (row) {
-      res.status(200).send({
+      res.status(200).json({
         message: '게시글 조회가 완료되었습니다.',
         post: row
       });
     } else {
-      res.status(404).send({ message: `${post_id}번 게시글이 존재하지 않습니다.` });
+      res.status(404).json({ message: `${post_id}번 게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
     console.log(error);
@@ -89,7 +89,7 @@ router.put('/:id', async (req, res) => {
   } catch (error) {
     console.log(error);
   } finally {
-    res.status(200).send({
+    res.status(200).json({
       message: '게시글 수정이 완료되었습니다.',
       post: row,
     });
@@ -113,7 +113,7 @@ router.delete('/:id', async (req, res) => {
   } catch (error) {
     console.log(error);
   } finally {
-    res.status(200).send({
+    res.status(200).json({
       message: '게시글 삭제가 완료되었습니다.'
     });
     if (conn) {

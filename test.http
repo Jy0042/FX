@@ -10,3 +10,6 @@ Content-Type: application/json
   "password": "test1pw",
   "nickname": "tester1"
 }
+
+### 환전 (Internal)
+GET http://localhost:3000/api/v1/fx/convert?from=USD&amount=100&to=KRW
