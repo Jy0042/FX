@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.development' });
 import path from 'path';
 import express from 'express';
+import session from 'express-session';
 import morgan from 'morgan';
 import debug from 'debug';
 import dbPool from './routes/db.js';
@@ -25,6 +26,11 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 app.use(express.json());
+app.use(session({
+  secret: 'kobook2-temporary-key',
+  resave: false,
+  saveUninitialized: false,
+}));
 app.use(cors({
   origin: 'http://localhost:5173', // 프론트엔드의 주소
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
@@ -39,6 +45,7 @@ app.use(cors({
 
 // Routing
 // Client-side Routing은 React Router에게 위임
+// 배포시, 빌드된 FE React 정적 파일을 반환 (Express 서버 단독 실행시)
 app.get('/', (req, res) => {
   res.sendFile(path.join(import.meta.dirname, 'index.html'));
 });
@@ -51,7 +58,6 @@ app.use('/api/v1/comments', commentsRouter); // 게시글에 대한 댓글
 app.use('/api/v1/replies', repliesRouter); // 댓글에 대한 답글
 
 app.use((req, res, next) => {
-  // res.status(404).send('Not Found');
   const error = new Error('Not Found');
   error.status = 404;
   next(error); // 에러 처리 미들웨어로 넘김
