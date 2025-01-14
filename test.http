@@ -39,6 +39,10 @@ Content-Type: application/json
   "password": "1234"
 }
 
+### Auth (로그인 상태 확인)
+### 클라이언트가 엔드포인트를 이동할 때마다 로그인 여부 확인)
+GET http://localhost:3000/api/v1/auth
+
 ### 로그아웃
 DELETE http://localhost:3000/api/v1/auth/logout
 Content-Type: application/json
