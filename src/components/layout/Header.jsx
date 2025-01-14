@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import ButtonComponent from '../common/ButtonComponent'; // 공통 버튼 컴포넌트
+import { Link, useLocation } from 'react-router-dom';
+import LoginModal from './LoginModal';
+import ButtonComponent from '../common/ButtonComponent';
+import useAuth from '../../hooks/useAuth';
 
 const Header = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const isAuthenticated = false; // 예제용, 실제 인증 여부 확인 로직 추가 필요
+  const { isAuthenticated, login, logout } = useAuth();
 
   return (
     <header className="header">
@@ -17,7 +17,7 @@ const Header = () => {
             F(X)
           </Link>
 
-          {/* 토글 버튼 (모바일용) */}
+          {/* 토글 버튼 */}
           <button
             className="navbar-toggler"
             type="button"
@@ -25,14 +25,13 @@ const Header = () => {
             data-bs-target="#navbarNav"
             aria-controls="navbarNav"
             aria-expanded="false"
-            aria-label="Toggle navigation"
+            aria-label="토글 메뉴"
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          {/* 메뉴 영역 */}
+          {/* 메뉴 */}
           <div className="collapse navbar-collapse" id="navbarNav">
-            {/* 탭 메뉴 */}
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
                 <Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">
@@ -49,35 +48,33 @@ const Header = () => {
               </li>
             </ul>
 
-            {/* 로그인/회원가입 버튼 */}
+            {/* 인증 버튼 */}
             <div className="d-flex auth-buttons">
-              <ButtonComponent
-                type="button"
-                variant="outline"
-                className="me-2"
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    console.log('Navigating to /login');
-                    navigate('/login');
-                  }
-                }}
-              >
-                로그인
-              </ButtonComponent>
-              <ButtonComponent
-                type="button"
-                variant="primary"
-                onClick={() => {
-                  console.log('Navigating to /register');
-                  navigate('/register');
-                }}
-              >
-                회원가입
-              </ButtonComponent>
+              {!isAuthenticated ? (
+                <>
+                  <ButtonComponent
+                    className="btn btn-outline-secondary me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+                  >
+                    로그인
+                  </ButtonComponent>
+                  <Link to="/register">
+                    <ButtonComponent className="btn btn-primary">회원가입</ButtonComponent>
+                  </Link>
+                </>
+              ) : (
+                <ButtonComponent className="btn btn-danger" onClick={logout}>
+                  로그아웃
+                </ButtonComponent>
+              )}
             </div>
           </div>
         </div>
       </nav>
+
+      {/* 로그인 모달 */}
+      <LoginModal onLogin={login} />
     </header>
   );
 };

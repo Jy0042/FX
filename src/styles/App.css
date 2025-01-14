@@ -131,3 +131,11 @@ footer ul li {
 .text-start {
   text-align: left;
 }
+
+/* ========================= */
+/* 로그인 모달 스타일 */
+/* ========================= */
+.btn-close:hover {
+  background-color: transparent !important; /* 호버 배경 제거 */
+  box-shadow: none !important; /* 불필요한 그림자 제거 (필요 시) */
+}

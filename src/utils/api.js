@@ -6,6 +6,20 @@ const api = axios.create({
   timeout: 10000, // 요청 시간 제한
 });
 
+// 로그인 API 요청
+export const loginUser = async ({ email, password, rememberMe }) => {
+  try {
+    const response = await api.post('/auth/login', { email, password, rememberMe });
+    return response.data; // 로그인 성공 시 토큰 등 데이터를 반환
+  } catch (error) {
+    console.error('로그인 요청 중 오류가 발생했습니다:', error);
+    if (error.response && error.response.status === 401) {
+      throw new Error('이메일 또는 비밀번호가 잘못되었습니다. 다시 확인해주세요.');
+    }
+    throw new Error('로그인 요청에 실패했습니다. 다시 시도해주세요.');
+  }
+};
+
 // 환율 계산 API 요청
 export const getRate = async (from, to, amount) => {
   try {
