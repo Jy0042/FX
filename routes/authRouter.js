@@ -37,9 +37,12 @@ function isLoggedIn(req) {
 // 로그인 상태 확인 ( /api/v1/auth 엔드포인트. 클라이언트가 페이지를 이동할 때마다 요청)
 router.get('/', async (req, res) => {
   if (isLoggedIn(req)) {
-    res.status(200).json({ isLoggedIn: true });
+    res.status(200).json({
+      isLoggedIn: true,
+      userId: req.session.userId
+    });
   } else {
-    res.status(404).json({ isLoggedIn: false });
+    res.status(401).json({ isLoggedIn: false });
   }
 });
 
@@ -54,7 +57,7 @@ router.post('/login', async (req, res) => {
       req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
       return res.status(201).json({ isLoggedIn: true });
     } else { // 입력 정보에 해당하는 회원 정보 없음
-      return res.status(404).json({
+      return res.status(401).json({
         isLoggedIn: false,
         message: '로그인 실패. 회원 정보 확인 후 다시 입력해주세요'
       });
