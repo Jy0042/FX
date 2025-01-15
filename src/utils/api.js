@@ -98,12 +98,9 @@ export const createPost = async (title, content, image) => {
 };
 
 export const readPost = async (id) => {
-  console.log('readPost함수 시작', id);
   try {
     const response = await api.get(`/posts/${id}`);
-
     const post = response.data.post;
-    console.log('readPost함수 안 post', post);
     return post; // 데이터를 반환
   } catch (error) {
     console.error('게시글 읽기 오류');
@@ -121,4 +118,15 @@ export const readPosts = async () => {
     console.error('게시글목록 읽기 오류');
   }
 };
+
+export const deletePost = async (id) => {
+  try {
+    console.log('deletePost함수 : ', id);
+    const response = await api.delete(`/posts/${id}`);
+    return response;
+  } catch (error) {
+    console.error('삭제 오류');
+  }
+};
+
 export default api;

@@ -33,7 +33,8 @@ const ReadPost = () => {
         // const data = await res.json();
         // console.log('fetch후 data', data);
         const data = await readPost(postId); // Use readPosts to fetch post data
-        setPost(data.post);
+        setPost(data);
+        console.log('파싱후 post:', post);
       } catch (error) {
         setError(error.message);
       } finally {

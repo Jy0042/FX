@@ -8,7 +8,8 @@ const UpdatePost = ({ post, onSave }) => {
   const handleEdit = async () => {
     console.log('업데이트할post', post);
     const res = await fetch(`http://localhost:3000/api/v1/posts/${post.id}`, {
-      method: 'PATCH',
+      // method: 'PATCH',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
