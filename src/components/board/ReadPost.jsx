@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import UpdatePost from './UpdatePost';
 import DeletePost from './DeletePost';
 import good from '../../assets/good.png';
+import example from '../../assets/example.png';
 import Uploader from './Uploader';
 import { readPost } from '../../utils/api';
 
@@ -20,7 +21,6 @@ const ReadPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        console.log('useEffect 내부 postId', postId);
         // const pId = parseInt(postId);
         // const data = await readPost(postId); // Use readPosts to fetch post data
         // const res = await fetch(`http://localhost:3000/api/v1/posts/${postId}`);
@@ -34,7 +34,7 @@ const ReadPost = () => {
         // console.log('fetch후 data', data);
         const data = await readPost(postId); // Use readPosts to fetch post data
         setPost(data);
-        console.log('파싱후 post:', post);
+        console.log('fetch후 data', data);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -59,55 +59,74 @@ const ReadPost = () => {
   };
 
   return (
-    <div>
-      <div className="col-md-8">
-        {isEditing ? (
-          <form>
-            수정중
-            <input
-              type="text"
-              className="form-control mb-3 text-dark border-secondary"
-              value={post.title} // 제목 데이터 바인딩
-              onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
-            />
-            <textarea
-              className="form-control mb-3 text-dark border-secondary"
-              rows="8" // 높이를 조정
-              value={post.content}
-              onChange={(e) => setPost({ ...post, content: e.target.value })} // 수정 중 데이터 반영
-            ></textarea>
-            <Uploader />
-            <UpdatePost post={post} onSave={handleSave} />
-            {/* <img
+    <div className="container my-4">
+      <div className="card">
+        <div className="card-body">
+          {isEditing ? (
+            <form>
+              수정중
+              <input
+                type="text"
+                className="form-control mb-3 text-dark border-secondary"
+                value={post.title} // 제목 데이터 바인딩
+                onChange={(e) => setPost({ ...post, title: e.target.value })} // 수정 중 데이터 반영
+              />
+              <textarea
+                className="form-control mb-3 text-dark border-secondary"
+                rows="8" // 높이를 조정
+                value={post.content}
+                onChange={(e) => setPost({ ...post, content: e.target.value })} // 수정 중 데이터 반영
+              ></textarea>
+              <Uploader />
+              <UpdatePost post={post} onSave={handleSave} />
+              {/* <img
               src="https://via.placeholder.com/150"
               alt="게시글 이미지"
               className="img-fluid"
               style={{ maxWidth: '100%', height: 'auto' }}
             /> */}
-          </form>
-        ) : (
-          <div>
-            기본
-            <input
-              type="text"
-              className="form-control mb-3 text-dark border-secondary"
-              value={post.title} // 제목 데이터 바인딩
-              readOnly
-            />
-            <textarea
-              className="form-control mb-3 text-dark border-secondary"
-              rows="8" // 높이를 조정
-              value={post.content}
-              readOnly
-            ></textarea>
-            <Uploader />
-          </div>
-        )}
-      </div>
+            </form>
+          ) : (
+            <div>
+              {/* <input
+                type="text"
+                // className="form-control mb-3 text-dark border-secondary"
+                className="card-title"
+                value={post.title} // 제목 데이터 바인딩
+                readOnly
+              /> */}
+              <h1 className="card-title">{post.title}</h1>
+              <div className="d-flex justify-content-center align-items-center mb-3">
+                {/* <div> */}
+                <small className="text-muted">
+                  <strong>{post.author}</strong> &middot; {post.updated_at} &middot; Guidelines
+                </small>
+                {/* </div> */}
 
-      <div className="col-md-4 d-flex justify-content-center">
-        <DeletePost post={post} />
-        <button onClick={() => setIsEditing(true)}>수정</button>
+                {/* <Uploader /> */}
+              </div>
+              <img
+                // src="https://via.placeholder.com/40"
+                src={example}
+                alt="Author"
+                style={{ maxWidth: '100%', height: 'auto' }}
+                className="me-2"
+              />
+              {/* <textarea
+                className="form-control mb-3 text-dark border-secondary"
+                rows="8" // 높이를 조정
+                value={post.content}
+                readOnly
+              ></textarea> */}
+              <p className="card-text">{post.content}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="col-md-4 d-flex justify-content-center">
+          <DeletePost post={post} />
+          <button onClick={() => setIsEditing(true)}>수정</button>
+        </div>
       </div>
     </div>
   );
