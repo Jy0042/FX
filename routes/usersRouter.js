@@ -8,9 +8,8 @@ let conn;
 
 // 회원 정보 조회
 // 아직 로그인 세션 구성이 안 되어 있어서, 임시로 회원 여부를 DB 조회로 판단
-async function getUser(userId) {
+export async function getUser(userId) {
   try {
-    // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
     conn = await dbPool.getConnection();
     const [user] = await conn.query(`
       SELECT *
@@ -27,7 +26,7 @@ async function getUser(userId) {
   }
 }
 
-// 회원 가입 (사용자 추가) (1차 개발 및 단일 테스트 완료. 통합 테스트 필요)
+// 회원 가입 (사용자 추가) (1차 개발 및 단위 테스트 완료. 통합 테스트 필요)
 router.post('/', async (req, res) => {
   const { email, password, nickname } = req.body;
   try {
@@ -53,7 +52,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// 회원 정보 조회 (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+// 회원 정보 조회 (1차 개발 및 단위 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.get('/:id', async (req, res) => {
   const userId = req.params.id;
   try {
@@ -75,7 +74,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 회원 정보 수정 (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+// 회원 정보 수정 (1차 개발 및 단위 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 // 일단 이메일, 비밀번호, 별명만 수정할 수 있도록 해놓음
 // TODO. 프로필 이미지 등도 수정할 수 있게 바꿔야 함
 // ※ TODO. 일단 PATCH로 만들었는데, PUT으로 바꾸든지 모든 항목을 수정할 수 있게 변경해야 한다.
@@ -110,7 +109,7 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// 회원 정보 삭제 (회원 탈퇴) (1차 개발 및 단일 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+// 회원 정보 삭제 (회원 탈퇴) (1차 개발 및 단위 테스트 완료. 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.delete('/:id', async (req, res) => {
   const userId = req.params.id;
   try {
