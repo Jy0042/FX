@@ -9,11 +9,11 @@ const Header = () => {
   const { isAuthenticated, login, logout } = useAuth();
 
   return (
-    <header className="header">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <header className="header bg-white shadow-sm">
+      <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           {/* 로고 */}
-          <Link className="navbar-brand fw-bold" to="/">
+          <Link className="navbar-brand fw-bold fs-4" to="/">
             F(X)
           </Link>
 
@@ -34,13 +34,18 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">
+                <Link
+                  className={`nav-link ${location.pathname === '/' ? 'active fw-bold' : ''}`}
+                  to="/"
+                >
                   환율 계산기
                 </Link>
               </li>
               <li className="nav-item">
                 <Link
-                  className={`nav-link ${location.pathname === '/community' ? 'active' : ''}`}
+                  className={`nav-link ${
+                    location.pathname === '/community' ? 'active fw-bold' : ''
+                  }`}
                   to="/community"
                 >
                   커뮤니티
@@ -49,7 +54,7 @@ const Header = () => {
             </ul>
 
             {/* 인증 버튼 */}
-            <div className="d-flex auth-buttons">
+            <div className="d-flex align-items-center">
               {!isAuthenticated ? (
                 <>
                   <ButtonComponent
