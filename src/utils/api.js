@@ -4,6 +4,7 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: 'http://localhost:3000/api/v1', // 로컬 백엔드 서버 URL
   timeout: 10000, // 요청 시간 제한
+  withCredentials: true, // 쿠키 전달 허용
 });
 
 // 로그인 API 요청

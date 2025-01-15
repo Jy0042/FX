@@ -25,18 +25,30 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
 app.use(express.json());
-app.use(session({
-  secret: 'kobook2-temporary-key',
-  resave: false,
-  saveUninitialized: false,
-}));
-app.use(cors({
-  origin: 'http://localhost:5173', // 프론트엔드의 주소
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
-  allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
-  credentials: true, // 쿠키 허용
-}));
+
+app.use(
+  session({
+    secret: 'kobook2-temporary-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false, // HTTPS가 아닌 경우 false로 설정
+      maxAge: 60000, // 세션 유지 시간
+    },
+  })
+);
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // 프론트엔드 주소
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용 메서드
+    allowedHeaders: ['Content-Type', 'Authorization'], // 허용 헤더
+    credentials: true, // 쿠키 허용
+  })
+);
 
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)

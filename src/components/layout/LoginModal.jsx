@@ -114,7 +114,7 @@ const LoginModal = ({ onLogin }) => {
           <div className="modal-footer">
             <p className="text-center w-100 mb-0">
               계정이 없으신가요?{' '}
-              <a href="/signup" className="text-primary text-decoration-none">
+              <a href="/register" className="text-primary text-decoration-none">
                 회원가입
               </a>
             </p>
