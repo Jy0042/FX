@@ -18,6 +18,9 @@ async function getPost(postId) {
     `, [postId]);
     return post;
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
@@ -43,6 +46,9 @@ router.post('/', async (req, res) => {
       res.status(400).json({ message: '게시글 저장 실패. 누락 정보 확인 후 다시 저장해주세요' });
     }
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
@@ -65,6 +71,9 @@ router.get('/:id', async (req, res) => {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
@@ -96,6 +105,9 @@ router.put('/:id', async (req, res) => {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
@@ -124,6 +136,9 @@ router.delete('/:id', async (req, res) => {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
@@ -154,6 +169,9 @@ router.get('/', async (req, res) => {
       res.status(404).json({ message: `게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
