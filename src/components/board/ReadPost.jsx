@@ -4,6 +4,7 @@ import UpdatePost from './UpdatePost';
 import DeletePost from './DeletePost';
 import good from '../../assets/good.png';
 import Uploader from './Uploader';
+import { readPost } from '../../utils/api';
 
 const ReadPost = () => {
   //   const [title, setTitle] = useState(post.title);
@@ -19,24 +20,33 @@ const ReadPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/v1/posts/${postId}`); // API 호출
-        if (!res.ok) {
-          throw new Error('Failed to fetch post');
-        }
-        const data = await res.json();
-        setPost(data);
+        console.log('useEffect 내부 postId', postId);
+        // const pId = parseInt(postId);
+        // const data = await readPost(postId); // Use readPosts to fetch post data
+        // const res = await fetch(`http://localhost:3000/api/v1/posts/${postId}`);
+        // console.log('res', res);
+        // // setPost(data); // Set the post data
+
+        // if (!res.ok) {
+        //   throw new Error('Failed to fetch post');
+        // }
+        // const data = await res.json();
+        // console.log('fetch후 data', data);
+        const data = await readPost(postId); // Use readPosts to fetch post data
+        setPost(data.post);
       } catch (error) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchPost();
-  }, [postId]);
 
-  useEffect(() => {
-    console.log('link post:', post);
-  }, [post]);
+    fetchPost();
+  }, []);
+
+  // useEffect(() => {
+  //   console.log('link post:', post);
+  // }, [post]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;

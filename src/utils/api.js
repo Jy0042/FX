@@ -83,4 +83,42 @@ export const verifyCode = async (email, code) => {
   }
 };
 
+export const createPost = async (title, content, image) => {
+  try {
+    const response = await api.post('/posts', {
+      author: 1,
+      title: title,
+      content: content,
+      image: image,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('게시글 작성 오류');
+  }
+};
+
+export const readPost = async (id) => {
+  console.log('readPost함수 시작', id);
+  try {
+    const response = await api.get(`/posts/${id}`);
+
+    const post = response.data.post;
+    console.log('readPost함수 안 post', post);
+    return post; // 데이터를 반환
+  } catch (error) {
+    console.error('게시글 읽기 오류');
+  }
+};
+
+export const readPosts = async () => {
+  try {
+    const response = await api.get(`/posts`);
+
+    const posts = response.data.posts;
+    console.log('posts', posts);
+    return posts; // 데이터를 반환
+  } catch (error) {
+    console.error('게시글목록 읽기 오류');
+  }
+};
 export default api;

@@ -12,11 +12,14 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 async function getUser(userId) {
   try {
     conn = await dbPool.getConnection();
-    const [user] = await conn.query(`
+    const [user] = await conn.query(
+      `
       SELECT *
       FROM users
       WHERE user_id = ?
-    `, [userId]);
+    `,
+      [userId]
+    );
     return user;
   } catch (error) {
     console.log(error);
@@ -30,13 +33,16 @@ async function getUser(userId) {
 async function getPost(postId) {
   try {
     conn = await dbPool.getConnection();
-    const [post] = await conn.query(`
+    const [post] = await conn.query(
+      `
       SELECT *
       FROM posts
       WHERE post_id = ?
-    `, [postId]);
+    `,
+      [postId]
+    );
     console.log('getPost 함수 안', post);
-
+    return post;
   } catch (error) {
     console.log(error);
   } finally {
@@ -46,16 +52,18 @@ async function getPost(postId) {
   }
 }
 
-
 // 게시글 작성 (1차 개발 완료 / 단일 테스트 및 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;
   try {
     conn = await dbPool.getConnection();
-    const result = await conn.query(`
+    const result = await conn.query(
+      `
       INSERT INTO posts (author, title, content, image)
       VALUES (?, ?, ?, ?);
-    `, [author, title, content, image]);
+    `,
+      [author, title, content, image]
+    );
     res.status(201).send({ message: '게시글 저장이 완료되었습니다.' }); // TODO? 게시글 객체도 같이 전송?
   } catch (error) {
     console.log(error);
@@ -74,11 +82,12 @@ router.get('/:id', async (req, res) => {
     if (post?.post_id) {
       res.status(200).json({
         message: '게시글 조회가 완료되었습니다.',
-        post: post
+        post: post,
       });
     } else {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
+    return post;
   } catch (error) {
     console.log(error);
   } finally {
@@ -86,7 +95,7 @@ router.get('/:id', async (req, res) => {
       await conn.release();
     }
   }
-})
+});
 
 // 게시글 수정 (1차 개발 완료 / 단일 테스트 및 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.put('/:id', async (req, res) => {
@@ -97,12 +106,15 @@ router.put('/:id', async (req, res) => {
     const { user } = req.session;
     // if (user?.user_id) {
     conn = await dbPool.getConnection();
-    const post = await conn.query(`
+    const post = await conn.query(
+      `
       UPDATE posts
       SET title = ?,
           content = ?,
       WHERE post_id = ?
-    `, [title, content, postId]);
+    `,
+      [title, content, postId]
+    );
     console.log('PUT /posts/:id 안:', row);
     // if (post?.post_id) {
     res.status(200).json({
@@ -119,7 +131,7 @@ router.put('/:id', async (req, res) => {
       conn.release();
     }
   }
-})
+});
 
 // 게시글 삭제 (1차 개발 완료 / 단일 테스트 및 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.delete('/:id', async (req, res) => {
@@ -129,12 +141,15 @@ router.delete('/:id', async (req, res) => {
     const { user } = req.session;
     // if (user?.user_id) {
     conn = await dbPool.getConnection();
-    const row = await conn.query(`
+    const row = await conn.query(
+      `
       DELETE FROM posts
       WHERE post_id = ?
-    `, [postId]);
+    `,
+      [postId]
+    );
     res.status(200).json({
-      message: '게시글 삭제가 완료되었습니다.'
+      message: '게시글 삭제가 완료되었습니다.',
     });
     // res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
   } catch (error) {
@@ -162,7 +177,7 @@ router.get('/', async (req, res) => {
     if (posts) {
       res.status(200).json({
         message: '게시글 전체 (게시판) 조회가 완료되었습니다.',
-        posts: posts
+        posts: posts,
       });
     } else {
       res.status(404).json({ message: `게시글이 존재하지 않습니다.` });

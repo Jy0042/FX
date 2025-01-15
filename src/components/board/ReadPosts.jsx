@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Post from './Post';
 import { useInView } from 'react-intersection-observer';
-import { Colors } from 'chart.js';
+import { readPosts } from '../../utils/api';
 
 const ReadPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
+  // const [title, setTitle] = useState(0);
+  // const [content, setContent] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(5); // 페이지 당 보여질 포스트 수
@@ -24,13 +26,17 @@ const ReadPosts = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/community`);
+        const res = await readPosts();
+
+        console.log('res', res);
+        // setPosts(Object.entries(res));
+        // console.log('posts', posts);
+        const postArray = Array.isArray(res) ? res : [res];
+        setPosts(res);
+
         if (!res.ok) {
           throw new Error('Failed to fetch posts');
         }
-        const data = await res.json();
-        console.log('data', data);
-        setPosts(data);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -38,19 +44,21 @@ const ReadPosts = () => {
       }
     };
     fetchPosts();
-    console.log('화면에 있습니까?', inView);
+    // console.log('화면에 있습니까?', inView);
 
     // paginate(currentPage + 1);
-  }, [userId]);
+  }, []);
   // }, [inView]);
 
-  useEffect(() => {
-    console.log('Updated posts:', posts);
-  }, [posts]);
+  // useEffect(() => {
+  //   console.log('Updated posts:', posts);
+  // }, [posts]);
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  // const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = (posts || []).slice(indexOfFirstPost, indexOfLastPost);
+  // const currentPosts = posts;
   // const lastPage = 2;
 
   // 페이지 변경 함수
@@ -71,12 +79,11 @@ const ReadPosts = () => {
 
   const handleClick = (postId) => {
     navigate(`/v1/posts/${postId}`); // 게시물 ID를 포함한 경로로 이동
-    console.log(postId);
+    console.log('게시글클릭', postId);
   };
 
   return (
     <div>
-      {/* <p>게시글: {posts.id}</p> */}
       <span className="input-group-text"></span>
       <ul
         className="pagination"
@@ -101,7 +108,6 @@ const ReadPosts = () => {
           </button>
         </li>
 
-        {/* 페이지 번호 버튼들 */}
         {Array.from({ length: endPage - startPage + 1 }).map((_, index) => {
           const pageNumber = startPage + index;
           return (
@@ -126,7 +132,6 @@ const ReadPosts = () => {
           );
         })}
 
-        {/* 다음 버튼 */}
         <li
           className={`page-item ${
             currentPage === Math.ceil(posts.length / postsPerPage) ? 'disabled' : ''
@@ -142,9 +147,10 @@ const ReadPosts = () => {
         </li>
       </ul>
       <ul>
-        {currentPosts.map((post) => (
-          <div onClick={() => handleClick(post.id)} style={{ cursor: 'pointer' }}>
-            <Post key={post.id} post={post} />
+        {/* {currentPosts.map((post) => ( */}
+        {(currentPosts || []).map((post) => (
+          <div onClick={() => handleClick(post.post_id)} style={{ cursor: 'pointer' }}>
+            <Post key={post.post_id} post={post} />
             <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
           </div>
         ))}

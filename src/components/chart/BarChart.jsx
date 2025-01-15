@@ -1,7 +1,7 @@
 import ReactApexChart from 'react-apexcharts';
 
 const Apex = ({ type }) => {
-  console.log('type: ', type);
+  // console.log('type: ', type);
   const chartOptions = {
     xaxis: {
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
