@@ -30,12 +30,18 @@ app.use(session({
   secret: 'kobook2-temporary-key',
   resave: false,
   saveUninitialized: false,
+  rolling: true, // 사용자의 활동시 세션과 SID(SessionID) 쿠키의 만료 시간 갱신
+  cookie: {
+    httpOnly: true, // 클라이언트 측 JS가 쿠키에 접근하지 못하도록 하여, XSS 공격 예방
+    secure: false, // HTTPS가 아닌 환경(HTTP 등)에서도 쿠키 전송 허용. false(기본값)로 명시적 설정
+    maxAge: 24 * 60 * 60 * 1000 // SID 쿠키 유지 시간: 1일 (기본 단위: ms(밀리세컨드))
+  }
 }));
 app.use(cors({
   origin: 'http://localhost:5173', // 프론트엔드의 주소
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
   allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
-  credentials: true, // 쿠키 허용
+  credentials: true // 쿠키를 포함한 요청 허용
 }));
 
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
