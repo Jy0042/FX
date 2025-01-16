@@ -19,7 +19,7 @@ const Apex = ({ type }) => {
   ];
 
   return (
-    <div>
+    <div className="container">
       <ReactApexChart options={chartOptions} series={data} type={type} height={350} key={type} />
     </div>
   );
