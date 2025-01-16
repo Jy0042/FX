@@ -33,6 +33,7 @@ const ReadPosts = () => {
         // console.log('posts', posts);
         const postArray = Array.isArray(res) ? res : [res];
         setPosts(res);
+        
 
         if (!res.ok) {
           throw new Error('Failed to fetch posts');
