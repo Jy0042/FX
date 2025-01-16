@@ -36,7 +36,7 @@ async function login(reqBody) {
     console.error(error);
   } finally {
     if (conn) {
-      conn.release(); // 커넥션 풀에 반환
+      await conn.release(); // 커넥션 풀에 반환
     }
   }
 };
