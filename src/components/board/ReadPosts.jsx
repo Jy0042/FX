@@ -28,12 +28,11 @@ const ReadPosts = () => {
       try {
         const res = await readPosts();
 
-        console.log('res', res);
+        // console.log('res', res);
         // setPosts(Object.entries(res));
         // console.log('posts', posts);
         const postArray = Array.isArray(res) ? res : [res];
         setPosts(res);
-        
 
         if (!res.ok) {
           throw new Error('Failed to fetch posts');

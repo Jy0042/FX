@@ -34,7 +34,6 @@ const ReadPost = () => {
         // console.log('fetch후 data', data);
         const data = await readPost(postId); // Use readPosts to fetch post data
         setPost(data);
-        console.log('fetch후 data', data);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -56,6 +55,7 @@ const ReadPost = () => {
   const handleSave = (updatedPost) => {
     setPost(updatedPost); // 업데이트된 데이터를 반영
     setIsEditing(false); // 읽기 모드로 복귀
+    console.log('수정버튼 누를때 post', post);
   };
 
   return (

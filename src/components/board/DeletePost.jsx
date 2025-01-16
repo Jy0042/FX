@@ -8,8 +8,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 const DeletePost = ({ post }) => {
   // const [title, setTitle] = useState(post.title);
   // const [content, setContent] = useState(post.content);
-
-  console.log(post);
   const handleDelete = async () => {
     if (confirm('정말 삭제하시겠습니까?')) {
       // const res = await fetch(`http://localhost:3000/api/v1/posts/${post.post_id}`, {
