@@ -17,12 +17,12 @@ const Community = () => {
       <h1 className="display-4 font-weight-bold text-center mb-4">커뮤니티 페이지</h1>
 
       {/* 검색 폼 */}
-      <div className="mb-4">
+      <div className="d-flex justify-content-center mb-4">
         <SearchForm />
       </div>
 
       {/* 게시글 리스트 */}
-      <div className="mb-4">
+      <div className="d-flex justify-content-center mb-4">
         <ReadPosts />
       </div>
 
