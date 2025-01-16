@@ -8,16 +8,16 @@ POST http://localhost:3000/api/v1/users
 Content-Type: application/json
 
 {
-  "email": "test11@fx.com",
-  "password": "test11pw",
-  "nickname": "tester11"
+  "email": "test20@fx.com",
+  "password": "test20pw",
+  "nickname": "tester20"
 }
 
 ### 회원 정보 조회 / 단위 테스트 완료
-GET http://localhost:3000/api/v1/users/11
+GET http://localhost:3000/api/v1/users/24
 
 ### 회원 정보 수정 / 단위 테스트 완료
-PATCH http://localhost:3000/api/v1/users/11
+PATCH http://localhost:3000/api/v1/users/20
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ### 회원 정보 삭제 (회원 탈퇴) / 단위 테스트 완료
-DELETE http://localhost:3000/api/v1/users/11
+DELETE http://localhost:3000/api/v1/users/20
 
 
 ### 로그인
@@ -35,8 +35,8 @@ POST http://localhost:3000/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "test17@fx.com",
-  "password": "1234"
+  "email": "test20@fx.com",
+  "password": "test19pw"
 }
 
 ### Auth (로그인 상태 확인)
