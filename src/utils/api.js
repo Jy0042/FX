@@ -128,17 +128,12 @@ export const deletePost = async (id) => {
   }
 };
 
-export const updatePost = async (id, title, content) => {
+export const updatePosts = async (id, title, content) => {
   try {
     console.log('updatePost함수 : ', id, title, content);
     const response = await api.put(`/posts/${id}`, {
-      headers: {
-        'Content-Type': 'application/json', // Setting headers
-      },
-      data: {
-        title: title,
-        content: content,
-      },
+      title: title,
+      content: content,
     });
     console.log('respose 받기', response);
     return response;

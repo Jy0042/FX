@@ -16,18 +16,8 @@ const ReadPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        // const pId = parseInt(postId);
-        // const data = await readPost(postId); // Use readPosts to fetch post data
-        // const res = await fetch(`http://localhost:3000/api/v1/posts/${postId}`);
-        // console.log('res', res);
-        // // setPost(data); // Set the post data
-
-        // if (!res.ok) {
-        //   throw new Error('Failed to fetch post');
-        // }
-        // const data = await res.json();
-        // console.log('fetch후 data', data);
         const data = await readPost(postId); // Use readPosts to fetch post data
+        console.log('fetch후 data', data);
         setPost(data);
       } catch (error) {
         setError(error.message);
@@ -38,10 +28,6 @@ const ReadPost = () => {
 
     fetchPost();
   }, []);
-
-  // useEffect(() => {
-  //   console.log('link post:', post);
-  // }, [post]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -58,7 +44,7 @@ const ReadPost = () => {
       <div className="card">
         <div className="card-body">
           {isEditing ? (
-            <form>
+            <div>
               수정중
               <input
                 type="text"
@@ -80,25 +66,14 @@ const ReadPost = () => {
               className="img-fluid"
               style={{ maxWidth: '100%', height: 'auto' }}
             /> */}
-            </form>
+            </div>
           ) : (
             <div>
-              {/* <input
-                type="text"
-                // className="form-control mb-3 text-dark border-secondary"
-                className="card-title"
-                value={post.title} // 제목 데이터 바인딩
-                readOnly
-              /> */}
               <h1 className="card-title">{post.title}</h1>
               <div className="d-flex justify-content-center align-items-center mb-3">
-                {/* <div> */}
                 <small className="text-muted">
                   <strong>{post.author}</strong> &middot; {post.updated_at} &middot; Guidelines
                 </small>
-                {/* </div> */}
-
-                {/* <Uploader /> */}
               </div>
               <img
                 // src="https://via.placeholder.com/40"
@@ -107,12 +82,6 @@ const ReadPost = () => {
                 style={{ maxWidth: '100%', height: 'auto' }}
                 className="me-2"
               />
-              {/* <textarea
-                className="form-control mb-3 text-dark border-secondary"
-                rows="8" // 높이를 조정
-                value={post.content}
-                readOnly
-              ></textarea> */}
               <p className="card-text">{post.content}</p>
               <div className="card-footer  bg-white d-flex justify-content-start align-items-center">
                 <img src={good} alt="좋아요 아이콘" className="me-1" />

@@ -27,13 +27,6 @@ const ReadPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await readPosts();
-
-        // setPosts(Object.entries(res));
-        // console.log('게시글 목록 posts', posts);
-        // console.log('게시글 목록 res', res);
-        // const postArray = Array.isArray(res) ? res : [res];
-        // console.log('게시글 목록 postArray', posts);
-
         setPosts(res);
 
         if (!res.ok) {
@@ -152,7 +145,8 @@ const ReadPosts = () => {
         {/* {currentPosts.map((post) => ( */}
         {(currentPosts || []).map((post) => (
           <div onClick={() => handleClick(post.post_id)} style={{ cursor: 'pointer' }}>
-            <Post key={post.post_id} post={post} />
+            {/* <Post key={post.post_id} post={post} /> */}
+            <Post post={post} />
             <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
           </div>
         ))}

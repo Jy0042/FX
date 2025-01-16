@@ -4,18 +4,9 @@ import PropTypes from 'prop-types';
 import { deletePost } from '../../utils/api';
 import { useParams, useNavigate } from 'react-router-dom';
 
-// const navigate = useNavigate();
 const DeletePost = ({ post }) => {
-  // const [title, setTitle] = useState(post.title);
-  // const [content, setContent] = useState(post.content);
   const handleDelete = async () => {
     if (confirm('정말 삭제하시겠습니까?')) {
-      // const res = await fetch(`http://localhost:3000/api/v1/posts/${post.post_id}`, {
-      //   method: 'delete',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ id: post.id }),
       const res = await deletePost(post.post_id);
       console.log('삭제후 ', res);
       if (res.statusText === 'OK') {
@@ -33,14 +24,6 @@ const DeletePost = ({ post }) => {
       <button onClick={handleDelete}>삭제</button>
     </div>
   );
-};
-
-DeletePost.propTypes = {
-  post: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    title: PropTypes.string,
-    content: PropTypes.string,
-  }).isRequired,
 };
 
 export default DeletePost;
