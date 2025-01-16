@@ -1,6 +1,12 @@
 import express from 'express';
+import debug from 'debug';
 import dbPool from './db.js';
 // import { getUser } from './userRouter.js';
+
+const debugLog = new debug('log');
+const debugError = new debug('error');
+const debugDb = new debug('db');
+
 
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
@@ -22,10 +28,10 @@ async function getPost(postId) {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
     }
-    console.log(error);
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 }
@@ -51,10 +57,10 @@ router.post('/', async (req, res) => {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
     }
-    console.log(error);
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -65,6 +71,7 @@ router.get('/:id', async (req, res) => {
   try {
     const post = await getPost(postId);
     if (post?.post_id) {
+      debugDb('게시글 조회 완료');
       res.status(200).json({
         message: '게시글 조회가 완료되었습니다.',
         post: post,
@@ -77,7 +84,7 @@ router.get('/:id', async (req, res) => {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
     }
-    console.log(error);
+    debugDb(error);
   } finally {
     if (conn) {
       await conn.release();
@@ -111,10 +118,10 @@ router.put('/:id', async (req, res) => {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
     }
-    console.log(error);
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -142,10 +149,10 @@ router.delete('/:id', async (req, res) => {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
     }
-    console.log(error);
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -175,10 +182,10 @@ router.get('/', async (req, res) => {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
     }
-    console.log(error);
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
