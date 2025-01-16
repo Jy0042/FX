@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Apex from '../components/chart/BarChart';
+import Apex from '../components/chart/Chart';
 // import Table from '../components/chart/Table';
 
 const ViewChart = () => {
