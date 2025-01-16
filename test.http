@@ -1,12 +1,79 @@
-### 개별 게시글 조회
-GET http://localhost:3000/api/v1/posts/1
+### 환전 (Internal) / 단위 테스트 완료
+GET http://localhost:3000/api/v1/fx/convert?from=USD&amount=100&to=KRW
 
-### 사용자 추가
-POST http://localhost:3000/api/v1/users HTTP/1.1
+
+
+### 회원 가입 / 단위 테스트 완료
+POST http://localhost:3000/api/v1/users
 Content-Type: application/json
 
 {
-  "email": "test1",
-  "password": "test1pw",
-  "nickname": "tester1"
+  "email": "test20@fx.com",
+  "password": "test20pw",
+  "nickname": "tester20"
 }
+
+### 회원 정보 조회 / 단위 테스트 완료
+GET http://localhost:3000/api/v1/users/24
+
+### 회원 정보 수정 / 단위 테스트 완료
+PATCH http://localhost:3000/api/v1/users/20
+Content-Type: application/json
+
+{
+  "email": "test11@fx.com",
+  "password": "test11pw",
+  "nickname": "tester11"
+}
+
+### 회원 정보 삭제 (회원 탈퇴) / 단위 테스트 완료
+DELETE http://localhost:3000/api/v1/users/20
+
+
+### 로그인
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test20@fx.com",
+  "password": "test19pw"
+}
+
+### Auth (로그인 상태 확인)
+### 클라이언트가 엔드포인트를 이동할 때마다 로그인 여부 확인)
+GET http://localhost:3000/api/v1/auth
+
+### 로그아웃
+DELETE http://localhost:3000/api/v1/auth/logout
+Content-Type: application/json
+
+
+
+### 전체 게시글 조회
+GET http://localhost:3000/api/v1/posts/
+
+### 게시글 작성
+POST http://localhost:3000/api/v1/posts
+Content-Type: application/json
+
+{
+  "author": 1,
+  "title": "제목 14",
+  "content": "본문 14",
+  "image": null
+}
+
+### 게시글 조회 / 단위 테스트 완료
+GET http://localhost:3000/api/v1/posts/14
+
+### 게시글 수정
+PUT http://localhost:3000/api/v1/posts/16
+Content-Type: application/json
+
+{
+  "title": "제목 6 (수정)",
+  "content": "본문 6 (수정)"
+}
+
+### 게시글 삭제
+DELETE http://localhost:3000/api/v1/posts/16

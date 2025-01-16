@@ -45,7 +45,7 @@ function Uploader() {
   };
 
   return (
-    <main>
+    <div>
       <form
         onClick={() => document.querySelector('.input-field').click()}
         className={`d-flex flex-column justify-content-center align-items-center rounded p-3 ${
@@ -55,7 +55,7 @@ function Uploader() {
         onDragLeave={handleDragEnd} // dragend 핸들러 추가
         onDragOver={handleDragOver} // dragover 핸들러 추가
         onDrop={handleDrop}
-        style={{ height: '260px', width: '690px', border: 'dotted gray', cursor: 'pointer' }}
+        style={{ height: '260px', width: 'auto', border: 'dotted gray', cursor: 'pointer' }}
       >
         <div>
           <input
@@ -82,7 +82,7 @@ function Uploader() {
         </div>
         {/* </label> */}
       </form>
-    </main>
+    </div>
   );
 }
 

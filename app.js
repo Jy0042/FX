@@ -2,9 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.development' });
 import path from 'path';
 import express from 'express';
+import session from 'express-session';
 import morgan from 'morgan';
 import debug from 'debug';
 import dbPool from './routes/db.js';
+import cors from 'cors';
 
 // Router
 import fxRouter from './routes/fxRouter.js';
@@ -24,35 +26,57 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 app.use(express.json());
-
+app.use(session({
+  secret: 'kobook2-temporary-key',
+  resave: false,
+  saveUninitialized: false,
+  rolling: true, // 사용자의 활동시 세션과 SID(SessionID) 쿠키의 만료 시간 갱신
+  cookie: {
+    httpOnly: true, // 클라이언트 측 JS가 쿠키에 접근하지 못하도록 하여, XSS 공격 예방
+    secure: false, // HTTPS가 아닌 환경(HTTP 등)에서도 쿠키 전송 허용. false(기본값)로 명시적 설정
+    maxAge: 24 * 60 * 60 * 1000 // SID 쿠키 유지 시간: 1일 (기본 단위: ms(밀리세컨드))
+  }
+}));
+app.use(cors({
+  origin: 'http://localhost:5173', // 프론트엔드의 주소
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
+  allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
+  credentials: true // 쿠키를 포함한 요청 허용
+}));
 
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
 // 해결책 2. path.resolve() 메서드 사용
 // const __dirname = path.resolve();
 
-// Routes
+// Routing
+// Client-side Routing은 React Router에게 위임
+// 배포시, 빌드된 FE React 정적 파일을 반환 (Express 서버 단독 실행시)
 app.get('/', (req, res) => {
-  // res.sendFile(path.join(__dirname, 'index.html'));
   res.sendFile(path.join(import.meta.dirname, 'index.html'));
 });
 
-// 환율 계산
-app.get('/api/v1/convert', (req, res) => {
-  const { from, amount, to } = req.query;
-  // 환율 계산 (외부) API 호출
-});
-
+app.use('/api/v1/fx', fxRouter); // 환율 정보
 app.use('/api/v1/users', usersRouter); // 회원 정보
-app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 소셜로그인, 로그아웃)
+app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 로그아웃, 소셜로그인)
 app.use('/api/v1/posts', postsRouter); // 커뮤니티 게시판 게시글
 app.use('/api/v1/comments', commentsRouter); // 게시글에 대한 댓글
 app.use('/api/v1/replies', repliesRouter); // 댓글에 대한 답글
 
-app.use((req, res) => {
-  res.status(404).send('Not Found');
+app.use((req, res, next) => {
+  const error = new Error('Not Found');
+  error.status = 404;
+  next(error); // 에러 처리 미들웨어로 넘김
 });
 
+// 에러 처리
+app.use((err, req, res, next) => {
+  console.error(err);
+  // res.locals.message = err.message;
+  // res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+  res.status(err.status || 500);
+  res.send(process.env.NODE_ENV !== 'production' ? err.message : 'Internal Server Error');
+});
 
 const server = app.listen(PORT, () => {
   console.log(`F(x).com server is running on http://localhost:${PORT}`);
@@ -72,5 +96,5 @@ const shutDown = async () => {
   });
 };
 
-process.on('SIGINT', shutDown);  // Ctrl + C로 서버를 중단한 경우
+process.on('SIGINT', shutDown); // Ctrl + C로 서버를 중단한 경우
 process.on('SIGTERM', shutDown); // Kill command로 "

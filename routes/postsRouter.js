@@ -1,138 +1,186 @@
 import express from 'express';
 import dbPool from './db.js';
+// import { getUser } from './userRouter.js';
 
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
-// 로그인 정보를 읽어와서 회원만 게시글 작성/수정/삭제가 가능하게 해야 함
-try {
-  const query = `
-    SELECT *
-    FROM users
-    WHERE user_id = ?
-  `;
-  conn = await dbPool.getConnection();
-  console.log(`Connected to DB! (id=${conn.threadId})`);
-  const row = await conn.query(query, [1]); // 로그인 기능 제작 전이라서 일단 1번 사용자 사용
-  console.log(row);
-} catch (error) {
-  console.log(error);
-} finally {
-  console.log('in finally');
-  conn.release();
-}
+// 세션 정보를 읽어와서 회원만 게시글 작성/수정/삭제가 가능하게 해야 함
+// 로그인 기능 제작 전이라서 일단 임의 사용자 사용
 
-
-// 게시글 작성 (수정해야 함)
-router.post('/', async (req, res) => {
-  const { author, title, content, image } = req.body;
-  console.log('POST /');
+async function getPost(postId) {
   try {
-    const conn = await dbPool.getConnection();
-    const query = `
-      INSERT INTO posts (author, title, content, image)
-      VALUES (?, ?, ?, ?);
-    `;
-    const result = await conn.query(query, [author, title, content, image]);
+    conn = await dbPool.getConnection();
+    const [post] = await conn.query(
+      `
+      SELECT *
+      FROM posts
+      WHERE post_id = ?
+    `, [postId]);
+    return post;
   } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
     console.log(error);
   } finally {
     if (conn) {
-      conn.release(); // 커넥션 풀에 반환
+      conn.release();
     }
   }
-  res.status(201).send({ message: '게시글 저장이 완료되었습니다.' }); // To-Do: 게시글 객체도 같이 전송?
+}
+
+// 게시글 작성 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.post('/', async (req, res) => {
+  const { author, title, content, image } = req.body;
+  try {
+    conn = await dbPool.getConnection();
+    const result = await conn.query(
+      `
+      INSERT INTO posts (author, title, content, image)
+      VALUES (?, ?, ?, ?);
+    `, [author, title, content, image]);
+    if (result.affectedRows === 1) {
+      res.status(201).json({
+        message: '게시글 저장이 완료되었습니다.'
+      });
+    } else {
+      res.status(400).json({ message: '게시글 저장 실패. 누락 정보 확인 후 다시 저장해주세요' });
+    }
+  } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    console.log(error);
+  } finally {
+    if (conn) {
+      conn.release();
+    }
+  }
 });
 
-
-router.route('/:id')
-  .get(async (req, res) => { // 게시글 조회
-    const post_id = req.params.id;
-    // console.log(`post_id = ${post_id}`);
-    console.log(`GET /api/v1/posts/${post_id}`);
-    try {
-      conn = await dbPool.getConnection();
-      console.log('try 진입 직후 - await conn.query 직전');
-      const row = await conn.query(`
-        SELECT *
-        FROM posts
-        WHERE post_id = ?
-      `, [post_id]);
-
-      console.log('try 내부 - await conn.query 직후');
-      console.log(row, row[0].title, row[0].content);
-      res.status(200).send({
+// 게시글 조회 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.get('/:id', async (req, res) => {
+  const postId = req.params.id;
+  try {
+    const post = await getPost(postId);
+    if (post?.post_id) {
+      res.status(200).json({
         message: '게시글 조회가 완료되었습니다.',
-        post: {
-          post_id: row[0].post_id,
-          author: row[0].author,
-          title: row[0].title,
-          content: row[0].content,
-          image: row[0].image,
-          view_count: row[0].view_count,
-          like_count: row[0].like_count,
-          comment_count: row[0].comment_count,
-          reply_count: row[0].reply_count,
-          created_at: row[0].created_at,
-          updated_at: row[0].updated_at
-        }
+        post: post,
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      console.log('finally 진입 직후');
-      if (conn) {
-        console.log('connection release 직전');
-        conn.release();
-      }
+    } else {
+      res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
-  })
-  .put(async (req, res) => { // 게시글 수정 (수정해야 함)
-    const post_id = req.params.id;
-    const { title, content, image } = req.body;
-    console.log('PUT /');
-    try {
-      conn = await dbPool.getConnection();
-      const query = `
-        UPDATE posts
-        SET title = ?,
-            content = ?,
-            image = ?
-        WHERE post_id = ?
-      `;
-      const row = await conn.query(query, [title, content, image, post_id]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      res.status(200).send({
-        message: '게시글 수정이 완료되었습니다.',
-        post: row,
+    return post;
+  } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    console.log(error);
+  } finally {
+    if (conn) {
+      await conn.release();
+    }
+  }
+});
+
+// 게시글 수정 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.put('/:id', async (req, res) => {
+  const postId = req.params.id;
+  const { title, content, image } = req.body;
+  try {
+    // const user = await getUser(userId);
+    const { user } = req.session;
+    // if (user?.user_id) {
+    conn = await dbPool.getConnection();
+    const result = await conn.query(`
+      UPDATE posts
+      SET title = ?,
+          content = ?
+      WHERE post_id = ?
+    `, [title, content, postId]);
+    if (result.affectedRows === 1) {
+      res.status(200).json({
+        message: '게시글 수정이 완료되었습니다.'
       });
-      if (conn) {
-        conn.release();
-      }
+    } else {
+      res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
-  })
-  .delete(async (req, res) => { // 게시글 삭제 (수정해야 함)
-    const post_id = req.params.id;
-    console.log('DELETE /');
-    try {
-      conn = await dbPool.getConnection();
-      const query = `
-        DELETE FROM posts
-        WHERE post_id = ?
-      `;
-      const row = await conn.query(query, [post_id]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      res.status(200).send({
+  } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    console.log(error);
+  } finally {
+    if (conn) {
+      conn.release();
+    }
+  }
+});
+
+// 게시글 삭제 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.delete('/:id', async (req, res) => {
+  const postId = req.params.id;
+  try {
+    // const user = await getUser(userId);
+    const { user } = req.session;
+    // if (user?.user_id) {
+    conn = await dbPool.getConnection();
+    const result = await conn.query(`
+      DELETE FROM posts
+      WHERE post_id = ?
+    `, [postId]);
+    if (result.affectedRows === 1) {
+      res.status(200).json({
         message: '게시글 삭제가 완료되었습니다.'
       });
-      if (conn) {
-        conn.release();
-      }
+    } else {
+      res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
-  });
+  } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    console.log(error);
+  } finally {
+    if (conn) {
+      conn.release();
+    }
+  }
+});
+
+// 전체 게시글 (게시판) 조회 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
+router.get('/', async (req, res) => {
+  // const { } = req.params.id;
+  // TODO: 검색, 정렬, 페이징
+  // /api/v1/posts?q=독일&search_type=all&sort=latest&page=1
+  // q: 검색어, search_type: 검색 조건(title, content, all, nickname),
+  // sort: 정렬 조건(latest, read, comments, likes), page: 검색할 페이지(위치)
+  try {
+    conn = await dbPool.getConnection();
+    const posts = await conn.query(`
+        SELECT *
+        FROM posts
+      `);
+    if (posts) {
+      res.status(200).json({
+        message: '게시글 전체 (게시판) 조회가 완료되었습니다.',
+        posts: posts,
+      });
+    } else {
+      res.status(404).json({ message: `게시글이 존재하지 않습니다.` });
+    }
+  } catch (error) {
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    console.log(error);
+  } finally {
+    if (conn) {
+      conn.release();
+    }
+  }
+});
 
 export default router;
