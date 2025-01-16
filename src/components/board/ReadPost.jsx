@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import UpdatePost from './UpdatePost';
 import DeletePost from './DeletePost';
-import good from '../../assets/good.png';
-import example from '../../assets/example.png';
+// import good from '../../assets/good.png';
+// import example from '../../assets/example.png';
+// import share from '../../assets/share.png';
+import { good, example, share } from '../../assets';
 import Uploader from './Uploader';
 import { readPost } from '../../utils/api';
 
@@ -11,7 +13,6 @@ const ReadPost = () => {
   //   const [title, setTitle] = useState(post.title);
   //   const [content, setContent] = useState(post.content);
 
-  const postTime = new Date(); //작성시간
   const { postId } = useParams(); // URL에서 게시물 ID를 가져옴
   const [post, setPost] = useState(null); // 게시물 데이터 저장
   const [loading, setLoading] = useState(true);
@@ -119,6 +120,15 @@ const ReadPost = () => {
                 readOnly
               ></textarea> */}
               <p className="card-text">{post.content}</p>
+              <div className="card-footer d-flex justify-content-start align-items-center">
+                <img src={good} alt="좋아요 아이콘" className="me-1" />
+                <small className="text-muted me-3">{post.like_count}</small>
+
+                <button className="btn btn-link text-muted">
+                  <img src={share} alt="공유 아이콘" />
+                  Share
+                </button>
+              </div>
             </div>
           )}
         </div>

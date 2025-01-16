@@ -28,10 +28,12 @@ const ReadPosts = () => {
       try {
         const res = await readPosts();
 
-        // console.log('res', res);
         // setPosts(Object.entries(res));
-        // console.log('posts', posts);
-        const postArray = Array.isArray(res) ? res : [res];
+        // console.log('게시글 목록 posts', posts);
+        // console.log('게시글 목록 res', res);
+        // const postArray = Array.isArray(res) ? res : [res];
+        // console.log('게시글 목록 postArray', posts);
+
         setPosts(res);
 
         if (!res.ok) {
@@ -70,7 +72,7 @@ const ReadPosts = () => {
     } else if (pageNumber > Math.ceil(posts.length / postsPerPage)) {
       pageNumber = Math.ceil(posts.length / postsPerPage);
     }
-    setCurrentPage(pageNumber + 1);
+    setCurrentPage(pageNumber);
   };
 
   // 현재 페이지 기준으로 표시할 페이지 버튼의 시작과 끝 설정

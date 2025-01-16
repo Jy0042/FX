@@ -52,7 +52,7 @@ const CreatePost = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4">
+    <form onSubmit={handleSubmit} className="container mb-4">
       {errorMessage && <p className="mb-2 text-sm">{errorMessage}</p>}
       <input
         type="text"

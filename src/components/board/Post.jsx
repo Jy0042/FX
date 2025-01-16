@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import review from '../../assets/review.png';
-import good from '../../assets/good.png';
-import author from '../../assets/author.png';
+import { good, review, author } from '../../assets';
 
 const Post = ({ post }) => {
   const postTime = new Date(); //작성시간
@@ -12,7 +10,7 @@ const Post = ({ post }) => {
 
   return (
     <div
-      className="row align-items-start  bg-dark text-light text-light p-3"
+      className="row align-items-start  bg-dark text-light p-3"
       style={{ height: '250px', width: '1000px', borderRadius: '8px' }}
     >
       {/* 왼쪽: 제목, 내용, 작성자, 좋아요/댓글 */}

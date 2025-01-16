@@ -112,8 +112,6 @@ export const readPosts = async () => {
     const response = await api.get(`/posts`);
 
     const posts = response.data.posts;
-
-    // console.log('posts', posts);
     return posts; // 데이터를 반환
   } catch (error) {
     console.error('게시글목록 읽기 오류');
