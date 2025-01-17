@@ -34,7 +34,7 @@ app.use(session({
   rolling: true, // 사용자의 활동시 세션과 SID(SessionID) 쿠키의 만료 시간 갱신
   cookie: {
     httpOnly: true, // 클라이언트 측 JS가 쿠키에 접근하지 못하도록 하여, XSS 공격 예방
-    secure: false, // HTTPS가 아닌 환경(HTTP 등)에서도 쿠키 전송 허용. false(기본값)로 명시적 설정
+    secure: false, // HTTPS에서만 쿠키 전송 허용 (보통 개발 환경은 HTTP) false(기본값)로 명시
     maxAge: 24 * 60 * 60 * 1000 // SID 쿠키 유지 시간: 1일 (기본 단위: ms(밀리세컨드))
   }
 }));
@@ -52,17 +52,16 @@ app.use(cors({
 
 // Routing
 // Client-side Routing은 React Router에게 위임
-// 배포시, 빌드된 FE React 정적 파일을 반환 (Express 서버 단독 실행시)
+// 배포시, 빌드된 FE React 정적 파일을 반환 (React 서버 없이 Express 서버 단독 실행시)
 app.get('/', (req, res) => {
   res.sendFile(path.join(import.meta.dirname, 'index.html'));
 });
 
 app.use('/api/v1/fx', fxRouter); // 환율 정보
 app.use('/api/v1/users', usersRouter); // 회원 정보
-app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 로그아웃, 소셜로그인)
+app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 로그아웃, 로그인(세션) 확인, 소셜로그인)
 app.use('/api/v1/posts', postsRouter); // 커뮤니티 게시판 게시글
 app.use('/api/v1/comments', commentsRouter); // 게시글에 대한 댓글
-app.use('/api/v1/replies', repliesRouter); // 댓글에 대한 답글
 
 app.use((req, res, next) => {
   const error = new Error('Not Found');
