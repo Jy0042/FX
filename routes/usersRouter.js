@@ -15,11 +15,14 @@ const SALT_ROUNDS = 10;
 export async function getUser(userId) {
   try {
     conn = await dbPool.getConnection();
-    const [user] = await conn.query(`
+    const [user] = await conn.query(
+      `
       SELECT *
       FROM users
       WHERE user_id = ?
-    `, [userId]);
+    `,
+      [userId]
+    );
     return user;
   } catch (error) {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
@@ -28,7 +31,7 @@ export async function getUser(userId) {
     console.log(error);
   } finally {
     if (conn) {
-      conn.release(); // 커넥션 풀에 반환
+      await conn.release(); // 커넥션 풀에 반환
     }
   }
 }
@@ -44,10 +47,13 @@ router.post('/', async (req, res) => {
   try {
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     conn = await dbPool.getConnection();
-    const result = await conn.query(`
+    const result = await conn.query(
+      `
       INSERT INTO users (email, password, nickname)
       VALUES (?, ?, ?);
-    `, [email, passwordHash, nickname]);
+    `,
+      [email, passwordHash, nickname]
+    );
     res.status(201).json({
       message: '회원 가입이 완료되었습니다',
     });
@@ -56,15 +62,16 @@ router.post('/', async (req, res) => {
       res.status(400).json({
         message: '이미 가입한 회원입니다.',
       });
-    } else if (error.code === 'ER_CONNECTION_TIMEOUT') {
+    } else if (error.code === 45012 || error.code == 45028) {
+      // if 'ER_CONNECTION_TIMEOUT' OR 'ER_GET_CONNECTION_TIMEOUT'
       res.status(500).json({ message: 'Connection Timeout' });
     } else {
-      console.log('암호화 실패', error);
+      console.log('암호화 실패', error.stack);
       res.status(400).json({ message: '암호화 실패. 문자, 숫자, 기호, 특수문자만 입력해주세요' });
     }
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -103,13 +110,16 @@ router.patch('/:id', async (req, res) => {
     if (user?.user_id) {
       conn = await dbPool.getConnection();
       // const query = `
-      await conn.query(`
+      await conn.query(
+        `
         UPDATE users
         SET email = ?,
             password = ?,
             nickname = ?
         WHERE user_id = ?
-      `, [email, password, nickname, userId]);
+      `,
+        [email, password, nickname, userId]
+      );
       res.status(200).json({
         message: '회원 정보 수정이 완료되었습니다.',
         user: await getUser(userId),
@@ -124,7 +134,7 @@ router.patch('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -138,10 +148,13 @@ router.delete('/:id', async (req, res) => {
       conn = await dbPool.getConnection();
       // const query = `
       // `;
-      await conn.query(`
+      await conn.query(
+        `
         DELETE FROM users
         WHERE user_id = ?
-      `, [userId]);
+      `,
+        [userId]
+      );
       res.status(200).json({ message: '회원 정보 삭제 (회원 탈퇴)가 완료되었습니다.' });
     } else {
       res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
@@ -153,7 +166,7 @@ router.delete('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });

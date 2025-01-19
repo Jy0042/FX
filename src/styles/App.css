@@ -43,32 +43,17 @@
 /* 헤더 스타일 */
 /* ========================= */
 .header {
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 1.5rem 0;
-}
-
-.header .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .header .navbar-brand {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #002d62;
+  color: #002d62 !important;
 }
 
 .header .navbar-brand:hover {
-  color: #0056b3;
-}
-
-.header .navbar-nav .nav-link {
-  font-weight: 600;
+  color: #0056b3 !important;
 }
 
 /* ========================= */
@@ -130,4 +115,12 @@ footer ul li {
 
 .text-start {
   text-align: left;
+}
+
+/* ========================= */
+/* 로그인 모달 스타일 */
+/* ========================= */
+.btn-close:hover {
+  background-color: transparent !important; /* 호버 배경 제거 */
+  box-shadow: none !important; /* 불필요한 그림자 제거 (필요 시) */
 }
