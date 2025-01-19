@@ -37,7 +37,7 @@ Content-Type: application/json
 
 {
   "email": "test11@fx.com",
-  "password": "test11pw",
+  "password": "test11pwpw",
   "nickname": "tester11"
 }
 
@@ -79,16 +79,16 @@ Content-Type: application/json
 }
 
 ### 게시글 조회 (단위 테스트 완료)
-GET http://localhost:3000/api/v1/posts/19
+GET http://localhost:3000/api/v1/posts/42
 
 ### 게시글 수정 (단위 테스트 완료)
-PUT http://localhost:3000/api/v1/posts/17
+PUT http://localhost:3000/api/v1/posts/27
 Content-Type: application/json
 
 {
-  "title": "제목 14 (수정)",
-  "content": "본문 14 (수정)"
+  "title": "제목 27 (수정)",
+  "content": "본문 27 (수정)"
 }
 
 ### 게시글 삭제 (단위 테스트 완료)
-DELETE http://localhost:3000/api/v1/posts/16
+DELETE http://localhost:3000/api/v1/posts/25
