@@ -47,55 +47,34 @@ router.get('/convert', async (req, res) => {
 // 즐겨찾는 환율 쌍 저장
 router.post('/users/:userId/user-currency-pair', async (req, res) => {
   const { userId } = req.params;
-  debugLog('req.body =', req.body);
-  // debugLog('JSON.parse(req.body)', JSON.parse(req.body));
   const newCurrencyPairs = req.body;
-  debugLog(newCurrencyPairs);
-  // [[1, 'USD', 'KRW', 1], [1, 'EUR', 'KRW', 2, 1550, 'GT']] →
-  // [[1, 1, 12, 1], [1, 2, 12, 2, 1550, 'GT']]
-  const tstArray = [
-    [1, 'USD', 'KRW', 1],
-    [1, 'EUR', 'KRW', 2, 1550, 'GT'],
-    [1, 'KRW', 'USD', 3, 6.89]
-  ];
-  debugLog('tstArray:', tstArray);
-
-
-  // const userCurrencyPairs = newCurrencyPairs.map(() => {
-  // });
   try {
     const currencyMapper = {};
     conn = await dbPool.getConnection();
 
-    // [ { currency_code: 'USD', currency_id: 1 }, ~ 후략 ~ ] 형태의 객체 '배열'을 반환
+    // 아래 쿼리는 [ { currency_code: 'USD', currency_id: 1 }, ~ 후략 ~ ] 형태의 객체 '배열'을 반환
     const rows = await conn.query(`
         SELECT currency_code, currency_id
         FROM available_currencies
         ORDER BY rank;
       `);
-    debugDb('rows:', rows);
 
     // 1. { USD: 1, EUR: 2, ~ 후략 ~ } 형태의 매핑 객체 리터럴 생성
     rows.map((row) => currencyMapper[row.currency_code] = row.currency_id);
-    debugLog('currencyMapper:', currencyMapper);
-    // debugDb('currencyMapper[USD]:', currencyMapper['USD']);
 
     // 2. 위 매핑 객체 리터럴을 이용하여, source, target 통화 코드 (from, to)를
     //    DB 테이블 컬럼에 맞는 currency_id로 변환
     //    예. [[1, 'USD', 'KRW', 1], [1, 'EUR', 'KRW', 2, 1550, 'GT']] --→
     //        [[1, 1, 12, 1], [1, 2, 12, 2, 1550, 'GT']]
     const convertedCurrencyPairs = newCurrencyPairs.map((row) => {
-      debugLog('row:', row);
       const tmpArray = row.map((col, index) => {
         return ((index === 1 || index === 2) ? currencyMapper[col] : col);
       });
-      debugLog('tmpArray.length:', tmpArray.length);
       for (let i = tmpArray.length; i < 6; i++) {
         tmpArray.push(null); // insert 문에 인수로 주기 위해서 빈 값에는 null 추가
       }
       return tmpArray;
     });
-    debugLog('convertedCurrencyPairs:', convertedCurrencyPairs);
 
     const insertQuery = `
       INSERT INTO user_currency_pair (user_id, source_id, target_id, sort_order, amount, alert_condition)
@@ -103,9 +82,7 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
     `;
     await conn.beginTransaction(); // 새 트랜잭션 시작
     const result = await conn.batch(insertQuery, convertedCurrencyPairs);
-    // const result = await dbPool.batch(insertQuery, userCurrencyPairs);
-    await conn.commit(); // batch insert 작업 전부 정상 처리되었으면 커밋
-    console.log('result:', result);
+    await conn.commit(); // batch insert 작업 전부 정상 처리되었으면 트랜잭션 커밋
 
     if (result.affectedRows === newCurrencyPairs.length) {
       res.status(201).json({
@@ -113,16 +90,20 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
       });
     } else {
       res.status(400).json({
-        message: '즐겨찾는 환율 쌍 저장이 온전하게 완료되지 않았습니다. 관리자에게 문의하세요.',
+        message: '즐겨찾는 환율 쌍 저장이 제대로 완료되지 않았습니다. 관리자에게 문의하세요.',
       });
     }
   } catch (error) {
     conn.rollback(); // 오류가 발생했으면, 위 트랜잭션 롤백
-    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+    if (error.code === 'ER_DUP_ENTRY') {
+      res.status(400).json({
+        message: '이미 저장하신 환율 쌍입니다.',
+      });
+    } else if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
+    } else {
+      res.status(500).json({ message: 'Unknown Error' });
     }
-    res.status(500).json({ message: 'Unknown Error' });
-    console.error(error);
   } finally {
     if (conn) {
       await conn.release(); // 커넥션 풀에 반환
@@ -134,7 +115,6 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
 router.get('/users/:userId/user-currency-pair', async (req, res) => {
   // router.get('/user-currency-pair ', (req, res) => {
   const { userId } = req.params;
-  debugError('userId:', userId);
   try {
     conn = await dbPool.getConnection();
     const userCurrencyPairs = await conn.query(`
@@ -150,23 +130,30 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
       WHERE u.user_id = ?
       ORDER BY sort_order;
     `, [userId]);
-    debugDb('userCurrencyPair:', userCurrencyPairs);
-    res.status(200).json({
-      message: '즐겨찾는 환율 쌍 조회가 완료되었습니다.',
-      userCurrencyPairs
-    });
+    debugLog('userCurrencyPairs:', userCurrencyPairs);
+    if (userCurrencyPairs.length > 0) {
+      res.status(200).json({
+        message: '즐겨찾는 환율 쌍 조회가 완료되었습니다.',
+        userCurrencyPairs
+      });
+    } else {
+      res.status(404).json({
+        message: '즐겨찾는 환율 쌍이 저장된 게 없습니다.',
+      });
+
+    }
     // } else {
     //   res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
     // }
   } catch (error) {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
+    } else {
+      res.status(500).json({ message: 'Unknown Error' });
     }
-    console.error(error);
-    res.status(500).json({ message: 'Unknown Error' });
   } finally {
     if (conn) {
-      await conn.release(); // 커넥션 풀에 반환
+      await conn.release();
     }
   }
 });

@@ -11,18 +11,6 @@ Content-Type: application/json
   [26, "KRW", "USD", 3]
 ]
 
-### 
-[
-  {
-    "userId": 26,
-    "from": "USD",
-    "to": "KRW",
-    "sortOrder": 1,
-    "amount": null,
-    "alertCondition": null
-  }
-]
-
 ### 즐겨찾는 환율 쌍 조회
 GET http://localhost:3000/api/v1/fx/users/26/user-currency-pair
 
