@@ -1,4 +1,5 @@
 import axios from 'axios';
+// import multer from 'multer';
 
 // Axios 기본 설정
 const api = axios.create({
@@ -85,6 +86,7 @@ export const verifyCode = async (email, code) => {
 
 export const createPost = async (title, content, image) => {
   try {
+    console.log('createpost 이미지 확인 : ', title, content, image);
     const response = await api.post('/posts', {
       author: 1,
       title: title,
@@ -97,10 +99,38 @@ export const createPost = async (title, content, image) => {
   }
 };
 
+// export const createPost = async (title, content, image) => {
+//   try {
+//     const formData = new FormData();
+//     formData.append('author', 1); // Assuming the author is a fixed value
+//     formData.append('title', title);
+//     formData.append('content', content);
+//     formData.append('image', image); // Here, image is a file (not base64)
+
+//     // Send a POST request with the FormData (multipart/form-data)
+//     const response = await api.post('/posts', formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data', // Important for file uploads
+//       },
+//     });
+
+//     return response.data;
+//   } catch (error) {
+//     console.error('게시글 작성 오류:', error);
+//   }
+// };
+
 export const readPost = async (id) => {
   try {
     const response = await api.get(`/posts/${id}`);
+    console.log('readpost data :', response);
     const post = response.data.post;
+    console.log('post data :', post.image);
+
+    // const buffer = Buffer.from(post.image.data);
+    // const base64Image = `data:image/png;base64,${buffer.toString('base64')}`;
+    // console.log(base64Image);
+
     return post; // 데이터를 반환
   } catch (error) {
     console.error('게시글 읽기 오류');
@@ -110,8 +140,9 @@ export const readPost = async (id) => {
 export const readPosts = async () => {
   try {
     const response = await api.get(`/posts`);
-
+    // console.log('response', response);
     const posts = response.data.posts;
+    // console.log('posts:', posts);
     return posts; // 데이터를 반환
   } catch (error) {
     console.error('게시글목록 읽기 오류');

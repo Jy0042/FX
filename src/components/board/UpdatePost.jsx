@@ -14,6 +14,8 @@ const UpdatePost = ({ post, onSave }) => {
       const updatedPost = post;
       onSave(updatedPost); // 수정된 데이터를 부모 컴포넌트로 전달
     }
+
+    
   };
 
   return (

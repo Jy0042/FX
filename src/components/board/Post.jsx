@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { good, review, author } from '../../assets';
+import { LuImageOff } from 'react-icons/lu';
 
 const Post = ({ post }) => {
-  const postTime = new Date(); //작성시간
-  // const [isImage, setIsImage] = useState(false);
-  // setIsImage(false);
-  const isImage = false;
-
   return (
     <div
       className="row align-items-start  bg-dark text-light p-3"
@@ -49,8 +44,6 @@ const Post = ({ post }) => {
 
           <span className="me-3">Time </span>
           {post.updated_at}
-          {/* {new Date(postTime.getTime() + 9 * 60 * 60 * 1000).toLocaleString('ko-KR')} */}
-          {/* 우선 현재시간 표시 작성시간 기준으로 ~시간전으로 표시 예정 */}
         </div>
 
         <div className="d-flex align-items-center">
@@ -62,20 +55,21 @@ const Post = ({ post }) => {
       </div>
       {/* 오른쪽: 이미지 */}
       <div className="col-md-4 d-flex justify-content-end">
-        {isImage ? (
+        {post.image ? (
           <img
-            src="https://via.placeholder.com/150"
+            src={post.image}
             alt="게시글 이미지"
             className="img-fluid"
             style={{ maxWidth: '100%', height: 'auto' }}
           />
         ) : (
-          <img
-          // src="https://via.placeholder.com/150"
-          // alt="게시글 이미지"
-          // className="img-fluid"
-          // style={{ maxWidth: '100%', height: 'auto' }}
-          />
+          // <img
+          //   src={review}
+          //   alt="게시글 이미지"
+          //   className="img-fluid"
+          //   style={{ maxWidth: '100%', height: 'auto' }}
+          // />
+          <LuImageOff />
         )}
       </div>
     </div>

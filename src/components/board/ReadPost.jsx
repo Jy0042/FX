@@ -24,6 +24,16 @@ const ReadPost = () => {
       try {
         const data = await readPost(postId); // Use readPosts to fetch post data
         console.log('fetch후 data', data);
+        console.log('fetch후 image', data.image);
+      
+        // Buffer 데이터를 Base64로 변환
+        // if (data.image && data.image.data) {
+        //   const base64Image = `data:image/png;base64,${btoa(
+        //     String.fromCharCode(...new Uint8Array(data.image.data))
+        //   )}`;
+        //   data.image = base64Image;
+        // }
+        // console.log('base64 변형후 image', data.image);
         setPost(data);
       } catch (error) {
         setError(error.message);
@@ -81,13 +91,32 @@ const ReadPost = () => {
                   <strong>{post.author}</strong> &middot; {post.updated_at} &middot; Guidelines
                 </small>
               </div>
-              <img
+              {/* <img
                 // src="https://via.placeholder.com/40"
-                src={example}
+                src={post.image}
                 alt="Author"
                 style={{ maxWidth: '100%', height: 'auto' }}
                 className="me-2"
-              />
+              /> */}
+              <div>
+                {post.image ? (
+                  <img
+                    // src="https://via.placeholder.com/40"
+                    src={post.image}
+                    alt="Post"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    className="me-2"
+                  />
+                ) : (
+                  <img
+                    // src="https://via.placeholder.com/40"
+                    src={example}
+                    alt="Author"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    className="me-2"
+                  />
+                )}
+              </div>
               <p className="card-text">{post.content}</p>
               <div className="card-footer d-flex justify-content-start align-items-center">
                 <img src={good} alt="좋아요 아이콘" className="me-1" />
