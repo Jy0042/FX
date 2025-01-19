@@ -179,4 +179,16 @@ export const updatePosts = async (id, title, content) => {
   }
 };
 
+export const readChartData = async (fx_rate, date) => {
+  try {
+    const response = await api.get(`/posts/`, {
+      fx_rate: fx_rate,
+      date: date,
+    });
+    return response;
+  } catch {
+    console.error('환율정보 읽기 오류');
+  }
+};
+
 export default api;
