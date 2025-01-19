@@ -7,7 +7,6 @@ const debugLog = new debug('log');
 const debugError = new debug('error');
 const debugDb = new debug('db');
 
-
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 

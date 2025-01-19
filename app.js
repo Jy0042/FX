@@ -14,7 +14,6 @@ import usersRouter from './routes/usersRouter.js';
 import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
 import commentsRouter from './routes/commentsRouter.js';
-import repliesRouter from './routes/repliesRouter.js';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -85,12 +84,12 @@ const server = app.listen(PORT, () => {
 // 서버 종료 처리
 const shutDown = async () => {
   // console.log('Shutting down F(x).com server...');
-  debugLog('Shutting down F(x).com server...');
+  console.log('Shutting down F(x).com server...');
 
   // 1. Express Server - 새로운 연결(connection) 중단 + 요청을 보내지 않거나 응답을 기다리는 모든 연결 종료
   // DB 커넥션을 요청한 HTTP 요청을 모두 종료하기 전에 우선 실행)
   server.close(() => {
-    debugLog('F(x).com server closed!');
+    console.log('F(x).com server closed!');
   });
 
   // Express Server의 모든 HTTP(S) 커넥션 닫기 (Active 상태 포함)
@@ -100,9 +99,9 @@ const shutDown = async () => {
   // 2. MariaDB Connection Pool 종료 (Resource 반환)
   try {
     await dbPool.end();
-    debugDb('MariaDB Connection Pool closed');
+    console.log('MariaDB Connection Pool closed');
   } catch (err) {
-    debugDb('Error closing MariaDB connection pool!');
+    console.log('Error closing MariaDB connection pool!');
   }
 
   // 3. Express Server Process 종료
@@ -111,7 +110,7 @@ const shutDown = async () => {
 
 process.on('SIGINT', shutDown); // Ctrl + C로 서버를 중단한 경우
 process.on('SIGTERM', shutDown); // Kill command로 "
-process.on('uncaughtException', () => { // uncaughtException handling
-  debugError('Unhandled error:', err);
-  shutDown();
+process.on('uncaughtException', (err, origin) => { // uncaughtException handling
+  console.log(`Uncaught exception: ${err}, Exception origin: ${origin}`);
+  // shutDown();
 });
