@@ -1,6 +1,11 @@
 import express from 'express';
+import debug from 'debug';
 import dbPool from './db.js';
 // import { getUser } from './userRouter.js';
+
+const debugLog = new debug('log');
+const debugError = new debug('error');
+const debugDb = new debug('db');
 
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
@@ -11,17 +16,23 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 async function getPost(postId) {
   try {
     conn = await dbPool.getConnection();
-    const [post] = await conn.query(`
+    const [post] = await conn.query(
+      `
       SELECT *
       FROM posts
       WHERE post_id = ?
-    `, [postId]);
+    `,
+      [postId]
+    );
     return post;
   } catch (error) {
-    console.log(error);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 }
@@ -31,22 +42,28 @@ router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;
   try {
     conn = await dbPool.getConnection();
-    const result = await conn.query(`
+    const result = await conn.query(
+      `
       INSERT INTO posts (author, title, content, image)
       VALUES (?, ?, ?, ?);
-    `, [author, title, content, image]);
+    `,
+      [author, title, content, image]
+    );
     if (result.affectedRows === 1) {
       res.status(201).json({
-        message: '게시글 저장이 완료되었습니다.'
+        message: '게시글 저장이 완료되었습니다.',
       });
     } else {
       res.status(400).json({ message: '게시글 저장 실패. 누락 정보 확인 후 다시 저장해주세요' });
     }
   } catch (error) {
-    console.log(error);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -57,21 +74,26 @@ router.get('/:id', async (req, res) => {
   try {
     const post = await getPost(postId);
     if (post?.post_id) {
+      debugDb('게시글 조회 완료');
       res.status(200).json({
         message: '게시글 조회가 완료되었습니다.',
-        post: post
+        post: post,
       });
     } else {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
+    return post;
   } catch (error) {
-    console.log(error);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    debugDb(error);
   } finally {
     if (conn) {
       await conn.release();
     }
   }
-})
+});
 
 // 게시글 수정 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.put('/:id', async (req, res) => {
@@ -82,27 +104,33 @@ router.put('/:id', async (req, res) => {
     const { user } = req.session;
     // if (user?.user_id) {
     conn = await dbPool.getConnection();
-    const result = await conn.query(`
+    const result = await conn.query(
+      `
       UPDATE posts
       SET title = ?,
           content = ?
       WHERE post_id = ?
-    `, [title, content, postId]);
+    `,
+      [title, content, postId]
+    );
     if (result.affectedRows === 1) {
       res.status(200).json({
-        message: '게시글 수정이 완료되었습니다.'
+        message: '게시글 수정이 완료되었습니다.',
       });
     } else {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
-    console.log(error);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
-})
+});
 
 // 게시글 삭제 (1차 개발 및 단위 테스트 완료 / 통합 테스트 필요. 완료 후 세션 로그인 기능 연동 필요)
 router.delete('/:id', async (req, res) => {
@@ -112,22 +140,28 @@ router.delete('/:id', async (req, res) => {
     const { user } = req.session;
     // if (user?.user_id) {
     conn = await dbPool.getConnection();
-    const result = await conn.query(`
+    const result = await conn.query(
+      `
       DELETE FROM posts
       WHERE post_id = ?
-    `, [postId]);
+    `,
+      [postId]
+    );
     if (result.affectedRows === 1) {
       res.status(200).json({
-        message: '게시글 삭제가 완료되었습니다.'
+        message: '게시글 삭제가 완료되었습니다.',
       });
     } else {
       res.status(404).json({ message: `${postId}번 게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
-    console.log(error);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -148,16 +182,19 @@ router.get('/', async (req, res) => {
     if (posts) {
       res.status(200).json({
         message: '게시글 전체 (게시판) 조회가 완료되었습니다.',
-        posts: posts
+        posts: posts,
       });
     } else {
       res.status(404).json({ message: `게시글이 존재하지 않습니다.` });
     }
   } catch (error) {
-    console.log(error);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
+    }
+    debugDb(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });

@@ -7,12 +7,14 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const login = () => setIsAuthenticated(true); // 로그인 함수
+  const logout = () => setIsAuthenticated(false); // 로그아웃 함수
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// 기본 내보내기로 AuthContext 내보내기
 export default AuthContext;

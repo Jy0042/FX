@@ -1,7 +1,7 @@
 import ReactApexChart from 'react-apexcharts';
 
 const Apex = ({ type }) => {
-  console.log('type: ', type);
+  // console.log('type: ', type);
   const chartOptions = {
     xaxis: {
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -19,7 +19,7 @@ const Apex = ({ type }) => {
   ];
 
   return (
-    <div>
+    <div className="container">
       <ReactApexChart options={chartOptions} series={data} type={type} height={350} key={type} />
     </div>
   );

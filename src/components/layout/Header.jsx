@@ -3,10 +3,20 @@ import { Link, useLocation } from 'react-router-dom';
 import LoginModal from './LoginModal';
 import ButtonComponent from '../common/ButtonComponent';
 import useAuth from '../../hooks/useAuth';
+import { logoutUser } from '../../utils/api';
 
 const Header = () => {
   const location = useLocation();
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated, setIsAuthenticated } = useAuth(); // setIsAuthenticated 추가
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); // 로그아웃 요청
+      setIsAuthenticated(false); // 클라이언트 상태 초기화
+    } catch (error) {
+      alert(error.message); // 에러 메시지 표시
+    }
+  };
 
   return (
     <header className="header bg-white shadow-sm">
@@ -69,9 +79,12 @@ const Header = () => {
                   </Link>
                 </>
               ) : (
-                <ButtonComponent className="btn btn-danger" onClick={logout}>
-                  로그아웃
-                </ButtonComponent>
+                <>
+                  <span className="me-3">환영합니다!</span>
+                  <ButtonComponent className="btn btn-danger" onClick={handleLogout}>
+                    로그아웃
+                  </ButtonComponent>
+                </>
               )}
             </div>
           </div>
@@ -79,7 +92,7 @@ const Header = () => {
       </nav>
 
       {/* 로그인 모달 */}
-      <LoginModal onLogin={login} />
+      <LoginModal />
     </header>
   );
 };

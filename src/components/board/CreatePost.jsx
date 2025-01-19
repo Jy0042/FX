@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Uploader from './Uploader';
+import { createPost } from '../../utils/api';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
@@ -29,13 +30,7 @@ const CreatePost = () => {
     console.log('title', title);
     console.log('content', content);
 
-    const res = await fetch(`http://localhost:3000/api/v1/posts`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, content }),
-    });
+    const res = await createPost(title, content, null);
 
     console.log('리스폰스', res);
 
@@ -50,7 +45,7 @@ const CreatePost = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4">
+    <form onSubmit={handleSubmit} className="container mb-4">
       {errorMessage && <p className="mb-2 text-sm">{errorMessage}</p>}
       <input
         type="text"

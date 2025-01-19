@@ -14,12 +14,12 @@ import usersRouter from './routes/usersRouter.js';
 import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
 import commentsRouter from './routes/commentsRouter.js';
-import repliesRouter from './routes/repliesRouter.js';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-// const debugLog = new debug('log');
-// const debugError = new debug('error');
+const debugLog = new debug('log');
+const debugError = new debug('error');
+const debugDb = new debug('db');
 
 // Middleware
 if (process.env.NODE_ENV === 'development') {
@@ -27,26 +27,25 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.json());
-
 app.use(
   session({
     secret: 'kobook2-temporary-key',
     resave: false,
     saveUninitialized: false,
+    rolling: true, // 사용자의 활동시 세션과 SID(SessionID) 쿠키의 만료 시간 갱신
     cookie: {
-      httpOnly: true,
-      secure: false, // HTTPS가 아닌 경우 false로 설정
-      maxAge: 60000, // 세션 유지 시간
+      httpOnly: true, // 클라이언트 측 JS가 쿠키에 접근하지 못하도록 하여, XSS 공격 예방
+      secure: false, // HTTPS에서만 쿠키 전송 허용 (보통 개발 환경은 HTTP) false(기본값)로 명시
+      maxAge: 24 * 60 * 60 * 1000, // SID 쿠키 유지 시간: 1일 (기본 단위: ms(밀리세컨드))
     },
   })
 );
-
 app.use(
   cors({
-    origin: 'http://localhost:5173', // 프론트엔드 주소
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용 메서드
-    allowedHeaders: ['Content-Type', 'Authorization'], // 허용 헤더
-    credentials: true, // 쿠키 허용
+    origin: 'http://localhost:5173', // 프론트엔드의 주소
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
+    allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
+    credentials: true, // 쿠키를 포함한 요청 허용
   })
 );
 
@@ -57,17 +56,16 @@ app.use(
 
 // Routing
 // Client-side Routing은 React Router에게 위임
-// 배포시, 빌드된 FE React 정적 파일을 반환 (Express 서버 단독 실행시)
+// 배포시, 빌드된 FE React 정적 파일을 반환 (React 서버 없이 Express 서버 단독 실행시)
 app.get('/', (req, res) => {
   res.sendFile(path.join(import.meta.dirname, 'index.html'));
 });
 
 app.use('/api/v1/fx', fxRouter); // 환율 정보
 app.use('/api/v1/users', usersRouter); // 회원 정보
-app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 로그아웃, 소셜로그인)
+app.use('/api/v1/auth', authRouter); // 인증 정보 (로그인, 로그아웃, 로그인(세션) 확인, 소셜로그인)
 app.use('/api/v1/posts', postsRouter); // 커뮤니티 게시판 게시글
 app.use('/api/v1/comments', commentsRouter); // 게시글에 대한 댓글
-app.use('/api/v1/replies', repliesRouter); // 댓글에 대한 답글
 
 app.use((req, res, next) => {
   const error = new Error('Not Found');
@@ -88,19 +86,37 @@ const server = app.listen(PORT, () => {
   console.log(`F(x).com server is running on http://localhost:${PORT}`);
 });
 
+// 서버 종료 처리
 const shutDown = async () => {
+  // console.log('Shutting down F(x).com server...');
   console.log('Shutting down F(x).com server...');
+
+  // 1. Express Server - 새로운 연결(connection) 중단 + 요청을 보내지 않거나 응답을 기다리는 모든 연결 종료
+  // DB 커넥션을 요청한 HTTP 요청을 모두 종료하기 전에 우선 실행)
+  server.close(() => {
+    console.log('F(x).com server closed!');
+  });
+
+  // Express Server의 모든 HTTP(S) 커넥션 닫기 (Active 상태 포함)
+  // race condition을 예방하기 위해서 server.close() 다음에 호출할 것을 권장
+  server.closeAllConnections();
+
+  // 2. MariaDB Connection Pool 종료 (Resource 반환)
   try {
-    await dbPool.end(); // MariaDB Connection Pool 종료 (Resource 반환)
+    await dbPool.end();
     console.log('MariaDB Connection Pool closed');
   } catch (err) {
     console.log('Error closing MariaDB connection pool!');
   }
-  server.close(() => {
-    console.log('F(x).com server closed!');
-    process.exit(0);
-  });
+
+  // 3. Express Server Process 종료
+  process.exit(0);
 };
 
 process.on('SIGINT', shutDown); // Ctrl + C로 서버를 중단한 경우
 process.on('SIGTERM', shutDown); // Kill command로 "
+process.on('uncaughtException', (err, origin) => {
+  // uncaughtException handling
+  console.log(`Uncaught exception: ${err}, Exception origin: ${origin}`);
+  // shutDown();
+});

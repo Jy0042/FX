@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { loginUser } from '../../utils/api';
 import ButtonComponent from '../common/ButtonComponent'; // 커스텀 버튼 컴포넌트 가져오기
+import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../utils/api';
+import useAuth from '../../hooks/useAuth';
 
-const LoginModal = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginModal = () => {
+  const [email, setEmail] = useState('admin@admin.com');
+  const [password, setPassword] = useState('admin');
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate(); // useNavigate 훅 사용
+  const { setIsAuthenticated } = useAuth(); // AuthContext의 setIsAuthenticated 함수 가져오기
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const loginData = await loginUser({ email, password, rememberMe });
-      onLogin(loginData); // 로그인 성공 데이터 전달
-      alert('로그인 성공!');
+      setIsAuthenticated(true); // 로그인 상태 업데이트
+
+      // 모달 닫기
+      const modalElement = document.getElementById('loginModal');
+      const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
+      modalInstance.hide();
+
+      navigate('/'); // 메인 페이지로 이동
     } catch (error) {
       alert(error.message); // 에러 메시지 표시
     }
