@@ -14,6 +14,9 @@ Content-Type: application/json
 ### 즐겨찾는 환율 쌍 조회
 GET http://localhost:3000/api/v1/fx/users/26/user-currency-pair
 
+### 환율 히스토리 조회
+GET http://localhost:3000/api/v1/fx/history?source=USD&target=KRW
+
 
 ### 회원 가입 (단위 테스트 완료)
 POST http://localhost:3000/api/v1/users

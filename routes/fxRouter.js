@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import debug from 'debug';
+// import dbPool, { getDBConnection } from './db.js';
 import dbPool from './db.js';
 
 const debugLog = new debug('log');
@@ -50,7 +51,8 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
   const newCurrencyPairs = req.body;
   try {
     const currencyMapper = {};
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
 
     // 아래 쿼리는 [ { currency_code: 'USD', currency_id: 1 }, ~ 후략 ~ ] 형태의 객체 '배열'을 반환
     const rows = await conn.query(`
@@ -140,7 +142,6 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
       res.status(404).json({
         message: '즐겨찾는 환율 쌍이 저장된 게 없습니다.',
       });
-
     }
     // } else {
     //   res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
@@ -160,36 +161,49 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
 
 // 환율 히스토리
 router.get('/history', async (req, res) => {
-  const { from, to } = req.query;
+  const { source, target } = req.query;
+  debugLog('req.query:', req.query);
   try {
-    // 히스토리 API는 제공하는 곳이 없음
-    // 일정 기간의 환율 정보를 저장할 DB 스키마 구성 → 테이블 생성 →
-    // Web에서 KRW 과거 환율을 엑셀 등으로 받아서 DB에 직접 입력
-    // /history 엔드포인트에서는 DB 정보 반환
-    if (fxHistory) {
-      console.log('GET /history > try > if');
-      res.status(200).json({ fxHistory });
+    conn = await dbPool.getConnection();
+    const fxHistory = await conn.query(`
+        SELECT
+          s.currency_code AS source_currency_code,
+          t.currency_code AS target_currency_code,
+          h.fx_rate,
+          h.date
+        FROM fx_rate_history h
+        JOIN available_currencies s ON h.source_id = s.currency_id
+        JOIN available_currencies t ON h.target_id = t.currency_id
+        WHERE s.currency_code = ?
+        AND t.currency_code = ?
+        ORDER BY h.date ASC;
+        `, [source, target]);
+    // 날짜 범위 지정? 1년치도 휴일 제외하면 250일 정도로 많지 않으니 일단 전부 전송
+    // h.date BETWEEN ?
+    debugLog('fxHistory:', fxHistory);
+    if (fxHistory.length > 0) {
+      res.status(200).json({
+        message: '환율 히스토리 조회가 완료되었습니다.',
+        fxHistory
+      });
     } else {
-      console.log('GET /history > try > else');
-      res.status(404).json({ message: `환율 히스토리가 존재하지 않습니다.` });
+      res.status(404).json({
+        message: '환율 히스토리가 저장된 게 없습니다.',
+      });
     }
+    // } else {
+    //   res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
+    // }
   } catch (error) {
-    // console.log(error);
-    if (error.response) {
-      // The request was made and the server responded with a status code that falls out of the range of 2xx
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and one of http.ClientRequest in node.js
-      console.log(error.request);
+    if (error.code === 'ER_CONNECTION_TIMEOUT') {
+      res.status(500).json({ message: 'Connection Timeout' });
     } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
+      res.status(500).json({ message: 'Unknown Error' });
     }
-    console.log(error.config);
-    res.status(500).send();
+  } finally {
+    if (conn) {
+      await conn.release();
+    }
   }
 });
 
