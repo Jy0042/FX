@@ -28,7 +28,7 @@ export async function getUser(userId) {
     console.log(error);
   } finally {
     if (conn) {
-      conn.release(); // 커넥션 풀에 반환
+      await conn.release(); // 커넥션 풀에 반환
     }
   }
 }
@@ -56,15 +56,16 @@ router.post('/', async (req, res) => {
       res.status(400).json({
         message: '이미 가입한 회원입니다.',
       });
-    } else if (error.code === 'ER_CONNECTION_TIMEOUT') {
+    } else if (error.code === 45012 || error.code == 45028) {
+      // if 'ER_CONNECTION_TIMEOUT' OR 'ER_GET_CONNECTION_TIMEOUT'
       res.status(500).json({ message: 'Connection Timeout' });
     } else {
-      console.log('암호화 실패', error);
+      console.log('암호화 실패', error.stack);
       res.status(400).json({ message: '암호화 실패. 문자, 숫자, 기호, 특수문자만 입력해주세요' });
     }
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -124,7 +125,7 @@ router.patch('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });
@@ -153,7 +154,7 @@ router.delete('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      conn.release();
+      await conn.release();
     }
   }
 });

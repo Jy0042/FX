@@ -18,8 +18,9 @@ import repliesRouter from './routes/repliesRouter.js';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-// const debugLog = new debug('log');
-// const debugError = new debug('error');
+const debugLog = new debug('log');
+const debugError = new debug('error');
+const debugDb = new debug('db');
 
 // Middleware
 if (process.env.NODE_ENV === 'development') {
@@ -82,19 +83,36 @@ const server = app.listen(PORT, () => {
   console.log(`F(x).com server is running on http://localhost:${PORT}`);
 });
 
+// 서버 종료 처리
 const shutDown = async () => {
-  console.log('Shutting down F(x).com server...');
-  try {
-    await dbPool.end(); // MariaDB Connection Pool 종료 (Resource 반환)
-    console.log('MariaDB Connection Pool closed');
-  } catch (err) {
-    console.log('Error closing MariaDB connection pool!');
-  }
+  // console.log('Shutting down F(x).com server...');
+  debugLog('Shutting down F(x).com server...');
+
+  // 1. Express Server - 새로운 연결(connection) 중단 + 요청을 보내지 않거나 응답을 기다리는 모든 연결 종료
+  // DB 커넥션을 요청한 HTTP 요청을 모두 종료하기 전에 우선 실행)
   server.close(() => {
-    console.log('F(x).com server closed!');
-    process.exit(0);
+    debugLog('F(x).com server closed!');
   });
+
+  // Express Server의 모든 HTTP(S) 커넥션 닫기 (Active 상태 포함)
+  // race condition을 예방하기 위해서 server.close() 다음에 호출할 것을 권장
+  server.closeAllConnections();
+
+  // 2. MariaDB Connection Pool 종료 (Resource 반환)
+  try {
+    await dbPool.end();
+    debugDb('MariaDB Connection Pool closed');
+  } catch (err) {
+    debugDb('Error closing MariaDB connection pool!');
+  }
+
+  // 3. Express Server Process 종료
+  process.exit(0);
 };
 
 process.on('SIGINT', shutDown); // Ctrl + C로 서버를 중단한 경우
 process.on('SIGTERM', shutDown); // Kill command로 "
+process.on('uncaughtException', () => { // uncaughtException handling
+  debugError('Unhandled error:', err);
+  shutDown();
+});
