@@ -13,7 +13,7 @@ const ReadPosts = () => {
   // const [content, setContent] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(3); // 페이지 당 보여질 포스트 수
+  const [postsPerPage] = useState(5); // 페이지 당 보여질 포스트 수
 
   const [isLoading, setIsLoading] = useState(false);
   const [postArr, setPostArr] = useState([]);
@@ -79,7 +79,7 @@ const ReadPosts = () => {
 
   return (
     <div>
-      <span className="input-group"></span>
+      <span className="input-group-text"></span>
       <ul
         className="pagination"
         style={{
@@ -141,7 +141,7 @@ const ReadPosts = () => {
           </button>
         </li>
       </ul>
-      <div className="card">
+      <ul>
         {/* {currentPosts.map((post) => ( */}
         {(currentPosts || []).map((post) => (
           <div onClick={() => handleClick(post.post_id)} style={{ cursor: 'pointer' }}>
@@ -150,7 +150,7 @@ const ReadPosts = () => {
             <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
           </div>
         ))}
-      </div>
+      </ul>
       <h1 className="color:white;" ref={ref}>
         load data
       </h1>

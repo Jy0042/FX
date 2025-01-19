@@ -5,8 +5,8 @@ const SearchForm = () => {
   const [query, setQuery] = useState('');
 
   return (
-    <div className="container">
-      <div className="input-group d-flex justify-content-center">
+    <div>
+      <div className="input-group ">
         <input
           id="searchInput"
           type="text"
