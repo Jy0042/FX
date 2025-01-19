@@ -16,14 +16,23 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 async function getPost(postId) {
   try {
     conn = await dbPool.getConnection();
-    const [post] = await conn.query(
-      `
-      SELECT *
-      FROM posts
+    const [post] = await conn.query(`
+      SELECT
+            p.post_id,
+            p.author,
+            u.nickname,
+            p.title,
+            p.content,
+            p.view_count,
+            p.like_count,
+            p.comment_count,
+            DATE_FORMAT(created_at, "%X-%m-%d %H:%i:%s") AS created_at,
+            DATE_FORMAT(updated_at, "%X-%m-%d %H:%i:%s") AS updated_at,
+            p.image
+      FROM posts p
+      JOIN users u ON p.author = u.user_id
       WHERE post_id = ?
-    `,
-      [postId]
-    );
+    `, [postId]);
     return post;
   } catch (error) {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
@@ -42,13 +51,10 @@ router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;
   try {
     conn = await dbPool.getConnection();
-    const result = await conn.query(
-      `
+    const result = await conn.query(`
       INSERT INTO posts (author, title, content, image)
       VALUES (?, ?, ?, ?);
-    `,
-      [author, title, content, image]
-    );
+    `, [author, title, content, image]);
     if (result.affectedRows === 1) {
       res.status(201).json({
         message: '게시글 저장이 완료되었습니다.',
@@ -104,15 +110,12 @@ router.put('/:id', async (req, res) => {
     const { user } = req.session;
     // if (user?.user_id) {
     conn = await dbPool.getConnection();
-    const result = await conn.query(
-      `
+    const result = await conn.query(`
       UPDATE posts
       SET title = ?,
           content = ?
       WHERE post_id = ?
-    `,
-      [title, content, postId]
-    );
+    `, [title, content, postId]);
     if (result.affectedRows === 1) {
       res.status(200).json({
         message: '게시글 수정이 완료되었습니다.',
@@ -140,13 +143,10 @@ router.delete('/:id', async (req, res) => {
     const { user } = req.session;
     // if (user?.user_id) {
     conn = await dbPool.getConnection();
-    const result = await conn.query(
-      `
+    const result = await conn.query(`
       DELETE FROM posts
       WHERE post_id = ?
-    `,
-      [postId]
-    );
+    `, [postId]);
     if (result.affectedRows === 1) {
       res.status(200).json({
         message: '게시글 삭제가 완료되었습니다.',
@@ -176,9 +176,21 @@ router.get('/', async (req, res) => {
   try {
     conn = await dbPool.getConnection();
     const posts = await conn.query(`
-        SELECT *
-        FROM posts
-      `);
+      SELECT
+            p.post_id,
+            p.author,
+            u.nickname,
+            p.title,
+            p.content,
+            p.view_count,
+            p.like_count,
+            p.comment_count,
+            DATE_FORMAT(created_at, "%X-%m-%d %H:%i:%s") AS created_at,
+            DATE_FORMAT(updated_at, "%X-%m-%d %H:%i:%s") AS updated_at,
+            p.image
+      FROM posts p
+      JOIN users u ON p.author = u.user_id
+    `);
     if (posts) {
       res.status(200).json({
         message: '게시글 전체 (게시판) 조회가 완료되었습니다.',

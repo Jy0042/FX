@@ -1,5 +1,4 @@
 import express from 'express';
-// import session from 'express-session';
 import bcrypt from 'bcrypt';
 import dbPool from './db.js';
 
@@ -16,15 +15,11 @@ async function login(reqBody) {
 
   try {
     conn = await dbPool.getConnection();
-    const [user] = await conn.query(
-      `
+    const [user] = await conn.query(`
       SELECT user_id, email, password AS passwordHash, nickname, profile_image
       FROM users
       WHERE email = ?
-    `,
-      [email]
-    );
-    console.log('user:', user);
+    `, [email]);
     if (user) {
       const match = await bcrypt.compare(password, user.passwordHash);
       console.log('match:', match);
