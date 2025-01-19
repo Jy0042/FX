@@ -2,6 +2,19 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.development' });
 import mariadb from 'mariadb';
 
+// MariaDB Connection 생성
+/* 
+export async function getDBConnection() {
+  return await mariadb.createConnection({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+  });
+  // return conn;
+}
+ */
 // MariaDB Connection Pool 생성
 const pool = mariadb.createPool({
   host: process.env.DB_HOST,
