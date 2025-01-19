@@ -1,9 +1,10 @@
 {
   "name": "fx",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
+    "be": "set DEBUG=db,log,error & node app.js",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
