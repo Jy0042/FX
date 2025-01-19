@@ -133,17 +133,16 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
       ORDER BY sort_order;
     `, [userId]);
     debugLog('userCurrencyPairs:', userCurrencyPairs);
-    // if (userCurrencyPairs.length > 0) {
-    res.status(200).json({
-      message: '즐겨찾는 환율 쌍 조회가 완료되었습니다.',
-      userCurrencyPairs
-    });
-    // } else {
-    // res.status(404).json({
-    //   message: '즐겨찾는 환율 쌍이 저장된 게 없습니다.',
-    // });
-
-    // }
+    if (userCurrencyPairs.length > 0) {
+      res.status(200).json({
+        message: '즐겨찾는 환율 쌍 조회가 완료되었습니다.',
+        userCurrencyPairs
+      });
+    } else {
+      res.status(404).json({
+        message: '즐겨찾는 환율 쌍이 저장된 게 없습니다.',
+      });
+    }
     // } else {
     //   res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
     // }
