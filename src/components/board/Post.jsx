@@ -5,8 +5,13 @@ import { LuImageOff } from 'react-icons/lu';
 const Post = ({ post }) => {
   return (
     <div
-      className="row align-items-start  bg-dark text-light p-3"
-      style={{ height: '250px', width: '1000px', borderRadius: '8px' }}
+      className="row align-items-start  bg-light text-dark p-3"
+      style={{
+        height: '250px',
+        width: '1000px',
+        borderRadius: '8px',
+        border: 'groove',
+      }}
     >
       {/* 왼쪽: 제목, 내용, 작성자, 좋아요/댓글 */}
       <div

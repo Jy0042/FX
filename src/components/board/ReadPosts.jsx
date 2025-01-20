@@ -27,7 +27,9 @@ const ReadPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await readPosts();
-        setPosts(res);
+        const sortedPosts = res.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        //작성시간순으로 내림차순 정렬(최신글이 맨 위로)
+        setPosts(sortedPosts);
 
         if (!res.ok) {
           throw new Error('Failed to fetch posts');
@@ -40,7 +42,6 @@ const ReadPosts = () => {
     };
     fetchPosts();
     // console.log('화면에 있습니까?', inView);
-
     // paginate(currentPage + 1);
   }, []);
   // }, [inView]);
@@ -79,7 +80,6 @@ const ReadPosts = () => {
 
   return (
     <div>
-      
       <ul>
         {/* {currentPosts.map((post) => ( */}
         {(currentPosts || []).map((post) => (
