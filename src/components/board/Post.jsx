@@ -53,7 +53,7 @@ const Post = ({ post }) => {
           {/* 우선 현재시간 표시 작성시간 기준으로 ~시간전으로 표시 예정 */}
         </div>
 
-        <div className="card-footer d-flex align-items-center">
+        <div className="d-flex align-items-center">
           <img src={good} alt="좋아요 아이콘" className="me-1" />
           <span className="me-3">{post.like_count}</span>
           <img src={review} alt="댓글 아이콘" className="me-1" />
