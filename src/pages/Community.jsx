@@ -20,7 +20,7 @@ const Community = () => {
         <SearchForm />
       </div>
       {/* 글쓰기 버튼 */}
-      <div className="d-flex justify-content-end text-center m-4">
+      <div className="d-flex justify-content-end text-center  mb-4">
         <button
           className="btn btn-primary"
           onClick={toWritePage}
@@ -30,7 +30,7 @@ const Community = () => {
         </button>
       </div>
       {/* 게시글 리스트 */}
-      <div className="mb-4">
+      <div className="d-flex justify-content-center mb-4">
         <ReadPosts />
       </div>
     </div>

@@ -25,7 +25,7 @@ const ReadPost = () => {
         const data = await readPost(postId); // Use readPosts to fetch post data
         console.log('fetch후 data', data);
         console.log('fetch후 image', data.image);
-      
+
         // Buffer 데이터를 Base64로 변환
         // if (data.image && data.image.data) {
         //   const base64Image = `data:image/png;base64,${btoa(
@@ -59,6 +59,13 @@ const ReadPost = () => {
     <div className="container my-4">
       <div className="card">
         <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <button onClick={() => setIsEditing(true)}>목록</button>
+            <div className="d-flex">
+              <DeletePost post={post} />
+              <button onClick={() => setIsEditing(true)}>수정</button>
+            </div>
+          </div>
           {isEditing ? (
             <div>
               수정중
@@ -86,7 +93,7 @@ const ReadPost = () => {
           ) : (
             <div>
               <h1 className="card-title">{post.title}</h1>
-              <div className="d-flex justify-content-center align-items-center mb-3">
+              <div className="d-flex justify-content-end align-items-center mb-3">
                 <small className="text-muted">
                   <strong>{post.author}</strong> &middot; {post.updated_at} &middot; Guidelines
                 </small>
@@ -129,11 +136,6 @@ const ReadPost = () => {
               </div>
             </div>
           )}
-        </div>
-
-        <div className="col-md-4 d-flex justify-content-center">
-          <DeletePost post={post} />
-          <button onClick={() => setIsEditing(true)}>수정</button>
         </div>
       </div>
     </div>
