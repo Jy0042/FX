@@ -79,6 +79,24 @@ const ReadPosts = () => {
 
   return (
     <div>
+      
+      <ul>
+        {/* {currentPosts.map((post) => ( */}
+        {(currentPosts || []).map((post) => (
+          <div
+            key={post.post_id}
+            onClick={() => handleClick(post.post_id)}
+            style={{ cursor: 'pointer' }}
+          >
+            <Post post={post} />
+            {/* <Post post={post} /> */}
+            <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
+          </div>
+        ))}
+      </ul>
+      <h1 className="color:white;" ref={ref}>
+        load data
+      </h1>
       <span className="input-group-text"></span>
       <ul
         className="pagination"
@@ -141,23 +159,6 @@ const ReadPosts = () => {
           </button>
         </li>
       </ul>
-      <ul>
-        {/* {currentPosts.map((post) => ( */}
-        {(currentPosts || []).map((post) => (
-          <div
-            key={post.post_id}
-            onClick={() => handleClick(post.post_id)}
-            style={{ cursor: 'pointer' }}
-          >
-            <Post post={post} />
-            {/* <Post post={post} /> */}
-            <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
-          </div>
-        ))}
-      </ul>
-      <h1 className="color:white;" ref={ref}>
-        load data
-      </h1>
     </div>
   );
 };

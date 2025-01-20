@@ -6,7 +6,7 @@ const SearchForm = () => {
 
   return (
     <div>
-      <div className="input-group ">
+      <div className="input-group d-flex justify-content-center">
         <input
           id="searchInput"
           type="text"
