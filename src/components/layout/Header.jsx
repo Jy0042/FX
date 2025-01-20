@@ -1,13 +1,15 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LoginModal from './LoginModal';
 import ButtonComponent from '../common/ButtonComponent';
 import useAuth from '../../hooks/useAuth';
-import { logoutUser } from '../../utils/api';
+import { logoutUser, getRate, readPosts } from '../../utils/api'; // 필요한 API 요청 함수 임포트
+import UserMenu from '../common/UserMenu';
 
 const Header = () => {
   const location = useLocation();
-  const { isAuthenticated, setIsAuthenticated } = useAuth(); // setIsAuthenticated 추가
+  const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated, userId } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -18,14 +20,41 @@ const Header = () => {
     }
   };
 
+  const handleCurrencyCalculatorClick = async () => {
+    try {
+      // 환율 계산 API 요청
+      const response = await getRate('USD', 'KRW', 100); // 예시 데이터
+      console.log('환율 계산 결과:', response);
+      navigate('/'); // 환율 계산기 페이지로 이동
+    } catch (error) {
+      console.error('환율 계산 중 오류가 발생했습니다:', error);
+      alert('환율 계산을 불러오는 데 실패했습니다.');
+    }
+  };
+
+  const handleCommunityClick = async () => {
+    try {
+      // 커뮤니티 게시글 API 요청
+      const response = await readPosts(); // 게시글 목록 불러오기
+      console.log('커뮤니티 게시글:', response);
+      navigate('/community'); // 커뮤니티 페이지로 이동
+    } catch (error) {
+      console.error('커뮤니티 데이터를 불러오는 중 오류가 발생했습니다:', error);
+      alert('커뮤니티를 불러오는 데 실패했습니다.');
+    }
+  };
+
   return (
     <header className="header bg-white shadow-sm">
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           {/* 로고 */}
-          <Link className="navbar-brand fw-bold fs-4" to="/">
+          <button
+            className="navbar-brand fw-bold fs-4 btn btn-link p-0 text-decoration-none"
+            onClick={() => navigate('/')}
+          >
             F(X)
-          </Link>
+          </button>
 
           {/* 토글 버튼 */}
           <button
@@ -44,26 +73,28 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <Link
-                  className={`nav-link ${location.pathname === '/' ? 'active fw-bold' : ''}`}
-                  to="/"
+                <button
+                  className={`nav-link btn btn-link ${
+                    location.pathname === '/' ? 'active fw-bold' : ''
+                  }`}
+                  onClick={handleCurrencyCalculatorClick}
                 >
                   환율 계산기
-                </Link>
+                </button>
               </li>
               <li className="nav-item">
-                <Link
-                  className={`nav-link ${
+                <button
+                  className={`nav-link btn btn-link ${
                     location.pathname === '/community' ? 'active fw-bold' : ''
                   }`}
-                  to="/community"
+                  onClick={handleCommunityClick}
                 >
                   커뮤니티
-                </Link>
+                </button>
               </li>
             </ul>
 
-            {/* 인증 버튼 */}
+            {/* 인증 버튼 또는 유저 메뉴 */}
             <div className="d-flex align-items-center">
               {!isAuthenticated ? (
                 <>
@@ -74,17 +105,15 @@ const Header = () => {
                   >
                     로그인
                   </ButtonComponent>
-                  <Link to="/register">
-                    <ButtonComponent className="btn btn-primary">회원가입</ButtonComponent>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <span className="me-3">환영합니다!</span>
-                  <ButtonComponent className="btn btn-danger" onClick={handleLogout}>
-                    로그아웃
+                  <ButtonComponent
+                    className="btn btn-primary"
+                    onClick={() => navigate('/register')}
+                  >
+                    회원가입
                   </ButtonComponent>
                 </>
+              ) : (
+                <UserMenu handleLogout={handleLogout} userId={userId} />
               )}
             </div>
           </div>
