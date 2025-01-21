@@ -45,14 +45,17 @@ router.get('/convert', async (req, res) => {
   }
 });
 
-// 즐겨찾는 환율 쌍 저장
-router.post('/users/:userId/user-currency-pair', async (req, res) => {
+// 즐겨찾는 환율 세트 저장
+router.put('/users/:userId/user-currency-pair', async (req, res) => {
   const { userId } = req.params;
+  debugLog(userId);
   const newCurrencyPairs = req.body;
+  debugLog(newCurrencyPairs);
   try {
     const currencyMapper = {};
-    // conn = await dbPool.getConnection();
-    conn = await getDBConnection();
+    conn = await dbPool.getConnection();
+    // conn = await getDBConnection();
+    debugDb('커넥션 얻어오기 성공');
 
     // 아래 쿼리는 [ { currency_code: 'USD', currency_id: 1 }, ~ 후략 ~ ] 형태의 객체 '배열'을 반환
     const rows = await conn.query(`
@@ -60,9 +63,11 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
         FROM available_currencies
         ORDER BY rank;
       `);
+    debugDb('통화 객체 배열 반환 성공');
 
     // 1. { USD: 1, EUR: 2, ~ 후략 ~ } 형태의 매핑 객체 리터럴 생성
     rows.map((row) => currencyMapper[row.currency_code] = row.currency_id);
+    debugDb('매핑 객체 리터럴 생성 성공');
 
     // 2. 위 매핑 객체 리터럴을 이용하여, source, target 통화 코드 (from, to)를
     //    DB 테이블 컬럼에 맞는 currency_id로 변환
@@ -77,29 +82,40 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
       }
       return tmpArray;
     });
+    debugDb('매핑 작업 완료 (예. USD → 1)');
 
+    const deleteQuery = 'DELETE FROM user_currency_pair where user_id = ?';
     const insertQuery = `
       INSERT INTO user_currency_pair (user_id, source_id, target_id, sort_order, amount, alert_condition)
       VALUES (?, ?, ?, ?, ?, ?)
-    `;
+    `
     await conn.beginTransaction(); // 새 트랜잭션 시작
-    const result = await conn.batch(insertQuery, convertedCurrencyPairs);
-    await conn.commit(); // batch insert 작업 전부 정상 처리되었으면 트랜잭션 커밋
+    debugDb('Transaction 시작');
+    // 회원이 예전에 저장해놓은 환율 세트 전부 삭제
+    const deleteResult = await conn.query(deleteQuery, [userId]);
+    debugDb('즐겨찾는 환율 세트 삭제 완료');
+    // 회원이 새로 저장한 환율 세트 일괄 추가
+    const insertResult = await conn.batch(insertQuery, convertedCurrencyPairs);
+    debugDb('즐겨찾는 환율 세트 일괄 입력 완료');
+    debugDb('insertResult:', insertResult);
+    await conn.commit(); // delete → batch insert 작업 전부 정상 처리되었으면 트랜잭션 커밋
+    debugDb('Transaction Committed!');
 
-    if (result.affectedRows === newCurrencyPairs.length) {
+    if (insertResult.affectedRows === newCurrencyPairs.length) {
       res.status(201).json({
-        message: '즐겨찾는 환율 쌍 저장이 완료되었습니다.',
+        message: '즐겨찾는 환율 세트 저장이 완료되었습니다.',
       });
     } else {
       res.status(400).json({
-        message: '즐겨찾는 환율 쌍 저장이 제대로 완료되지 않았습니다. 관리자에게 문의하세요.',
+        message: '즐겨찾는 환율 세트가 제대로 저장되지 않았습니다. 관리자에게 문의하세요.',
       });
     }
   } catch (error) {
     conn.rollback(); // 오류가 발생했으면, 위 트랜잭션 롤백
+    debugDb('오류 발생해서 롤백!');
     if (error.code === 'ER_DUP_ENTRY') {
       res.status(400).json({
-        message: '이미 저장하신 환율 쌍입니다.',
+        message: '이미 저장하신 환율 세트입니다.',
       });
     } else if (error.code === 'ER_CONNECTION_TIMEOUT') {
       res.status(500).json({ message: 'Connection Timeout' });
@@ -113,7 +129,7 @@ router.post('/users/:userId/user-currency-pair', async (req, res) => {
   }
 });
 
-// 즐겨찾는 환율 쌍 조회 (세션 제대로 작동하는 거 확인되면 라우터 변경 예정)
+// 즐겨찾는 환율 세트 조회 (세션 제대로 작동하는 거 확인되면 라우터 변경 예정)
 router.get('/users/:userId/user-currency-pair', async (req, res) => {
   // router.get('/user-currency-pair ', (req, res) => {
   const { userId } = req.params;
@@ -135,12 +151,12 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
     debugLog('userCurrencyPairs:', userCurrencyPairs);
     if (userCurrencyPairs.length > 0) {
       res.status(200).json({
-        message: '즐겨찾는 환율 쌍 조회가 완료되었습니다.',
+        message: '즐겨찾는 환율 세트 조회가 완료되었습니다.',
         userCurrencyPairs
       });
     } else {
       res.status(404).json({
-        message: '즐겨찾는 환율 쌍이 저장된 게 없습니다.',
+        message: '즐겨찾는 환율 세트가 저장된 게 없습니다.',
       });
     }
     // } else {
@@ -170,7 +186,7 @@ router.get('/history', async (req, res) => {
           s.currency_code AS source_currency_code,
           t.currency_code AS target_currency_code,
           h.fx_rate,
-          h.date
+          DATE_FORMAT(h.date, "%X-%m-%d") AS date
         FROM fx_rate_history h
         JOIN available_currencies s ON h.source_id = s.currency_id
         JOIN available_currencies t ON h.target_id = t.currency_id
@@ -192,7 +208,7 @@ router.get('/history', async (req, res) => {
       });
     }
     // } else {
-    //   res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
+    //   res.status(404).json({ message: '환율 정보가 존재하지 않습니다.' });
     // }
   } catch (error) {
     if (error.code === 'ER_CONNECTION_TIMEOUT') {
