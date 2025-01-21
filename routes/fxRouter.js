@@ -11,8 +11,43 @@ const debugDb = new debug('db');
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
-// 세션 정보를 읽어와서 회원만 즐겨찾는 환율 쌍 저장 가능하게 해야 함
+// 세션 정보를 읽어와서 회원만 즐겨찾는 환율 세트 저장 가능하게 해야 함
 // 로그인 기능 제작 전이라서 일단 임의 사용자 사용
+
+// 통화 목록
+router.get('/currencies', async (req, res) => {
+  try {
+    conn = await dbPool.getConnection();
+    const rows = await conn.query(`
+      SELECT currency_code AS currencyCode, currency
+      FROM available_currencies
+      ORDER BY rank;
+    `);
+    debugDb(rows);
+    // 통화 코드, 통화명, 국기 아이콘 URL
+    // const availableCurrencies = rows.map(([currency_code, currency]) => ({
+    //   currency_code,
+    //   currency,
+    //   flag: `https://flagcdn.com/w40/${code.slice(0, 2).toLowerCase()}.png`,
+    // }));
+    const availableCurrencies = rows.map((row) => {
+      row.flagURL = `https://flagcdn.com/w40/${(row.currencyCode).slice(0, 2).toLowerCase()}.png`;
+      return row;
+    });
+    debugLog('availableCurrencies:', availableCurrencies);
+    if (!availableCurrencies || availableCurrencies.length === 0) {
+      res.status(404).json({ message: '통화 목록이 없습니다.' });
+    }
+    res.status(200).json(availableCurrencies);
+  } catch (error) {
+    console.error('통화 목록 조회 중 오류:', error.message);
+    res.status(500).json({ message: '통화 목록을 가져올 수 없습니다.' });
+  } finally {
+    if (conn) {
+      await conn.release();
+    }
+  }
+});
 
 // 환전 계산
 router.get('/convert', async (req, res) => {
@@ -135,6 +170,7 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
   const { userId } = req.params;
   try {
     conn = await dbPool.getConnection();
+    // 기준/목표 통화 코드, 정렬 순서, 알림 메일 발송을 위한 설정 금액과 조건(LT(<=) or GT(>=))
     const userCurrencyPairs = await conn.query(`
       SELECT
         s.currency_code AS source_currency_code,

@@ -1,3 +1,6 @@
+### 통화 목록
+GET http://localhost:3000/api/v1/fx/currencies
+
 ### 환전 (단위 테스트 완료)
 GET http://localhost:3000/api/v1/fx/convert?from=USD&amount=100&to=KRW
 
