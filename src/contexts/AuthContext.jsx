@@ -29,11 +29,25 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const verifySession = async () => {
+      // 로컬 스토리지에서 로그인 상태 확인
+      const storedAuth = localStorage.getItem('isAuthenticated') === 'true';
+      const storedUserId = localStorage.getItem('userId');
+
+      if (!storedAuth || !storedUserId) {
+        // 로그인 상태가 아닌 경우 초기화 및 로딩 완료 처리
+        setIsAuthenticated(false);
+        setUserId(null);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const response = await axios.get('/api/v1/auth', { withCredentials: true });
         setIsAuthenticated(response.data.isLoggedIn);
         setUserId(response.data.userId || null);
-      } catch {
+      } catch (error) {
+        // 세션이 유효하지 않으면 상태 초기화
+        console.error('세션 확인 중 오류 발생:', error);
         setIsAuthenticated(false);
         setUserId(null);
       } finally {
