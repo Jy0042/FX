@@ -6,15 +6,23 @@ import axios from 'axios';
 
 const UserMenu = ({ handleLogout, userId }) => {
   const [profileImage, setProfileImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (!userId) {
+      // userId가 없을 경우 useEffect 종료
+      return;
+    }
+
     const fetchUserData = async () => {
-      if (!userId) return; // userId가 없으면 요청하지 않음
+      setIsLoading(true);
       try {
         const response = await axios.get(`/api/v1/users/${userId}`);
-        setProfileImage(response.data.profileImage || null);
+        setProfileImage(response.data.profileImage || '/default-profile.png');
       } catch (error) {
         console.error('유저 데이터를 가져오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -26,14 +34,21 @@ const UserMenu = ({ handleLogout, userId }) => {
       <button className="btn btn-link text-dark p-0 me-3">
         <BsSearch size={20} />
       </button>
-
       <button className="btn btn-link text-dark p-0 me-3">
         <BsBell size={20} />
       </button>
-
       <Dropdown align="end">
         <Dropdown.Toggle as="div" className="d-flex align-items-center cursor-pointer">
-          {profileImage ? (
+          {isLoading ? (
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: '#f0f0f0',
+              }}
+            />
+          ) : profileImage ? (
             <img
               src={profileImage}
               alt="프로필"
@@ -44,7 +59,6 @@ const UserMenu = ({ handleLogout, userId }) => {
             <BsPersonCircle size={32} className="text-secondary" />
           )}
         </Dropdown.Toggle>
-
         <Dropdown.Menu>
           <Dropdown.Item as={Link} to="/profile">
             내 프로필
