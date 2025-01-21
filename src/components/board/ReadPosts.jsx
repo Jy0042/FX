@@ -8,6 +8,8 @@ const ReadPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 3;
 
