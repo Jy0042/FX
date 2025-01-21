@@ -6,18 +6,19 @@ import { useLocation } from 'react-router-dom';
 const ViewChart = () => {
   const [chartState, setChartState] = useState(true);
   const location = useLocation();
-  const [currency, setCurrency] = useState('USD/KRW'); //초기 환율값 USD/KRW
+  const params = new URLSearchParams(location.search);
+  let [currency, setCurrency] = useState(params.get('currency')); //초기 환율값 USD/KRW
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const initialCurrency = params.get('currency');
+    console.log('initialCurrency:', initialCurrency);
 
     // 초기 currency 값과 다를 때만 업데이트
     if (initialCurrency && initialCurrency !== currency) {
       setCurrency(initialCurrency);
+      console.log('초기 currency 값과 다를 때/업데이트');
     }
-    console.log('params:', params);
-    console.log('initialCurrency:', initialCurrency);
   }, [location.search]);
 
   const changeChart = () => {
@@ -40,7 +41,7 @@ const ViewChart = () => {
         </div>
       ) : (
         <div>
-          <Apex type={'bar'} />
+          <Apex type={'bar'} currency={currency} />
         </div>
       )}
       <div>

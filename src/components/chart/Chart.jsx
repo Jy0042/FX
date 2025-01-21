@@ -13,6 +13,7 @@ const Apex = ({ type, currency }) => {
       isFetching.current = true;
 
       try {
+        console.log('변경할 currency:', currency);
         const res = await readChartData(currency);
 
         if (!res || res.length === 0) {
