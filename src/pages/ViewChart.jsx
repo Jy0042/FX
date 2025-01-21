@@ -11,8 +11,10 @@ const ViewChart = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const initialCurrency = params.get('currency');
-    if (initialCurrency) {
-      setCurrency(initialCurrency); // Set currency from URL
+
+    // 초기 currency 값과 다를 때만 업데이트
+    if (initialCurrency && initialCurrency !== currency) {
+      setCurrency(initialCurrency);
     }
     console.log('params:', params);
     console.log('initialCurrency:', initialCurrency);
