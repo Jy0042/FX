@@ -15,11 +15,14 @@ async function login(reqBody) {
 
   try {
     conn = await dbPool.getConnection();
-    const [user] = await conn.query(`
+    const [user] = await conn.query(
+      `
       SELECT user_id, email, password AS passwordHash, nickname, profile_image
       FROM users
       WHERE email = ?
-    `, [email]);
+    `,
+      [email]
+    );
     if (user) {
       const match = await bcrypt.compare(password, user.passwordHash);
       console.log('match:', match);
@@ -65,7 +68,11 @@ router.post('/login', async (req, res) => {
       req.session.email = user.email;
       req.session.nickname = user.nickname; // Community 별명
       req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
-      return res.status(201).json({ isLoggedIn: true });
+      // 서버 응답 수정
+      return res.status(201).json({
+        isLoggedIn: true,
+        userId: user.user_id, // userId를 응답에 추가
+      });
     } else {
       // 입력 정보에 해당하는 회원 정보 없음
       return res.status(401).json({

@@ -1,11 +1,11 @@
 import React from 'react';
-import CurrencyConverter from '../converter/CurrencyConverter';
+import Converter from '../converter/Converter';
 import GuideSection from './GuideSection';
 
 const MainLayout = ({ children }) => {
   return (
     <div>
-      <CurrencyConverter />
+      <Converter />
       {children}
       <GuideSection />
     </div>

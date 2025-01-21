@@ -9,20 +9,14 @@ const UserMenu = ({ handleLogout, userId }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!userId) {
-      // userId가 없을 경우 useEffect 종료
-      return;
-    }
+    if (!userId) return;
 
     const fetchUserData = async () => {
-      setIsLoading(true);
       try {
-        const response = await axios.get(`/api/v1/users/${userId}`);
+        const response = await axios.get(`/api/v1/users/${userId}`, { withCredentials: true });
         setProfileImage(response.data.profileImage || '/default-profile.png');
       } catch (error) {
-        console.error('유저 데이터를 가져오는 중 오류가 발생했습니다:', error);
-      } finally {
-        setIsLoading(false);
+        console.error('유저 데이터 로드 실패:', error.message);
       }
     };
 
