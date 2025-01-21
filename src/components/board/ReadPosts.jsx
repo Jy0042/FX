@@ -9,8 +9,6 @@ const ReadPosts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
-  // const [title, setTitle] = useState(0);
-  // const [content, setContent] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(3); // 페이지 당 보여질 포스트 수

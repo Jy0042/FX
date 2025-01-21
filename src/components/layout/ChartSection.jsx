@@ -19,14 +19,15 @@ const ChartSection = () => {
 
   return (
     <div className="container">
-      <button onClick={changeChart}>변경</button>
+      {/* <button onClick={changeChart}>변경</button> */}
       <h1 className="card-title text-start mb-2">맞춤형 인기 환율 순위</h1>
       <div className="row">
         <div className="col-md-3">
           <ChangeData />
         </div>
         <div onClick={handleClick} className="col-md-9">
-          {chartState ? (
+          <Apex type={'line'} />
+          {/* {chartState ? (
             <div>
               <Apex type={'line'} />
             </div>
@@ -34,7 +35,7 @@ const ChartSection = () => {
             <div>
               <Apex type={'bar'} />
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
