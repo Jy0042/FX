@@ -1,6 +1,7 @@
-const ChangeData = () => {
+const ChangeData = (props) => {
   const exchange = (e) => {
     console.log('클릭', e.target.textContent);
+    props.exchangeRate(e.target.textContent);
   };
   return (
     <table className="table table-light border-success table-hover">

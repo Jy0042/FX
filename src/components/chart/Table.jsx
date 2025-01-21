@@ -63,13 +63,13 @@ const Table = () => {
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {exchange.map((item, index) => (
+          {/* {exchange.map((item, index) => (
             <tr key={index}>
               {headers.map((header) => (
                 <td key={header.value}>{item[header.value]}</td>
               ))}
             </tr>
-          ))}
+          ))} */}
         </tbody>
       </table>
     </div>
