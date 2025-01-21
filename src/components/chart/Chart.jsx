@@ -1,22 +1,45 @@
 import ReactApexChart from 'react-apexcharts';
 // import { useNavigate } from 'react-router-dom';
+import { readChartData } from '../../utils/api';
+import { useState, useEffect } from 'react';
 
 const Apex = ({ type }) => {
-  // console.log('type: ', type);
   // const navigate = useNavigate();
+  const [exchange, setExchange] = useState([]);
+  // const [fxEx, setfxEx] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await readChartData();
+        setExchange(res);
+        console.log('환율데이터', res);
+        // console.log('items: ', exchange);
+        if (!res) {
+          throw new Error('Failed to fetch posts');
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const reducedExchange = exchange.filter((_, index) => index % 10 === 0);
+
   const chartOptions = {
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      categories: reducedExchange.map((items) => items.date),
     },
     title: {
-      text: 'Monthly Sales',
+      text: 'USD/KRW',
     },
   };
 
   const data = [
     {
       name: 'Sales',
-      data: [30, 40, 35, 50, 49, 60],
+      data: reducedExchange.map((items) => parseInt(items.fx_rate)),
     },
   ];
 

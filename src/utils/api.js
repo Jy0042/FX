@@ -179,16 +179,30 @@ export const updatePosts = async (id, title, content) => {
   }
 };
 
-export const readChartData = async (fx_rate, date) => {
+// export const readChartData = async (fx_rate, date) => {
+//   try {
+//     const response = await api.get(`/posts/`, {
+//       fx_rate: fx_rate,
+//       date: date,
+//     });
+//     return response;
+//   } catch {
+//     console.error('환율정보 읽기 오류');
+//   }
+// };
+
+export const readChartData = async () => {
   try {
-    const response = await api.get(`/posts/`, {
-      fx_rate: fx_rate,
-      date: date,
+    const response = await api.get(`/fx/history`, {
+      params: {
+        source: 'USD', // 예: 'USD'
+        target: 'KRW', // 예: 'KRW'
+      },
     });
-    return response;
+    console.log('환율history:', response.data);
+    return response.data.fxHistory;
   } catch {
     console.error('환율정보 읽기 오류');
   }
 };
-
 export default api;

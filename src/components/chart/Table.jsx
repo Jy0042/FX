@@ -1,60 +1,78 @@
-import { ColumnDef, getCoreRowModel, useReactTable, flexRender, Row } from '@tanstack/react-table';
-import styled from '@emotion/styled';
-import { Fragment } from 'react';
+import { useState, useEffect } from 'react';
+import { readChartData } from '../../utils/api';
 
 const Table = () => {
+  const [exchange, setExchange] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState('');
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await readChartData();
+  //       setExchange(res);
+  //       console.log('환율데이터', res[0].fx_rate);
+  //       // console.log('items: ', exchange);
+  //       if (!res) {
+  //         throw new Error('Failed to fetch posts');
+  //       }
+  //     } catch (error) {
+  //       console.log(error.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log('Updated exchange data:', exchange);
+  // }, [exchange]); // exchange 상태가 업데이트될 때 실행
+
   const headers = [
     {
-      text: 'Name',
-      value: 'name',
+      text: 'From',
+      value: 'source_currency_code',
     },
     {
-      text: 'Version',
-      value: 'version',
+      text: 'To',
+      value: 'target_currency_code',
     },
     {
-      text: 'Launch Date',
-      value: 'launch',
+      text: 'Exchange Rate',
+      value: 'fx_rate',
+    },
+    {
+      text: 'Date',
+      value: 'date',
     },
   ];
 
-  const items = [
-    {
-      name: 'React',
-      version: '18.2.0',
-      launch: '2013-05-29',
-    },
-    {
-      name: 'Vue',
-      version: '3.2.45',
-      launch: '2014-02',
-    },
-    {
-      name: 'jQuery',
-      version: '3.3',
-      disabled: true,
-      launch: '2006-08-26',
-    },
-    {
-      name: 'Svelte',
-      version: '3.53.1',
-      launch: '2016-11-26',
-    },
-  ];
+  // const items = exchange;
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {headers.map((header) => (
-            <th key={header.text}>
-              {header.text} {/* 컬럼명 바인딩 */}
-            </th>
+    <div className="container mt-4">
+      <table className="table table-light table-bordered border-success table-hover">
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th key={header.text}>
+                {header.text} {/* 컬럼명 바인딩 */}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="table-group-divider">
+          {exchange.map((item, index) => (
+            <tr key={index}>
+              {headers.map((header) => (
+                <td key={header.value}>{item[header.value]}</td>
+              ))}
+            </tr>
           ))}
-        </tr>
-      </thead>
-      <tbody>{/* TODO 테이블 데이터 바인딩 */}</tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
