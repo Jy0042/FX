@@ -1,67 +1,68 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { checkSession } from '../utils/api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = (id) => {
+  useEffect(() => {
+    const storedAuth = localStorage.getItem('isAuthenticated') === 'true';
+    const storedUserId = localStorage.getItem('userId');
+
+    if (storedAuth && storedUserId) {
+      const verifySession = async () => {
+        try {
+          const sessionData = await checkSession();
+          if (sessionData.isLoggedIn) {
+            setIsAuthenticated(true);
+            setUserId(sessionData.userId);
+          } else {
+            throw new Error('세션이 유효하지 않습니다.');
+          }
+        } catch (error) {
+          console.warn('세션 검증 실패:', error.message);
+          setIsAuthenticated(false);
+          setUserId(null);
+          localStorage.removeItem('isAuthenticated');
+          localStorage.removeItem('userId');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      verifySession();
+    } else {
+      setIsAuthenticated(false);
+      setUserId(null);
+      setIsLoading(false);
+    }
+  }, []);
+
+  const login = (userId) => {
     setIsAuthenticated(true);
-    setUserId(id);
-    localStorage.setItem('userId', id);
+    setUserId(userId);
     localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userId', userId);
   };
 
   const logout = async () => {
     try {
-      await axios.delete('/api/v1/auth/logout', { withCredentials: true });
+      await axios.delete('/api/v1/auth/logout', { withCredentials: true }); // 로그아웃 API 호출
       setIsAuthenticated(false);
       setUserId(null);
       localStorage.removeItem('userId');
       localStorage.removeItem('isAuthenticated');
     } catch (error) {
-      console.error('로그아웃 처리 중 오류:', error);
+      console.error('로그아웃 처리 중 오류:', error.message); // 오류 로그 출력
     }
   };
 
-  useEffect(() => {
-    const verifySession = async () => {
-      // 로컬 스토리지에서 로그인 상태 확인
-      const storedAuth = localStorage.getItem('isAuthenticated') === 'true';
-      const storedUserId = localStorage.getItem('userId');
-
-      if (!storedAuth || !storedUserId) {
-        // 로그인 상태가 아닌 경우 초기화 및 로딩 완료 처리
-        setIsAuthenticated(false);
-        setUserId(null);
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/v1/auth', { withCredentials: true });
-        setIsAuthenticated(response.data.isLoggedIn);
-        setUserId(response.data.userId || null);
-      } catch (error) {
-        // 세션이 유효하지 않으면 상태 초기화
-        console.error('세션 확인 중 오류 발생:', error);
-        setIsAuthenticated(false);
-        setUserId(null);
-      } finally {
-        setIsLoading(false); // 로딩 완료
-      }
-    };
-
-    verifySession();
-  }, []);
-
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, userId, login, logout, isLoading }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, userId, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

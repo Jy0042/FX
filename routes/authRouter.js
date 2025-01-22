@@ -17,7 +17,8 @@ async function authenticateUser(reqBody) {
   try {
     // conn = await dbPool.getConnection();
     conn = await getDBConnection();
-    const [user] = await conn.query(`
+    const [user] = await conn.query(
+      `
       SELECT user_id AS userId,
              email,
              password AS passwordHash,
@@ -25,7 +26,9 @@ async function authenticateUser(reqBody) {
              profile_image AS profileImage
       FROM users
       WHERE email = ?
-    `, [email]);
+    `,
+      [email]
+    );
     if (user) {
       const match = await bcrypt.compare(password, user.passwordHash);
       return match ? user : null;
@@ -79,7 +82,7 @@ router.post('/login', async (req, res) => {
           // req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
           return res.status(201).json({ isLoggedIn: true });
         }
-      })
+      });
     } else {
       // 입력 정보에 해당하는 회원 정보 없음
       return res.status(401).json({
