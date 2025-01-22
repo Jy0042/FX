@@ -7,7 +7,7 @@ const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
 // 회원 인증 함수
-async function authenticateUser(reqBody) {
+async function authenticateUser(reqBody, res) {
   const { email, password } = reqBody;
 
   if (!email || !password) {
@@ -40,7 +40,7 @@ async function authenticateUser(reqBody) {
   } finally {
     if (conn) {
       // await conn.release(); // 커넥션 풀에 반환
-      await conn.close(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 연결 닫기
     }
   }
 }
@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
 // 로그인
 router.post('/login', async (req, res) => {
   if (!isLoggedIn(req) && req.body) {
-    const user = await authenticateUser(req.body);
+    const user = await authenticateUser(req.body, res);
     delete user.passwordHash;
     if (user) {
       // 세션 재생성으로 세션 고착 방지

@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import dbPool from './db.js';
+import { getDBConnection } from './db.js';
+// import dbPool from './db.js';
 
 const router = express.Router();
 // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
@@ -14,7 +15,8 @@ const SALT_ROUNDS = 10;
 // 아직 로그인 세션 구성이 안 되어 있어서, 임시로 회원 여부를 DB 조회로 판단
 export async function getUser(userId) {
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const [user] = await conn.query(`
       SELECT *
       FROM users
@@ -28,7 +30,8 @@ export async function getUser(userId) {
     console.log(error);
   } finally {
     if (conn) {
-      await conn.release(); // 커넥션 풀에 반환
+      // await conn.release(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 연결 닫기
     }
   }
 }
@@ -43,7 +46,8 @@ router.post('/', async (req, res) => {
 
   try {
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const result = await conn.query(`
       INSERT INTO users (email, password, nickname)
       VALUES (?, ?, ?);
@@ -65,7 +69,8 @@ router.post('/', async (req, res) => {
     }
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -87,7 +92,8 @@ router.get('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -108,7 +114,8 @@ router.patch('/:id', async (req, res) => {
     const user = await getUser(userId);
     if (user?.user_id) {
       const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-      conn = await dbPool.getConnection();
+      // conn = await dbPool.getConnection();
+      conn = await getDBConnection();
       // const query = `
       await conn.query(`
         UPDATE users
@@ -131,7 +138,8 @@ router.patch('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -142,7 +150,8 @@ router.delete('/:id', async (req, res) => {
   try {
     const user = await getUser(userId);
     if (user?.user_id) {
-      conn = await dbPool.getConnection();
+      // conn = await dbPool.getConnection();
+      conn = await getDBConnection();
       // const query = `
       // `;
       await conn.query(`
@@ -160,7 +169,8 @@ router.delete('/:id', async (req, res) => {
     console.log(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });

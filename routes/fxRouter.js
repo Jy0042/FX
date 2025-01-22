@@ -1,8 +1,8 @@
 import express from 'express';
 import axios from 'axios';
 import debug from 'debug';
-// import dbPool, { getDBConnection } from './db.js';
-import dbPool from './db.js';
+import { getDBConnection } from './db.js';
+// import dbPool from './db.js';
 
 const debugLog = new debug('log');
 const debugError = new debug('error');
@@ -17,7 +17,8 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 // 통화 목록
 router.get('/currencies', async (req, res) => {
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const rows = await conn.query(`
       SELECT currency_code AS currencyCode, currency
       FROM available_currencies
@@ -25,16 +26,10 @@ router.get('/currencies', async (req, res) => {
     `);
     debugDb(rows);
     // 통화 코드, 통화명, 국기 아이콘 URL
-    // const availableCurrencies = rows.map(([currency_code, currency]) => ({
-    //   currency_code,
-    //   currency,
-    //   flag: `https://flagcdn.com/w40/${code.slice(0, 2).toLowerCase()}.png`,
-    // }));
     const availableCurrencies = rows.map((row) => {
       row.flagURL = `https://flagcdn.com/w40/${(row.currencyCode).slice(0, 2).toLowerCase()}.png`;
       return row;
     });
-    debugLog('availableCurrencies:', availableCurrencies);
     if (!availableCurrencies || availableCurrencies.length === 0) {
       res.status(404).json({ message: '통화 목록이 없습니다.' });
     }
@@ -44,7 +39,8 @@ router.get('/currencies', async (req, res) => {
     res.status(500).json({ message: '통화 목록을 가져올 수 없습니다.' });
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 연결 닫기
     }
   }
 });
@@ -63,19 +59,16 @@ router.get('/convert', async (req, res) => {
       res.status(404).json({ message: `환전 정보가 존재하지 않습니다.` });
     }
   } catch (error) {
-    // console.log(error);
-    if (error.response) {
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // `error.request` is an instance of XMLHttpRequest in the browser and one of http.ClientRequest in node.js
-      console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
+    if (error.response) { // HTTP 응답에서 오류 발생
+      debugError(error.response.data);
+      debugError(error.response.status);
+      debugError(error.response.headers);
+    } else if (error.request) { // HTTP 요청에서 오류 발생
+      debugError(error.request);
+    } else { // HTTP 요청하는 중에 오류 발생
+      debugError('Error', error.message);
     }
-    console.log(error.config);
+    debugError(error.config);
     res.status(500).send();
   }
 });
@@ -88,8 +81,8 @@ router.put('/users/:userId/user-currency-pair', async (req, res) => {
   debugLog(newCurrencyPairs);
   try {
     const currencyMapper = {};
-    conn = await dbPool.getConnection();
-    // conn = await getDBConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     debugDb('커넥션 얻어오기 성공');
 
     // 아래 쿼리는 [ { currency_code: 'USD', currency_id: 1 }, ~ 후략 ~ ] 형태의 객체 '배열'을 반환
@@ -159,7 +152,8 @@ router.put('/users/:userId/user-currency-pair', async (req, res) => {
     }
   } finally {
     if (conn) {
-      await conn.release(); // 커넥션 풀에 반환
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -169,7 +163,8 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
   // router.get('/user-currency-pair ', (req, res) => {
   const { userId } = req.params;
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     // 기준/목표 통화 코드, 정렬 순서, 알림 메일 발송을 위한 설정 금액과 조건(LT(<=) or GT(>=))
     const userCurrencyPairs = await conn.query(`
       SELECT
@@ -206,7 +201,8 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
     }
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -216,7 +212,8 @@ router.get('/history', async (req, res) => {
   const { source, target } = req.query;
   debugLog('req.query:', req.query);
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const fxHistory = await conn.query(`
         SELECT
           s.currency_code AS source_currency_code,
@@ -254,7 +251,8 @@ router.get('/history', async (req, res) => {
     }
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
