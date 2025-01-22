@@ -6,9 +6,7 @@ import Tabs from './Tabs';
 import { getSavedCalculators, saveCurrencyPair } from '../../utils/api';
 
 const Converter = () => {
-  const { isAuthenticated, userId, isLoading } = useContext(AuthContext);
-  console.log('Converter 컴포넌트 상태:', { isAuthenticated, userId, isLoading }); // 디버깅용 로그
-
+  const { isAuthenticated, userId, isLoading, login, logout } = useContext(AuthContext);
   const [calculators, setCalculators] = useState([
     { id: 1, amount: 1, fromCurrency: 'USD', toCurrency: 'KRW', result: null, error: null },
   ]);
@@ -28,11 +26,20 @@ const Converter = () => {
     }
   }, [isAuthenticated, userId]);
 
+  // 로그인 시 계산기 목록 불러오기
   useEffect(() => {
     if (!isLoading) {
       fetchCalculators();
     }
   }, [fetchCalculators, isLoading]);
+
+  const handleLogin = () => {
+    login(userId, fetchCalculators); // 로그인 후 계산기 목록 동기화
+  };
+
+  const handleLogout = () => {
+    logout(); // 로그아웃 처리 후 페이지 새로고침
+  };
 
   const saveCalculators = async () => {
     try {
@@ -41,17 +48,19 @@ const Converter = () => {
         return;
       }
 
-      const currencySet = calculators.map((calc) => [
+      // 백엔드에서 기대하는 데이터 구조 생성
+      const currencySet = calculators.map((calc, index) => [
         userId, // 사용자 ID
-        calc.fromCurrency, // 소스 통화
-        calc.toCurrency, // 대상 통화
-        calc.amount || null, // 금액
-        null, // sort_order, 필요시 교체
-        null, // alert_condition, 필요시 교체
+        calc.fromCurrency, // 출발 통화 코드
+        calc.toCurrency, // 도착 통화 코드
+        index + 1, // 정렬 순서
+        calc.amount || null, // 금액 (없을 경우 null)
+        null, // 알림 조건 (필요 시 설정)
       ]);
 
       console.log('저장 요청 데이터:', currencySet);
 
+      // API 요청
       const result = await saveCurrencyPair(userId, currencySet);
       console.log('환율 쌍 저장 성공:', result);
     } catch (error) {
