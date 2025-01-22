@@ -65,11 +65,21 @@ const ReadPost = () => {
       <div className="card">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <button onClick={() => navigate('/community')}>목록</button>
-            <div className="d-flex">
-              <DeletePost post={post} />
-              <button onClick={() => setIsEditing(true)}>수정</button>
-            </div>
+            <button className="btn btn-primary" onClick={() => navigate('/community')}>
+              목록
+            </button>
+            {isEditing ? (
+              <div>
+                <UpdatePost post={post} onSave={handleSave} />
+              </div>
+            ) : (
+              <div className="d-flex">
+                <DeletePost post={post} />
+                <button className="btn btn-primary" onClick={() => setIsEditing(true)}>
+                  수정
+                </button>
+              </div>
+            )}
           </div>
           {isEditing ? (
             <div>
@@ -86,7 +96,6 @@ const ReadPost = () => {
                 onChange={(e) => setPost({ ...post, content: e.target.value })}
               ></textarea>
               <Uploader />
-              <UpdatePost post={post} onSave={handleSave} />
             </div>
           ) : (
             <div>
@@ -128,7 +137,7 @@ const ReadPost = () => {
                 <small className="text-muted me-3">{post.like_count}</small>
                 <button className="btn btn-link text-muted">
                   <img src={share} alt="공유 아이콘" />
-                  Share
+                  공유
                 </button>
               </div>
             </div>

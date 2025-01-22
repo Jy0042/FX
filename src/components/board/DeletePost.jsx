@@ -24,8 +24,10 @@ const DeletePost = ({ post }) => {
   };
 
   return (
-    <div>
-      <button onClick={handleDelete}>삭제</button>
+    <div className="mx-2">
+      <button className="btn btn-primary" onClick={handleDelete}>
+        삭제
+      </button>
     </div>
   );
 };
