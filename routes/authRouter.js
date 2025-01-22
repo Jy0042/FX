@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import dbPool from './db.js';
+import { getDBConnection } from './db.js';
+// import dbPool from './db.js';
 
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
@@ -14,7 +15,8 @@ async function authenticateUser(reqBody) {
   }
 
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const [user] = await conn.query(`
       SELECT user_id AS userId,
              email,
@@ -37,7 +39,8 @@ async function authenticateUser(reqBody) {
     console.error(error);
   } finally {
     if (conn) {
-      await conn.release(); // 커넥션 풀에 반환
+      // await conn.release(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 풀에 반환
     }
   }
 }
@@ -105,7 +108,7 @@ router.delete('/logout', (req, res) => {
     // session 객체는 destroy 후에도 다시 생성되서, 그렇게 하면 중복 로그아웃 시도를 막을 수 없음
     req.session.destroy((err) => {
       if (!err) {
-        // res.clearCookie('connect.sid'); // 세션 쿠키 제거
+        res.clearCookie('connect.sid'); // 세션 쿠키 제거
         res.status(200).json({
           isSuccess: true,
           message: '로그아웃 성공',
