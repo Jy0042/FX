@@ -1,12 +1,13 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import dbPool from './db.js';
+import { getDBConnection } from './db.js';
+// import dbPool from './db.js';
 
 const router = express.Router();
 let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
-// 로그인 함수
-async function login(reqBody) {
+// 회원 인증 함수
+async function authenticateUser(reqBody) {
   const { email, password } = reqBody;
 
   if (!email || !password) {
@@ -14,10 +15,15 @@ async function login(reqBody) {
   }
 
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const [user] = await conn.query(
       `
-      SELECT user_id, email, password AS passwordHash, nickname, profile_image
+      SELECT user_id AS userId,
+             email,
+             password AS passwordHash,
+             nickname,
+             profile_image AS profileImage
       FROM users
       WHERE email = ?
     `,
@@ -25,7 +31,6 @@ async function login(reqBody) {
     );
     if (user) {
       const match = await bcrypt.compare(password, user.passwordHash);
-      console.log('match:', match);
       return match ? user : null;
     } else {
       res.status(404).json({ message: '회원 정보가 존재하지 않습니다.' });
@@ -37,14 +42,15 @@ async function login(reqBody) {
     console.error(error);
   } finally {
     if (conn) {
-      await conn.release(); // 커넥션 풀에 반환
+      // await conn.release(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 풀에 반환
     }
   }
 }
 
 // 로그인 상태 확인 (세션 정보 유무 확인) 함수
 function isLoggedIn(req) {
-  return req.session && req.session.userId ? true : false;
+  return req.session && req.session.user;
 }
 
 // 로그인 상태 확인 ( /api/v1/auth 엔드포인트. 클라이언트가 페이지를 이동할 때마다 요청)
@@ -52,7 +58,7 @@ router.get('/', async (req, res) => {
   if (isLoggedIn(req)) {
     res.status(200).json({
       isLoggedIn: true,
-      userId: req.session.userId,
+      userId: req.session.user.userId,
     });
   } else {
     res.status(401).json({ isLoggedIn: false });
@@ -62,16 +68,20 @@ router.get('/', async (req, res) => {
 // 로그인
 router.post('/login', async (req, res) => {
   if (!isLoggedIn(req) && req.body) {
-    const user = await login(req.body);
+    const user = await authenticateUser(req.body);
+    delete user.passwordHash;
     if (user) {
-      req.session.userId = user.user_id;
-      req.session.email = user.email;
-      req.session.nickname = user.nickname; // Community 별명
-      req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
-      // 서버 응답 수정
-      return res.status(201).json({
-        isLoggedIn: true,
-        userId: user.user_id, // userId를 응답에 추가
+      // 세션 재생성으로 세션 고착 방지
+      req.session.regenerate(function (err) {
+        if (err) {
+          console.error(err);
+          next(err);
+        } else {
+          req.session.user = user;
+          // req.session.userId = user.user_id;
+          // req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
+          return res.status(201).json({ isLoggedIn: true });
+        }
       });
     } else {
       // 입력 정보에 해당하는 회원 정보 없음
@@ -96,45 +106,30 @@ router.post('/login', async (req, res) => {
 
 // 로그아웃
 router.delete('/logout', (req, res) => {
-  if (req.session) {
+  if (req.session.user) {
+    // ※ req.session 존재 유무로 분기하면 안 되니 다른 팀원은 다시 수정하지 말 것!
+    // session 객체는 destroy 후에도 다시 생성되서, 그렇게 하면 중복 로그아웃 시도를 막을 수 없음
     req.session.destroy((err) => {
-      if (err) {
+      if (!err) {
+        res.clearCookie('connect.sid'); // 세션 쿠키 제거
+        res.status(200).json({
+          isSuccess: true,
+          message: '로그아웃 성공',
+        });
+      } else {
         console.error('세션 삭제 중 오류 발생:', err);
-        return res.status(500).json({
+        res.status(500).json({
           isSuccess: false,
-          message: '로그아웃 처리 중 오류가 발생했습니다.',
+          message: '로그아웃 중 오류가 발생했습니다.',
         });
       }
-      res.clearCookie('connect.sid'); // 세션 쿠키 제거
-      return res.status(200).json({
-        isSuccess: true,
-        message: '로그아웃 성공',
-      });
     });
   } else {
-    return res.status(409).json({
+    res.status(409).json({
       isSuccess: false,
       message: '로그인되어 있지 않습니다.',
     });
   }
-});
-
-// Social Login (우선순위 낮음)
-// 1. Naver
-router.post('/login/naver', (req, res) => {
-  console.log('POST /login/naver');
-});
-
-router.delete('/logout/naver', (req, res) => {
-  console.log('POST /logout/naver');
-});
-// 2. Google
-router.post('/login/google', (req, res) => {
-  console.log('POST /login/google');
-});
-
-router.delete('/logout/google', (req, res) => {
-  console.log('POST /logout/google');
 });
 
 export default router;
