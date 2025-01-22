@@ -33,13 +33,27 @@ const Apex = ({ type, currency }) => {
   }, [currency]);
 
   // 다운 샘플링
-  const reducedExchange = exchange.filter((_, index) => index % 20 === 0);
+  // const reducedExchange = exchange.filter((_, index) => index % 20 === 0);
+  const sampleXData = exchange.map((items) => items.date.slice(0, 10));
+  console.log('일자만 : ', sampleXData);
+
+  const reducedExchange = exchange.reduce((acc, item) => {
+    const yearMonth = item.date.slice(0, 7); // Extract "YYYY-MM" from the date
+    if (!acc[yearMonth]) {
+      acc[yearMonth] = item; // Add the first entry of each month
+    }
+    return acc;
+  }, {});
+
+  // const filteredExchange = Object.values(reducedExchange);
 
   // 차트 옵션
   const chartOptions = {
     xaxis: {
-      categories: reducedExchange.map((items) => items.date),
+      categories: sampleXData,
+      type: 'datetime',
     },
+
     title: {
       text: currency,
     },
@@ -51,6 +65,9 @@ const Apex = ({ type, currency }) => {
     markers: {
       size: 0, // 데이터 포인트 표시 제거
     },
+    stroke: {
+      curve: 'straight',
+    },
   };
 
   console.log('chartOptions', chartOptions.title.text);
@@ -58,7 +75,7 @@ const Apex = ({ type, currency }) => {
   const data = [
     {
       name: chartOptions.title.text,
-      data: reducedExchange.map((items) => parseInt(items.fx_rate, 10)), // 정수 변환
+      data: exchange.map((items) => parseInt(items.fx_rate, 10)), // 정수 변환
     },
   ];
 

@@ -45,9 +45,9 @@ const Post = ({ post }) => {
             className="rounded-circle me-2"
             style={{ width: '30px', height: '30px' }}
           />
-          <span className="me-3">작성자</span>
+          <span className="me-3">{post.nickname}</span>
 
-          <span className="me-3">Time </span>
+          <span className="me-3"></span>
           {post.updated_at}
           {/* {new Date(postTime.getTime() + 9 * 60 * 60 * 1000).toLocaleString('ko-KR')} */}
           {/* 우선 현재시간 표시 작성시간 기준으로 ~시간전으로 표시 예정 */}
