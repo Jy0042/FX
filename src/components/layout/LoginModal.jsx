@@ -15,20 +15,18 @@ const LoginModal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoginError(null);
+
     try {
       const loginData = await loginUser({ email, password, rememberMe });
-      if (loginData?.userId) {
-        login(loginData.userId); // `AuthContext`에 상태 업데이트
-        setLoginError(null);
-
-        // 모달 닫기
+      if (loginData?.isLoggedIn) {
+        login(); // 상태 업데이트
         const modalElement = document.getElementById('loginModal');
         const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
         if (modalInstance) modalInstance.hide();
-
         navigate('/');
       } else {
-        throw new Error('유효한 userId가 없습니다.');
+        throw new Error('로그인 실패');
       }
     } catch (error) {
       setLoginError(error.message || '로그인에 실패했습니다.');

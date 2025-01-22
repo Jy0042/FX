@@ -9,10 +9,21 @@ const api = axios.create({
 
 // 에러 처리 공통 함수
 const handleError = (error) => {
+  const status = error.response?.status;
   const message =
     error.response?.data?.message || error.message || '요청 처리 중 오류가 발생했습니다.';
-  console.error('API 요청 오류:', message);
-  throw new Error(message);
+
+  // 디버깅 로그
+  console.error(`[API 요청 오류] 상태코드: ${status || 'Unknown'}, 메시지: ${message}`);
+
+  // 사용자에게 표시할 에러 메시지
+  if (status === 401) {
+    throw new Error('인증에 실패했습니다. 다시 로그인해주세요.');
+  } else if (status === 403) {
+    throw new Error('접근 권한이 없습니다.');
+  } else {
+    throw new Error(message);
+  }
 };
 
 // 로그인 API 요청
@@ -20,13 +31,29 @@ export const loginUser = async ({ email, password, rememberMe }) => {
   try {
     const response = await api.post('/auth/login', { email, password, rememberMe });
     console.log('로그인 응답:', response.data);
-    if (!response.data.userId) {
-      throw new Error('유효한 userId가 없습니다.');
+
+    // 응답 데이터 처리
+    const { isLoggedIn } = response.data || {};
+    if (!isLoggedIn) {
+      throw new Error(response.data.message || '로그인에 실패했습니다.');
     }
+
+    // 로그인 성공 시 응답 반환
     return response.data;
   } catch (error) {
-    console.error('로그인 요청 실패:', error.message);
-    throw new Error(error.response?.data?.message || '로그인 실패');
+    handleError(error);
+  }
+};
+
+// 세션 상태 확인
+export const checkSession = async () => {
+  try {
+    const response = await api.get('/auth');
+    console.log('세션 상태 확인 응답:', response.data);
+
+    return response.data; // 세션 상태 반환
+  } catch (error) {
+    handleError(error);
   }
 };
 
@@ -34,6 +61,8 @@ export const loginUser = async ({ email, password, rememberMe }) => {
 export const logoutUser = async () => {
   try {
     const response = await api.delete('/auth/logout');
+    console.log('로그아웃 응답:', response.data);
+
     return response.data;
   } catch (error) {
     handleError(error);
