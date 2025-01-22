@@ -42,22 +42,28 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userId) => {
+  const login = (userId, callback) => {
     setIsAuthenticated(true);
     setUserId(userId);
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('userId', userId);
+
+    // 로그인 후 콜백 실행
+    if (callback) callback();
   };
 
   const logout = async () => {
     try {
-      await axios.delete('/api/v1/auth/logout', { withCredentials: true }); // 로그아웃 API 호출
+      await axios.delete('/api/v1/auth/logout', { withCredentials: true });
       setIsAuthenticated(false);
       setUserId(null);
-      localStorage.removeItem('userId');
       localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userId');
+
+      // 페이지 새로고침
+      window.location.reload();
     } catch (error) {
-      console.error('로그아웃 처리 중 오류:', error.message); // 오류 로그 출력
+      console.error('로그아웃 처리 중 오류:', error.message);
     }
   };
 

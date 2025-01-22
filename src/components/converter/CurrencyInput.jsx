@@ -22,15 +22,15 @@ const CurrencyInput = ({ amount, setAmount, selectedCurrency, setSelectedCurrenc
 
   // React-Select 옵션 데이터 생성
   const options = currencies.map((currency) => ({
-    value: currency.code,
+    value: currency.currencyCode, // 백엔드의 `currency_code`와 일치
     label: (
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <img
-          src={currency.flag}
-          alt={currency.name}
+          src={currency.flagURL} // 백엔드의 `flagURL`과 일치
+          alt={currency.currency}
           style={{ width: 20, height: 15, marginRight: 10 }}
         />
-        {currency.name} ({currency.code})
+        {currency.currency} ({currency.currencyCode})
       </div>
     ),
   }));

@@ -97,23 +97,24 @@ export const getSavedCalculators = async (userId) => {
   try {
     const response = await api.get(`/fx/users/${userId}/user-currency-pair`);
 
-    // 빈 데이터인 경우 경고 로그 출력 후 빈 배열 반환
-    if (!response.data || response.data.length === 0) {
-      console.info('저장된 환율 쌍이 없습니다. 새로 저장하세요.');
+    // response.data 확인 및 처리
+    const { userCurrencyPairs, message } = response.data;
+
+    if (!userCurrencyPairs || userCurrencyPairs.length === 0) {
+      console.info(message || '저장된 환율 쌍이 없습니다. 새로 저장하세요.');
       return [];
     }
 
-    // 데이터가 있는 경우 매핑 처리
-    return response.data.map((pair, index) => ({
+    // 데이터 매핑 처리
+    return userCurrencyPairs.map((pair, index) => ({
       id: index + 1,
-      amount: pair[3] || 1,
-      fromCurrency: pair[1],
-      toCurrency: pair[2],
+      amount: pair.amount || 1,
+      fromCurrency: pair.source_currency_code,
+      toCurrency: pair.target_currency_code,
       result: null,
       error: null,
     }));
   } catch (error) {
-    // API 요청 실패 시에만 에러 처리
     console.error('저장된 계산기 불러오기 실패:', error.message);
     throw new Error('저장된 계산기를 불러오는 데 실패했습니다.');
   }
@@ -124,15 +125,17 @@ export const saveCurrencyPair = async (userId, currencySet) => {
   // 데이터 검증 추가
   if (
     !Array.isArray(currencySet) ||
-    currencySet.some((item) => !Array.isArray(item) || item.length < 2)
+    currencySet.some((row) => row.length < 3) // 최소 source, target 포함 확인
   ) {
     console.error('잘못된 currencySet 데이터:', currencySet);
-    throw new Error('currencySet의 각 요소는 최소 두 개의 값(source, target)을 포함해야 합니다.');
+    throw new Error(
+      'currencySet의 각 요소는 최소 세 개의 값(userId, source, target)을 포함해야 합니다.'
+    );
   }
 
   try {
-    console.log('환율 쌍 저장 요청 데이터:', { userId, currencySet });
-    const response = await api.post(`/fx/users/${userId}/user-currency-pair`, { currencySet });
+    console.log('환율 쌍 저장 요청 데이터:', currencySet); // 디버깅용 로그
+    const response = await api.put(`/fx/users/${userId}/user-currency-pair`, currencySet);
     console.log('환율 쌍 저장 응답 데이터:', response.data);
     return response.data;
   } catch (error) {
