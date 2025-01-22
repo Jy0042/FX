@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Button = ({
+const ButtonComponent = ({
   children,
-  type = 'button', // 기본값 설정
-  variant = 'primary', // 기본값 설정
-  size = '', // 기본값 설정
-  className = '', // 기본값 설정
-  isLoading = false, // 기본값 설정
-  disabled = false, // 기본값 설정
-  onClick = () => {}, // 기본값 설정
+  type = 'button',
+  variant = 'primary',
+  size = '',
+  className = '',
+  isLoading = false,
+  disabled = false,
+  onClick = () => {},
   ...props
 }) => {
   const baseClass = `btn btn-${variant} ${size ? `btn-${size}` : ''}`;
@@ -20,7 +20,7 @@ const Button = ({
       className={`${baseClass} ${className}`}
       onClick={onClick}
       disabled={disabled || isLoading}
-      {...props}
+      {...props} // 추가 속성 적용
     >
       {isLoading && (
         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
@@ -30,7 +30,7 @@ const Button = ({
   );
 };
 
-Button.propTypes = {
+ButtonComponent.propTypes = {
   children: PropTypes.node.isRequired,
   type: PropTypes.oneOf(['button', 'submit', 'reset']),
   variant: PropTypes.oneOf([
@@ -52,4 +52,4 @@ Button.propTypes = {
   onClick: PropTypes.func,
 };
 
-export default Button;
+export default ButtonComponent;

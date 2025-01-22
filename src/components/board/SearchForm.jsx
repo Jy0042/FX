@@ -17,7 +17,7 @@ const SearchForm = () => {
           <i className="bi bi-search"></i>
         </span>
         <button id="filterButton" className="rounded">
-          Filter
+          검색
         </button>
       </div>
     </div>

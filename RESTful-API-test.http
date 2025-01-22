@@ -1,0 +1,94 @@
+### 환전 (단위 테스트 완료)
+GET http://localhost:3000/api/v1/fx/convert?from=USD&amount=100&to=KRW
+
+### 즐겨찾는 환율 쌍 저장
+POST http://localhost:3000/api/v1/fx/users/26/user-currency-pair
+Content-Type: application/json
+
+[
+  [26, "USD", "KRW", 1],
+  [26, "EUR", "KRW", 2, 1550, "GT"],
+  [26, "KRW", "USD", 3]
+]
+
+### 즐겨찾는 환율 쌍 조회
+GET http://localhost:3000/api/v1/fx/users/26/user-currency-pair
+
+### 환율 히스토리 조회
+GET http://localhost:3000/api/v1/fx/history?source=USD&target=KRW
+
+
+### 회원 가입 (단위 테스트 완료)
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+  "email": "test21@fx.com",
+  "password": "test21pw",
+  "nickname": "tester21"
+}
+
+### 회원 정보 조회 (단위 테스트 완료)
+GET http://localhost:3000/api/v1/users/26
+
+### 회원 정보 수정 (단위 테스트 완료)
+PATCH http://localhost:3000/api/v1/users/11
+Content-Type: application/json
+
+{
+  "email": "test11@fx.com",
+  "password": "test11pwpw",
+  "nickname": "tester11"
+}
+
+### 회원 정보 삭제 (회원 탈퇴) (단위 테스트 완료)
+DELETE http://localhost:3000/api/v1/users/25
+
+
+### 로그인 (단위 테스트 완료)
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test21@fx.com",
+  "password": "test21pw"
+}
+
+### Auth (로그인 상태 확인) (단위 테스트 완료)
+### 클라이언트가 엔드포인트를 이동할 때마다 로그인 여부 확인
+GET http://localhost:3000/api/v1/auth
+
+### 로그아웃 (단위 테스트 완료)
+DELETE http://localhost:3000/api/v1/auth/logout
+Content-Type: application/json
+
+
+
+### 전체 게시글 조회 (단위 테스트 완료)
+GET http://localhost:3000/api/v1/posts/
+
+### 게시글 작성 (단위 테스트 완료)
+POST http://localhost:3000/api/v1/posts
+Content-Type: application/json
+
+{
+  "author": 1,
+  "title": "제목 14",
+  "content": "본문 14",
+  "image": null
+}
+
+### 게시글 조회 (단위 테스트 완료)
+GET http://localhost:3000/api/v1/posts/42
+
+### 게시글 수정 (단위 테스트 완료)
+PUT http://localhost:3000/api/v1/posts/27
+Content-Type: application/json
+
+{
+  "title": "제목 27 (수정)",
+  "content": "본문 27 (수정)"
+}
+
+### 게시글 삭제 (단위 테스트 완료)
+DELETE http://localhost:3000/api/v1/posts/25

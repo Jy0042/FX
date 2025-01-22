@@ -5,7 +5,44 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: 'http://localhost:3000/api/v1', // 로컬 백엔드 서버 URL
   timeout: 10000, // 요청 시간 제한
+  withCredentials: true, // 쿠키 전달 허용
 });
+
+// 로그인 API 요청
+export const loginUser = async ({ email, password, rememberMe }) => {
+  try {
+    const response = await api.post('/auth/login', { email, password, rememberMe });
+    return response.data; // 로그인 성공 시 토큰 등 데이터를 반환
+  } catch (error) {
+    console.error('로그인 요청 중 오류가 발생했습니다:', error);
+
+    if (error.response) {
+      // 백엔드에서 반환한 상태 코드에 따른 에러 메시지 처리
+      switch (error.response.status) {
+        case 401:
+          throw new Error('이메일 또는 비밀번호가 잘못되었습니다. 다시 확인해주세요.');
+        case 409:
+          throw new Error('이미 로그인된 상태입니다. 로그아웃 후 다시 시도해주세요.');
+        default:
+          throw new Error('로그인 요청에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+
+    // 네트워크 오류 등 기타 에러 처리
+    throw new Error('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
+};
+
+// 로그아웃 API 요청
+export const logoutUser = async () => {
+  try {
+    const response = await api.delete('/auth/logout'); // 로그아웃 요청
+    return response.data; // 성공 메시지 반환
+  } catch (error) {
+    console.error('로그아웃 요청 중 오류가 발생했습니다:', error);
+    throw new Error('로그아웃 요청에 실패했습니다.');
+  }
+};
 
 // 환율 계산 API 요청
 export const getRate = async (from, to, amount) => {
@@ -173,4 +210,19 @@ export const updatePosts = async (id, title, content) => {
   }
 };
 
+export const readChartData = async (currency) => {
+  try {
+    const source = currency.slice(0, 3);
+    const target = currency.slice(4, 7);
+    const response = await api.get(`/fx/history`, {
+      params: {
+        source: source, // Currency 데이터 예시(USD/KRW)
+        target: target, // 앞 뒤값 잘라서 넣음
+      },
+    });
+    return response.data.fxHistory;
+  } catch {
+    console.error('환율정보 읽기 오류');
+  }
+};
 export default api;

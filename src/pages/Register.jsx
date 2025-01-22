@@ -34,7 +34,7 @@ const Register = () => {
     if (formData.password !== formData.confirmPassword) {
       setModalContent({
         title: '비밀번호 오류',
-        body: '비밀번호와 비밀번호 확인이 일치하지 않습니다.',
+        body: '비밀번호가 일치하지 않습니다.',
       });
       setShowModal(true);
       return;

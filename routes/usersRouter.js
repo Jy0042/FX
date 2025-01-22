@@ -99,9 +99,15 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   const userId = req.params.id;
   const { email, password, nickname } = req.body;
+
+  if (!email || !password || !nickname) {
+    return res.status(400).json({ message: '회원 정보 수정 실패. 누락 정보 확인 후 다시 입력해주세요' });
+  }
+
   try {
     const user = await getUser(userId);
     if (user?.user_id) {
+      const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
       conn = await dbPool.getConnection();
       // const query = `
       await conn.query(`
@@ -110,7 +116,7 @@ router.patch('/:id', async (req, res) => {
             password = ?,
             nickname = ?
         WHERE user_id = ?
-      `, [email, password, nickname, userId]);
+      `, [email, passwordHash, nickname, userId]);
       res.status(200).json({
         message: '회원 정보 수정이 완료되었습니다.',
         user: await getUser(userId),

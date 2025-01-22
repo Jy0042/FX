@@ -42,33 +42,13 @@
 /* ========================= */
 /* 헤더 스타일 */
 /* ========================= */
-.header {
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  padding: 1.5rem 0;
-}
-
-.header .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
 .header .navbar-brand {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #002d62;
+  color: #002d62 !important;
 }
 
 .header .navbar-brand:hover {
-  color: #0056b3;
-}
-
-.header .navbar-nav .nav-link {
-  font-weight: 600;
+  color: #0056b3 !important;
 }
 
 /* ========================= */
@@ -130,4 +110,18 @@ footer ul li {
 
 .text-start {
   text-align: left;
+}
+
+/* ========================= */
+/* 로그인 모달 스타일 */
+/* ========================= */
+.login-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-close:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 버튼에 반투명한 배경색 추가 */
 }
