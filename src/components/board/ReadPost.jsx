@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import UpdatePost from './UpdatePost';
 import DeletePost from './DeletePost';
-import { good, example, share } from '../../assets';
+import { good, example, share, frame, author } from '../../assets';
 import Uploader from './Uploader';
 import { readPost } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
@@ -85,13 +85,17 @@ const ReadPost = () => {
             </div>
           ) : (
             <div>
-              <h1 className="card-title">{post.title}</h1>
-              <div className="d-flex justify-content-end align-items-center mb-3">
+              <div className="d-flex px-4">
+                <h1 className="card-title">{post.title}</h1>
+              </div>
+              <div className="d-flex justify-content-start align-items-center mb-3 px-4">
                 <small className="text-muted">
-                  <strong>{post.nickname}</strong> &middot; {post.updated_at}
+                  <img src={author} alt="좋아요 아이콘" className="me-1 mx-1" />
+                  <strong>{post.nickname}</strong>{' '}
+                  <img src={frame} alt="날짜 아이콘" className="me-1 mx-1" /> {post.updated_at}
                 </small>
               </div>
-              <div>
+              <div className="mx-3 my-5">
                 {post.image ? (
                   <img
                     src={post.image}
@@ -108,9 +112,13 @@ const ReadPost = () => {
                   />
                 )}
               </div>
-              <p className="card-text">{post.content}</p>
+
+              <div className="d-flex px-4">
+                <p className="card-text my-4">{post.content}</p>
+              </div>
               <div className="card-footer d-flex justify-content-start align-items-center">
                 <img src={good} alt="좋아요 아이콘" className="me-1" />
+
                 <small className="text-muted me-3">{post.like_count}</small>
                 <button className="btn btn-link text-muted">
                   <img src={share} alt="공유 아이콘" />
