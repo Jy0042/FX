@@ -89,8 +89,10 @@ function Uploader({ loadImage }) {
           ) : (
             <div className="text-center">
               <MdCloudUpload color="gray" size={50} />
-              <p className="text-secondary fs-5">Drag and drop an image here, or click to select</p>
-              <p className="text-secondary fs-6">PNG, JPG up to 5MB</p>
+              <p className="text-secondary fs-5">
+                사진을 드래그 앤 드롭 하시거나, 클릭하여 업로드하시오
+              </p>
+              <p className="text-secondary fs-6">PNG, JPG 5MB 이하</p>
             </div>
           )}
         </div>

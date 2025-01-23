@@ -245,6 +245,7 @@ export const readChartData = async (currency) => {
         target: target, // 앞 뒤값 잘라서 넣음
       },
     });
+    console.log('차트 데이터', response);
     // 소수점 2자리로 변환
     const processedData = response.data.fxHistory.map((item) => ({
       ...item, // 기존 데이터 유지

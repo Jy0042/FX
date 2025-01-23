@@ -68,14 +68,14 @@ const CreatePost = () => {
       <input
         type="text"
         value={title}
-        placeholder="Enter your title here..."
+        placeholder="제목을 입력하시오..."
         className="form-control" // 가로 길이를 늘림
         // style="color: black;"
         onChange={(e) => inputCounter(e.target.value)}
       />
       <h6 className="d-flex justify-content-end align-items-end">{inputCount}/100</h6>
       <textarea
-        placeholder="Write your content here..."
+        placeholder="내용을 입력하시오..."
         color="gray"
         value={content}
         className="form-control mb-3 "
