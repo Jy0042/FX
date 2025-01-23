@@ -1,8 +1,11 @@
+### 통화 목록
+GET http://localhost:3000/api/v1/fx/currencies
+
 ### 환전 (단위 테스트 완료)
 GET http://localhost:3000/api/v1/fx/convert?from=USD&amount=100&to=KRW
 
-### 즐겨찾는 환율 쌍 저장
-POST http://localhost:3000/api/v1/fx/users/26/user-currency-pair
+### 즐겨찾는 환율 세트 저장
+PUT http://localhost:3000/api/v1/fx/users/26/user-currency-pair
 Content-Type: application/json
 
 [
@@ -11,7 +14,7 @@ Content-Type: application/json
   [26, "KRW", "USD", 3]
 ]
 
-### 즐겨찾는 환율 쌍 조회
+### 즐겨찾는 환율 세트 조회
 GET http://localhost:3000/api/v1/fx/users/26/user-currency-pair
 
 ### 환율 히스토리 조회
@@ -72,9 +75,9 @@ POST http://localhost:3000/api/v1/posts
 Content-Type: application/json
 
 {
-  "author": 1,
-  "title": "제목 14",
-  "content": "본문 14",
+  "author": 11,
+  "title": "작성일시 test 2",
+  "content": "작성일시 test 2",
   "image": null
 }
 
@@ -82,12 +85,12 @@ Content-Type: application/json
 GET http://localhost:3000/api/v1/posts/42
 
 ### 게시글 수정 (단위 테스트 완료)
-PUT http://localhost:3000/api/v1/posts/27
+PUT http://localhost:3000/api/v1/posts/68
 Content-Type: application/json
 
 {
-  "title": "제목 27 (수정)",
-  "content": "본문 27 (수정)"
+  "title": "수정일시 test 1",
+  "content": "수정일시 test 1"
 }
 
 ### 게시글 삭제 (단위 테스트 완료)
