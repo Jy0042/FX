@@ -5,7 +5,7 @@ const SearchForm = () => {
   const [query, setQuery] = useState('');
 
   return (
-    <div className="container">
+    <div>
       <div className="input-group d-flex justify-content-center">
         <input
           id="searchInput"
@@ -17,7 +17,7 @@ const SearchForm = () => {
           <i className="bi bi-search"></i>
         </span>
         <button id="filterButton" className="rounded">
-          Filter
+          검색
         </button>
       </div>
     </div>

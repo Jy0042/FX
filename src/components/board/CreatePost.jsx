@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Uploader from './Uploader';
 import { createPost } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
@@ -10,6 +11,8 @@ const CreatePost = () => {
 
   let [inputCount, setInputCount] = useState(0);
   let [textCount, setTextareaCount] = useState(0);
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const inputCounter = (e) => {
     //input에 입력한 글자 세는 함수
@@ -27,20 +30,35 @@ const CreatePost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log('title', title);
-    console.log('content', content);
+    // console.log('title', title);
+    // console.log('content', content);
 
-    const res = await createPost(title, content, null);
+    // const res = await createPost(title, content, null);
 
-    console.log('리스폰스', res);
+    // console.log('리스폰스', res);
 
     if (!title.trim() || !content.trim()) {
-      setErrorMessage('제목과 내용을 모두 입력해주세요.');
+      alert('제목과 내용을 모두 입력해주세요.');
       return;
     }
-    if (res.ok) {
-      alert('게시글이 작성되었습니다.');
-      window.location.reload(); //게시글 작성후 페이지 새로고침
+    // if (res) {
+    //   alert('게시글이 작성되었습니다.');
+    //   window.location.reload(); //게시글 작성후 페이지 새로고침
+    // }
+    try {
+      // Make the API call only after validation
+      const res = await createPost(title, content, null);
+
+      console.log('Response:', res);
+
+      if (res) {
+        alert('Your post has been successfully created.');
+        navigate('/community');
+        // window.location.reload(); // Refresh the page after successful submission
+      }
+    } catch (error) {
+      console.error('Error creating post:', error);
+      alert('An error occurred while creating the post.');
     }
   };
 
@@ -50,7 +68,7 @@ const CreatePost = () => {
       <input
         type="text"
         value={title}
-        placeholder="Enter hour title here..."
+        placeholder="Enter your title here..."
         className="form-control" // 가로 길이를 늘림
         // style="color: black;"
         onChange={(e) => inputCounter(e.target.value)}
@@ -67,9 +85,15 @@ const CreatePost = () => {
       <h6 className="d-flex justify-content-end align-items-end">{textCount}words</h6>
       <Uploader />
       <div className="d-flex justify-content-end align-items-end rounded p-3">
-        <button className="btn btn-outline-secondary">Cancel</button>
+        <button
+          type="button"
+          className="btn btn-outline-secondary mx-3"
+          onClick={() => navigate('/community')}
+        >
+          취소
+        </button>
         <button type="submit" className="btn btn-primary">
-          Publish
+          작성
         </button>
       </div>
     </form>

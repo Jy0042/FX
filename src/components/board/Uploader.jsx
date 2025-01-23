@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { MdCloudUpload } from 'react-icons/md';
 
-function Uploader() {
+function Uploader({ loadImage }) {
   const [image, setImage] = useState(null);
   const [fileName, setFileName] = useState('No Selector file');
   const [isActive, setActive] = useState(false);
@@ -14,13 +14,23 @@ function Uploader() {
     const reader = new FileReader();
 
     reader.onload = (e) => {
+      // if (imgRef.current) {
+      //   imgRef.current.src = e.target.result;
+      // }
+      // setImage(e.target.result);
+      // console.log('이미지:', image);
+      // loadImage(image);
+      const imageSrc = e.target.result; // 로드된 이미지를 변수에 저장
       if (imgRef.current) {
-        imgRef.current.src = e.target.result;
+        imgRef.current.src = imageSrc;
       }
-      setImage(e.target.result);
+      setImage(imageSrc); // 상태 업데이트
+      console.log('이미지:', imageSrc); // 로드된 이미지 즉시 출력
+      loadImage(imageSrc); // 부모 컴포넌트로 이미지 전달
     };
 
     reader.readAsDataURL(file);
+    // console.log('reader.readAsDataURL(file) : ', reader.readAsDataURL(file));
   };
   const handleDragStart = () => {
     setActive(true);
@@ -46,7 +56,7 @@ function Uploader() {
 
   return (
     <div>
-      <form
+      <div
         onClick={() => document.querySelector('.input-field').click()}
         className={`d-flex flex-column justify-content-center align-items-center rounded p-3 ${
           isActive ? 'active' : ''
@@ -64,9 +74,13 @@ function Uploader() {
             className="input-field"
             hidden
             onChange={({ target: { files } }) => {
-              files[0] && setFileName(files[0].name);
-              if (files) {
-                setImage(URL.createObjectURL(files[0]));
+              // files[0] && setFileName(files[0].name);
+              // if (files) {
+              //   setImage(URL.createObjectURL(files[0]));
+              // }
+              if (files[0]) {
+                setFileName(files[0].name);
+                readImage(files[0]);
               }
             }}
           />
@@ -81,7 +95,7 @@ function Uploader() {
           )}
         </div>
         {/* </label> */}
-      </form>
+      </div>
     </div>
   );
 }

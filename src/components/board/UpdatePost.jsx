@@ -18,7 +18,9 @@ const UpdatePost = ({ post, onSave }) => {
 
   return (
     <div>
-      <button onClick={handleEdit}>저장</button>
+      <button className="btn btn-primary" onClick={handleEdit}>
+        저장
+      </button>
     </div>
   );
 };

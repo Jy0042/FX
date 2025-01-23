@@ -20,10 +20,12 @@ const ReadPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await readPosts();
+        const sortedPosts = res.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        //작성시간순으로 내림차순 정렬(최신글이 맨 위로)
         if (!Array.isArray(res)) {
           throw new Error('Invalid response data');
         }
-        setPosts(res);
+        setPosts(sortedPosts);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -62,7 +64,6 @@ const ReadPosts = () => {
   return (
     <div>
       <ul>
-        {/* {currentPosts.map((post) => ( */}
         {(currentPosts || []).map((post) => (
           <div
             key={post.post_id}
@@ -70,14 +71,9 @@ const ReadPosts = () => {
             style={{ cursor: 'pointer' }}
           >
             <Post post={post} />
-            {/* <Post post={post} /> */}
-            <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
           </div>
         ))}
       </ul>
-      {/* <h1 className="color:white;" ref={ref}>
-        load data
-      </h1> */}
       <ul
         className="pagination"
         style={{
@@ -97,7 +93,7 @@ const ReadPosts = () => {
           }}
         >
           <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-            Previous
+            이전
           </button>
         </li>
         {Array.from({ length: endPage - startPage + 1 }).map((_, index) => {
@@ -114,8 +110,8 @@ const ReadPosts = () => {
           );
         })}
         <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-          <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-            Next
+          <button className="page-link mx-2" onClick={() => paginate(currentPage + 1)}>
+            다음
           </button>
         </li>
       </ul>

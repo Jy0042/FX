@@ -1,4 +1,5 @@
 import axios from 'axios';
+// import multer from 'multer';
 
 // Axios 기본 설정
 const api = axios.create({
@@ -177,7 +178,13 @@ export const verifyCode = async (email, code) => {
 // 게시글 관련 API (생성, 읽기, 수정, 삭제)
 export const createPost = async (title, content, image) => {
   try {
-    const response = await api.post('/posts', { author: 1, title, content, image });
+    console.log('createpost 이미지 확인 : ', title, content, image);
+    const response = await api.post('/posts', {
+      author: 1,
+      title: title,
+      content: content,
+      image: image,
+    });
     return response.data;
   } catch (error) {
     handleError(error);
@@ -187,7 +194,11 @@ export const createPost = async (title, content, image) => {
 export const readPost = async (id) => {
   try {
     const response = await api.get(`/posts/${id}`);
-    return response.data.post;
+    console.log('readpost data :', response);
+    const post = response.data.post;
+    console.log('post data :', post.image);
+
+    return post; // 데이터를 반환
   } catch (error) {
     handleError(error);
   }
@@ -195,8 +206,11 @@ export const readPost = async (id) => {
 
 export const readPosts = async () => {
   try {
-    const response = await api.get('/posts');
-    return response.data.posts;
+    const response = await api.get(`/posts`);
+    // console.log('response', response);
+    const posts = response.data.posts;
+    // console.log('posts:', posts);
+    return posts; // 데이터를 반환
   } catch (error) {
     handleError(error);
   }

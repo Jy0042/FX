@@ -5,8 +5,12 @@ import DeletePost from './DeletePost';
 import { good, example, share } from '../../assets';
 import Uploader from './Uploader';
 import { readPost } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const ReadPost = () => {
+  //   const [title, setTitle] = useState(post.title);
+  //   const [content, setContent] = useState(post.content);
+
   const { postId } = useParams(); // URL에서 게시물 ID를 가져옴
   const [post, setPost] = useState({
     title: '',
@@ -18,12 +22,23 @@ const ReadPost = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const data = await readPost(postId); // API 요청
         console.log('fetch후 data', data);
+        console.log('fetch후 image', data.image);
+
+        // Buffer 데이터를 Base64로 변환
+        // if (data.image && data.image.data) {
+        //   const base64Image = `data:image/png;base64,${btoa(
+        //     String.fromCharCode(...new Uint8Array(data.image.data))
+        //   )}`;
+        //   data.image = base64Image;
+        // }
+        // console.log('base64 변형후 image', data.image);
         setPost(data);
       } catch (error) {
         setError(error.message);
@@ -49,6 +64,23 @@ const ReadPost = () => {
     <div className="container my-4">
       <div className="card">
         <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <button className="btn btn-primary" onClick={() => navigate('/community')}>
+              목록
+            </button>
+            {isEditing ? (
+              <div>
+                <UpdatePost post={post} onSave={handleSave} />
+              </div>
+            ) : (
+              <div className="d-flex">
+                <DeletePost post={post} />
+                <button className="btn btn-primary" onClick={() => setIsEditing(true)}>
+                  수정
+                </button>
+              </div>
+            )}
+          </div>
           {isEditing ? (
             <div>
               <input
@@ -64,37 +96,52 @@ const ReadPost = () => {
                 onChange={(e) => setPost({ ...post, content: e.target.value })}
               ></textarea>
               <Uploader />
-              <UpdatePost post={post} onSave={handleSave} />
             </div>
           ) : (
             <div>
               <h1 className="card-title">{post.title}</h1>
-              <div className="d-flex justify-content-center align-items-center mb-3">
+              <div className="d-flex justify-content-end align-items-center mb-3">
                 <small className="text-muted">
                   <strong>{post.author}</strong> &middot; {post.updated_at} &middot; Guidelines
                 </small>
               </div>
-              <img
-                src={post.image_url || example}
+              {/* <img
+                // src="https://via.placeholder.com/40"
+                src={post.image}
                 alt="Author"
                 style={{ maxWidth: '100%', height: 'auto' }}
                 className="me-2"
-              />
+              /> */}
+              <div>
+                {post.image ? (
+                  <img
+                    // src="https://via.placeholder.com/40"
+                    src={post.image}
+                    alt="Post"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    className="me-2"
+                  />
+                ) : (
+                  <img
+                    // src="https://via.placeholder.com/40"
+                    src={example}
+                    alt="Author"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    className="me-2"
+                  />
+                )}
+              </div>
               <p className="card-text">{post.content}</p>
-              <div className="card-footer bg-white d-flex justify-content-start align-items-center">
+              <div className="card-footer d-flex justify-content-start align-items-center">
                 <img src={good} alt="좋아요 아이콘" className="me-1" />
                 <small className="text-muted me-3">{post.like_count}</small>
                 <button className="btn btn-link text-muted">
                   <img src={share} alt="공유 아이콘" />
-                  Share
+                  공유
                 </button>
               </div>
             </div>
           )}
-        </div>
-        <div className="col-md-4 d-flex justify-content-center">
-          <DeletePost post={post} />
-          <button onClick={() => setIsEditing(true)}>수정</button>
         </div>
       </div>
     </div>
