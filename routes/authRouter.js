@@ -68,18 +68,26 @@ router.post('/login', async (req, res) => {
     const user = await authenticateUser(req.body, res);
     delete user.passwordHash;
     if (user) {
-      // 세션 재생성으로 세션 고착 방지
+      // 새 세션 생성으로 세션 고착 방지
       req.session.regenerate(function (err) {
         if (err) {
           console.error(err);
           next(err);
-        } else {
-          req.session.user = user;
+        }
+
+        req.session.user = user;
+
+        // 바로 세션 저장 (저장 전 client-side에서 새로 고침이 발생해서 세션이 날아가는 것을 예방)
+        req.session.save(function (err) {
+          if (err) {
+            console.error(err);
+            next(err);
+          }
           // req.session.userId = user.user_id;
           // req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
-          return res.status(201).json({ isLoggedIn: true });
-        }
-      })
+        });
+        return res.status(201).json({ isLoggedIn: true });
+      });
     } else {
       // 입력 정보에 해당하는 회원 정보 없음
       return res.status(401).json({
@@ -106,19 +114,17 @@ router.delete('/logout', (req, res) => {
   if (req.session.user) {
     // ※ req.session 존재 유무로 분기하면 안 되니 다른 팀원은 다시 수정하지 말 것!
     // session 객체는 destroy 후에도 다시 생성되서, 그렇게 하면 중복 로그아웃 시도를 막을 수 없음
-    req.session.destroy((err) => {
+    // req.session.destroy((err) => {
+    req.session.user = null;
+    req.session.save(function (err) {
+      if (err) next(err);
+    });
+    req.session.regenerate(function (err) { // 새 세션 생성
       if (!err) {
-        res.clearCookie('connect.sid'); // 세션 쿠키 제거
-        req.session.regenerate(function (err) { // 세션 재생성으로 세션 고착 방지
-          if (err) {
-            console.error(err);
-            next(err);
-          } else {
-            res.status(200).json({
-              isSuccess: true,
-              message: '로그아웃 성공',
-            });
-          }
+        // res.clearCookie('connect.sid'); // 세션 쿠키 제거
+        res.status(200).json({
+          isSuccess: true,
+          message: '로그아웃 성공',
         });
       } else {
         console.error('세션 삭제 중 오류 발생:', err);
