@@ -23,18 +23,10 @@ const Header = () => {
     navigate(path);
   };
 
-  if (isLoading) {
-    return (
-      <header className="header bg-white shadow-sm">
-        <div className="text-center py-3">로딩 중...</div>
-      </header>
-    );
-  }
-
   return (
     <header className="header bg-white shadow-sm">
       <nav className="navbar navbar-expand-lg">
-        <div className="container-fluid">
+        <div className="container">
           <button
             className="navbar-brand fw-bold fs-4 btn btn-link p-0 text-decoration-none"
             onClick={() => navigateTo('/')}
@@ -52,7 +44,6 @@ const Header = () => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
@@ -80,16 +71,21 @@ const Header = () => {
             <div className="d-flex align-items-center">
               {!isAuthenticated ? (
                 <>
-                  <ButtonComponent
-                    className="btn btn-outline-secondary me-2"
+                  {/* 로그인 버튼 */}
+                  <button
+                    className="btn login-btn me-2"
                     data-bs-toggle="modal"
                     data-bs-target="#loginModal"
+                    onClick={() => console.log('로그인 버튼 클릭')}
                   >
                     로그인
-                  </ButtonComponent>
+                  </button>
+
+                  {/* 회원가입 버튼 */}
                   <ButtonComponent
-                    className="btn btn-primary"
+                    className="btn-primary"
                     onClick={() => navigateTo('/register')}
+                    variant="primary"
                   >
                     회원가입
                   </ButtonComponent>

@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BsSearch, BsBell, BsPersonCircle } from 'react-icons/bs';
 import Dropdown from 'react-bootstrap/Dropdown';
-import axios from 'axios';
 
 const UserMenu = ({ handleLogout, userId }) => {
-  const [profileImage, setProfileImage] = useState('/default-profile.png'); // 기본 값 설정
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -14,11 +12,9 @@ const UserMenu = ({ handleLogout, userId }) => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`/api/v1/users/${userId}`, { withCredentials: true });
-        setProfileImage(response.data.profileImage || '/default-profile.png');
+        // 여기서 사용자 데이터를 불러올 수도 있지만, 프로필 이미지는 사용하지 않음
       } catch (error) {
         console.error('유저 데이터 로드 실패:', error.message);
-        setProfileImage('/default-profile.png'); // 기본 프로필 설정
       } finally {
         setIsLoading(false);
       }
@@ -47,12 +43,7 @@ const UserMenu = ({ handleLogout, userId }) => {
               }}
             />
           ) : (
-            <img
-              src={profileImage}
-              alt="프로필"
-              className="rounded-circle"
-              style={{ width: '32px', height: '32px' }}
-            />
+            <BsPersonCircle size={32} />
           )}
         </Dropdown.Toggle>
         <Dropdown.Menu>

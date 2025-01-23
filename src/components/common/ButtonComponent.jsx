@@ -5,22 +5,21 @@ const ButtonComponent = ({
   children,
   type = 'button',
   variant = 'primary',
-  size = '',
   className = '',
   isLoading = false,
   disabled = false,
   onClick = () => {},
   ...props
 }) => {
-  const baseClass = `btn btn-${variant} ${size ? `btn-${size}` : ''}`;
+  const baseClass = `btn btn-${variant} ${className}`;
 
   return (
     <button
       type={type}
-      className={`${baseClass} ${className}`}
+      className={baseClass}
       onClick={onClick}
       disabled={disabled || isLoading}
-      {...props} // 추가 속성 적용
+      {...props}
     >
       {isLoading && (
         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
@@ -44,8 +43,10 @@ ButtonComponent.propTypes = {
     'dark',
     'link',
     'outline',
-  ]),
-  size: PropTypes.oneOf(['sm', 'lg', '']),
+    'outline-secondary',
+    'outline-dark',
+    'outline-primary',
+  ]), // "outline" 추가
   className: PropTypes.string,
   isLoading: PropTypes.bool,
   disabled: PropTypes.bool,
