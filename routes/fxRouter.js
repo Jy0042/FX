@@ -14,30 +14,28 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 // 세션 정보를 읽어와서 회원만 즐겨찾는 환율 세트 저장 가능하게 해야 함
 // 로그인 기능 제작 전이라서 일단 임의 사용자 사용
 
+let availableCurrencies;
+
 // 통화 목록 조회
 async function getAvailableCurrencies() {
   try {
-    // conn = await dbPool.getConnection();
-    conn = await getDBConnection();
-    const rows = await conn.query(`
-    SELECT currency_code AS currencyCode, currency
-    FROM available_currencies
-    ORDER BY rank;
-  `);
-    debugDb('(getAvailableCurrencies 함수 안) rows:', rows);
-    // 통화 코드, 통화명, 국기 아이콘 URL
-    const availableCurrencies = rows.map((row) => {
-      row.flagURL = `https://flagcdn.com/w40/${row.currencyCode.slice(0, 2).toLowerCase()}.png`;
-      return row;
-    });
-    if (!availableCurrencies || availableCurrencies.length === 0) {
-      res.status(404).json({ message: '통화 목록이 없습니다.' });
+    if (!availableCurrencies) {
+      // conn = await dbPool.getConnection();
+      conn = await getDBConnection();
+      const rows = await conn.query(`
+      SELECT currency_code AS currencyCode, currency
+      FROM available_currencies
+      ORDER BY rank;
+      `);
+      // 통화 코드, 통화명, 국기 아이콘 URL
+      availableCurrencies = rows.map((row) => {
+        row.flagURL = `https://flagcdn.com/w40/${row.currencyCode.slice(0, 2).toLowerCase()}.png`;
+        return row;
+      });
+      return availableCurrencies;
     }
-    debugLog('(getAvailableCurrencies 함수 안) availableCurrencies:', availableCurrencies);
-    return availableCurrencies;
   } catch (error) {
-    console.error('통화 목록 조회 중 오류:', error.message);
-    res.status(500).json({ message: '통화 목록을 가져올 수 없습니다.' });
+    debugDb('통화 목록 조회 중 오류:', error.message);
   } finally {
     if (conn) {
       // await conn.release(); // 커넥션 풀에 반환
@@ -45,15 +43,18 @@ async function getAvailableCurrencies() {
     }
   }
 }
-const availableCurrencies = await getAvailableCurrencies();
+availableCurrencies = await getAvailableCurrencies();
 
 // 통화 목록
 router.get('/currencies', async (req, res) => {
   if (availableCurrencies) {
-    debugLog(availableCurrencies);
     return res.status(200).json(availableCurrencies);
   } else {
-    const availableCurrencies = await getAvailableCurrencies();
+    availableCurrencies = await getAvailableCurrencies();
+    if (!availableCurrencies || availableCurrencies.length === 0) {
+      return res.status(404).json({ message: '통화 목록이 없습니다.' });
+    }
+    // res.status(500).json({ message: '통화 목록을 가져올 수 없습니다.' });
     res.status(200).json(availableCurrencies);
   }
 });
@@ -233,12 +234,7 @@ router.get('/history', async (req, res) => {
         WHERE s.currency_code = ?
         AND t.currency_code = ?
         ORDER BY h.date ASC;
-        `,
-      [source, target]
-    );
-    // 날짜 범위 지정? 1년치도 휴일 제외하면 250일 정도로 많지 않으니 일단 전부 전송
-    // h.date BETWEEN ?
-    debugLog('fxHistory:', fxHistory);
+        `, [source, target]);
     if (fxHistory.length > 0) {
       res.status(200).json({
         message: '환율 히스토리 조회가 완료되었습니다.',
