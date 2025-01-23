@@ -28,8 +28,8 @@ async function getPost(postId) {
             p.view_count,
             p.like_count,
             p.comment_count,
-            DATE_FORMAT(created_at, "%X-%m-%d %H:%i:%s") AS created_at,
-            DATE_FORMAT(updated_at, "%X-%m-%d %H:%i:%s") AS updated_at,
+            DATE_FORMAT(created_at, "%Y-%m-%d %H:%i:%s") AS created_at,
+            DATE_FORMAT(updated_at, "%Y-%m-%d %H:%i:%s") AS updated_at,
             p.image
       FROM posts p
       JOIN users u ON p.author = u.user_id
@@ -196,8 +196,8 @@ router.get('/', async (req, res) => {
             p.view_count,
             p.like_count,
             p.comment_count,
-            DATE_FORMAT(created_at, "%X-%m-%d %H:%i:%s") AS created_at,
-            DATE_FORMAT(updated_at, "%X-%m-%d %H:%i:%s") AS updated_at,
+            DATE_FORMAT(created_at, "%Y-%m-%d %H:%i:%s") AS created_at,
+            DATE_FORMAT(updated_at, "%Y-%m-%d %H:%i:%s") AS updated_at,
             p.image
       FROM posts p
       JOIN users u ON p.author = u.user_id

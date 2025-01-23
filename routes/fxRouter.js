@@ -230,7 +230,7 @@ router.get('/history', async (req, res) => {
           s.currency_code AS source_currency_code,
           t.currency_code AS target_currency_code,
           h.fx_rate,
-          DATE_FORMAT(h.date, "%X-%m-%d") AS date
+          DATE_FORMAT(h.date, "%Y-%m-%d") AS date
         FROM fx_rate_history h
         JOIN available_currencies s ON h.source_id = s.currency_id
         JOIN available_currencies t ON h.target_id = t.currency_id
