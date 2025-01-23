@@ -7,7 +7,6 @@ const Community = () => {
   const navigate = useNavigate();
 
   const toWritePage = () => {
-    console.log('페이지 이동');
     navigate('/post');
   };
 

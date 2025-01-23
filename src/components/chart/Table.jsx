@@ -1,6 +1,4 @@
 const Table = ({ exchangeData }) => {
-  console.log('Table에서의 currency: ', exchangeData);
-
   const headers = [
     {
       text: 'From',
@@ -29,9 +27,7 @@ const Table = ({ exchangeData }) => {
         <thead>
           <tr>
             {headers.map((header) => (
-              <th key={header.text}>
-                {header.text} {/* 컬럼명 바인딩 */}
-              </th>
+              <th key={header.text}>{header.text}</th>
             ))}
           </tr>
         </thead>
