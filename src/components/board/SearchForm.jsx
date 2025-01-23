@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const SearchForm = () => {
-  const [query, setQuery] = useState('');
-
   return (
     <div>
       <div className="input-group d-flex justify-content-center">

@@ -8,12 +8,8 @@ const ReadPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 3;
-
-  const { ref, inView } = useInView(); // Intersection Observer
+  const postsPerPage = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +17,6 @@ const ReadPosts = () => {
       try {
         const res = await readPosts();
         const sortedPosts = res.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        //작성시간순으로 내림차순 정렬(최신글이 맨 위로)
         if (!Array.isArray(res)) {
           throw new Error('Invalid response data');
         }
@@ -36,7 +31,6 @@ const ReadPosts = () => {
     fetchPosts();
   }, []);
 
-  // Pagination 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
@@ -48,7 +42,6 @@ const ReadPosts = () => {
     setCurrentPage(pageNumber);
   };
 
-  // Pagination 버튼
   const totalPages = Math.ceil(posts.length / postsPerPage);
   const startPage = Math.max(1, Math.floor((currentPage - 1) / 5) * 5 + 1);
   const endPage = Math.min(startPage + 4, totalPages);

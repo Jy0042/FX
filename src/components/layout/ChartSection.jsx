@@ -6,24 +6,10 @@ import ChangeData from '../chart/ChangeData';
 
 const ChartSection = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
+
   const [currency, setCurrency] = useState('USD/KRW'); //초기 환율값 USD/KRW
-  // console.log('초기 환율설정: 'currency);
-
-  // const params = new URLSearchParams(location.search);
-  // console.log('params', params);
-
-  // // Extract `currency` from URL query parameters on component mount
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   const initialCurrency = params.get('currency');
-  //   if (initialCurrency) {
-  //     setCurrency(initialCurrency); // Set currency from URL
-  //   }
-  // }, [location.search]);
 
   const handleClick = () => {
-    // setCurrency();
     navigate(`/chart?currency=${currency}`); // 게시물 ID를 포함한 경로로 이동
     console.log();
   };

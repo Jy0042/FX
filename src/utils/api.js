@@ -178,7 +178,6 @@ export const verifyCode = async (email, code) => {
 // 게시글 관련 API (생성, 읽기, 수정, 삭제)
 export const createPost = async (title, content, image) => {
   try {
-    console.log('createpost 이미지 확인 : ', title, content, image);
     const response = await api.post('/posts', {
       author: 1,
       title: title,
@@ -194,9 +193,7 @@ export const createPost = async (title, content, image) => {
 export const readPost = async (id) => {
   try {
     const response = await api.get(`/posts/${id}`);
-    console.log('readpost data :', response);
     const post = response.data.post;
-    console.log('post data :', post.image);
 
     return post; // 데이터를 반환
   } catch (error) {
@@ -207,9 +204,7 @@ export const readPost = async (id) => {
 export const readPosts = async () => {
   try {
     const response = await api.get(`/posts`);
-    // console.log('response', response);
     const posts = response.data.posts;
-    // console.log('posts:', posts);
     return posts; // 데이터를 반환
   } catch (error) {
     handleError(error);
@@ -241,15 +236,14 @@ export const readChartData = async (currency) => {
     const target = currency.slice(4, 7);
     const response = await api.get(`/fx/history`, {
       params: {
-        source: source, // Currency 데이터 예시(USD/KRW)
-        target: target, // 앞 뒤값 잘라서 넣음
+        source: source,
+        target: target,
       },
     });
-    console.log('차트 데이터', response);
-    // 소수점 2자리로 변환
+
     const processedData = response.data.fxHistory.map((item) => ({
-      ...item, // 기존 데이터 유지
-      fx_rate: Number(item.fx_rate).toFixed(2), // fx_rate만 소수점 2자리로 변환
+      ...item,
+      fx_rate: Number(item.fx_rate).toFixed(2),
     }));
 
     return processedData;

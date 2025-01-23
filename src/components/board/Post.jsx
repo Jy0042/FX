@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { good, review, author } from '../../assets';
-import { LuImageOff } from 'react-icons/lu';
 
 const Post = ({ post }) => {
   return (
     <div
-      className="row align-items-start  bg-light text-dark p-3"
+      className="row align-items-start  bg-light text-dark p-3 mb-2"
       style={{
         height: '250px',
         width: '1000px',
@@ -13,26 +12,23 @@ const Post = ({ post }) => {
         border: 'groove',
       }}
     >
-      {/* 왼쪽: 제목, 내용, 작성자, 좋아요/댓글 */}
       <div
         className="col-md-8 d-flex flex-column justify-content-between"
         style={{
-          height: '100%', // 부모 높이 기준으로 정렬
+          height: '100%',
         }}
       >
-        {/* 게시글 영역 */}
         <h4 className="card-title text-start mb-2">{post.title}</h4>
         <p
           className="card-text text-start mb-3 text-align-top"
           style={{
-            // padding-top: '100px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
-            WebkitLineClamp: 3, // Adjust the number of visible lines
+            WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
             lineHeight: '1.5',
-            maxHeight: '4.5em', // lineHeight * WebkitLineClamp
+            maxHeight: '4.5em',
           }}
         >
           {post.content}
@@ -58,31 +54,8 @@ const Post = ({ post }) => {
           <span>{post.like_count}</span>
         </div>
       </div>
-      {/* 오른쪽: 이미지 */}
-      <div className="col-md-4 d-flex justify-content-end">
-        {post.image ? (
-          <img
-            src={post.image}
-            alt="게시글 이미지"
-            className="img-fluid"
-            style={{ maxWidth: '100%', height: 'auto' }}
-          />
-        ) : (
-          // <img
-          //   src={review}
-          //   alt="게시글 이미지"
-          //   className="img-fluid"
-          //   style={{ maxWidth: '100%', height: 'auto' }}
-          // />
-          <LuImageOff />
-        )}
-      </div>
     </div>
   );
 };
-
-// Post.propTypes = {
-//   setMessage: PropTypes.func.isRequired, // setMessage가 반드시 함수여야 함
-// };
 
 export default Post;

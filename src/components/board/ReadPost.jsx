@@ -8,37 +8,23 @@ import { readPost } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 const ReadPost = () => {
-  //   const [title, setTitle] = useState(post.title);
-  //   const [content, setContent] = useState(post.content);
-
-  const { postId } = useParams(); // URL에서 게시물 ID를 가져옴
+  const { postId } = useParams();
   const [post, setPost] = useState({
     title: '',
     content: '',
     author: '',
     updated_at: '',
     like_count: 0,
-  }); // 게시물 초기 상태
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const data = await readPost(postId); // API 요청
-        console.log('fetch후 data', data);
-        console.log('fetch후 image', data.image);
-
-        // Buffer 데이터를 Base64로 변환
-        // if (data.image && data.image.data) {
-        //   const base64Image = `data:image/png;base64,${btoa(
-        //     String.fromCharCode(...new Uint8Array(data.image.data))
-        //   )}`;
-        //   data.image = base64Image;
-        // }
-        // console.log('base64 변형후 image', data.image);
+        const data = await readPost(postId);
         setPost(data);
       } catch (error) {
         setError(error.message);
@@ -48,12 +34,12 @@ const ReadPost = () => {
     };
 
     fetchPost();
+    console.log('posts', post);
   }, [postId]);
 
   const handleSave = (updatedPost) => {
-    setPost(updatedPost); // 업데이트된 데이터를 반영
-    setIsEditing(false); // 읽기 모드로 복귀
-    console.log('수정 완료 후 post 상태:', post);
+    setPost(updatedPost);
+    setIsEditing(false);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -102,20 +88,12 @@ const ReadPost = () => {
               <h1 className="card-title">{post.title}</h1>
               <div className="d-flex justify-content-end align-items-center mb-3">
                 <small className="text-muted">
-                  <strong>{post.author}</strong> &middot; {post.updated_at} &middot; Guidelines
+                  <strong>{post.nickname}</strong> &middot; {post.updated_at}
                 </small>
               </div>
-              {/* <img
-                // src="https://via.placeholder.com/40"
-                src={post.image}
-                alt="Author"
-                style={{ maxWidth: '100%', height: 'auto' }}
-                className="me-2"
-              /> */}
               <div>
                 {post.image ? (
                   <img
-                    // src="https://via.placeholder.com/40"
                     src={post.image}
                     alt="Post"
                     style={{ maxWidth: '100%', height: 'auto' }}
@@ -123,7 +101,6 @@ const ReadPost = () => {
                   />
                 ) : (
                   <img
-                    // src="https://via.placeholder.com/40"
                     src={example}
                     alt="Author"
                     style={{ maxWidth: '100%', height: 'auto' }}
