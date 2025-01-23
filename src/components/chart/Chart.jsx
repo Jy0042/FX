@@ -2,10 +2,9 @@ import ReactApexChart from 'react-apexcharts';
 import { readChartData } from '../../utils/api';
 import { useState, useEffect, useRef } from 'react';
 
-const Apex = ({ type, currency }) => {
+const Apex = ({ type, currency, onDataLoaded }) => {
   const [exchange, setExchange] = useState([]);
   const isFetching = useRef(false); // 중복 호출 방지 플래그
-  console.log('Apex차트 내부 props : ', currency);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +12,6 @@ const Apex = ({ type, currency }) => {
       isFetching.current = true;
 
       try {
-        console.log('변경할 currency:', currency);
         const res = await readChartData(currency);
 
         if (!res || res.length === 0) {
@@ -21,7 +19,7 @@ const Apex = ({ type, currency }) => {
         }
 
         setExchange(res);
-        console.log('환율데이터', res);
+        onDataLoaded(res);
       } catch (error) {
         console.error('데이터 로드 오류:', error.message);
       } finally {
@@ -32,14 +30,15 @@ const Apex = ({ type, currency }) => {
     fetchData();
   }, [currency]);
 
-  // 다운 샘플링
-  const reducedExchange = exchange.filter((_, index) => index % 20 === 0);
+  const sampleXData = exchange.map((items) => items.date.slice(0, 10));
 
   // 차트 옵션
   const chartOptions = {
     xaxis: {
-      categories: reducedExchange.map((items) => items.date),
+      categories: sampleXData,
+      type: 'datetime',
     },
+
     title: {
       text: currency,
     },
@@ -51,14 +50,15 @@ const Apex = ({ type, currency }) => {
     markers: {
       size: 0, // 데이터 포인트 표시 제거
     },
+    stroke: {
+      curve: 'straight',
+    },
   };
-
-  console.log('chartOptions', chartOptions.title.text);
 
   const data = [
     {
       name: chartOptions.title.text,
-      data: reducedExchange.map((items) => parseInt(items.fx_rate, 10)), // 정수 변환
+      data: exchange.map((items) => parseInt(items.fx_rate, 10)), // 정수 변환
     },
   ];
 

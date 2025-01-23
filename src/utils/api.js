@@ -223,11 +223,23 @@ export const updatePosts = async (id, title, content) => {
 // 환율 데이터 조회
 export const readChartData = async (currency) => {
   try {
-    const [source, target] = currency.split('/');
-    const response = await api.get('/fx/history', { params: { source, target } });
-    return response.data.fxHistory;
-  } catch (error) {
-    handleError(error);
+    const source = currency.slice(0, 3);
+    const target = currency.slice(4, 7);
+    const response = await api.get(`/fx/history`, {
+      params: {
+        source: source, // Currency 데이터 예시(USD/KRW)
+        target: target, // 앞 뒤값 잘라서 넣음
+      },
+    });
+    // 소수점 2자리로 변환
+    const processedData = response.data.fxHistory.map((item) => ({
+      ...item, // 기존 데이터 유지
+      fx_rate: Number(item.fx_rate).toFixed(2), // fx_rate만 소수점 2자리로 변환
+    }));
+
+    return processedData;
+  } catch {
+    console.error('환율정보 읽기 오류');
   }
 };
 

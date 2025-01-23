@@ -61,9 +61,41 @@ const ReadPosts = () => {
 
   return (
     <div>
-      {/* Pagination */}
-      <ul className="pagination justify-content-center">
-        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+      <ul>
+        {/* {currentPosts.map((post) => ( */}
+        {(currentPosts || []).map((post) => (
+          <div
+            key={post.post_id}
+            onClick={() => handleClick(post.post_id)}
+            style={{ cursor: 'pointer' }}
+          >
+            <Post post={post} />
+            {/* <Post post={post} /> */}
+            <span className="input-group-text">{/* <i className="bi bi-search"></i> */}</span>
+          </div>
+        ))}
+      </ul>
+      {/* <h1 className="color:white;" ref={ref}>
+        load data
+      </h1> */}
+      <ul
+        className="pagination"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          listStyleType: 'none',
+          padding: 0,
+          textAlign: 'center',
+          width: '100%',
+        }}
+      >
+        <li
+          className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}
+          style={{
+            display: 'inline-block',
+            marginRight: '10px',
+          }}
+        >
           <button className="page-link" onClick={() => paginate(currentPage - 1)}>
             Previous
           </button>
@@ -87,24 +119,6 @@ const ReadPosts = () => {
           </button>
         </li>
       </ul>
-
-      {/* Posts */}
-      <div className="card">
-        {currentPosts.map((post) => (
-          <div
-            key={post.post_id} // 고유한 key 속성
-            onClick={() => handleClick(post.post_id)}
-            style={{ cursor: 'pointer' }}
-          >
-            <Post post={post} />
-          </div>
-        ))}
-      </div>
-
-      {/* Intersection Observer */}
-      <h1 className="text-center" ref={ref}>
-        Load more posts...
-      </h1>
     </div>
   );
 };
