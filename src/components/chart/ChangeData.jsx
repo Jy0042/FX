@@ -5,11 +5,6 @@ const ChangeData = (props) => {
   };
   return (
     <table className="table table-light border-success table-hover">
-      {/* <tbody class="table-group-divider" height={350}>
-              <tr>USD/KRW</tr>
-              <tr>JPY/KRW</tr>
-              <tr>EUR/KRW</tr>
-            </tbody> */}
       <tbody className="table-group-divider">
         <tr>
           <td className="text-center align-middle" height="110" onClick={exchange} id="1">

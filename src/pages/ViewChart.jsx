@@ -8,6 +8,7 @@ const ViewChart = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   let [currency, setCurrency] = useState(params.get('currency')); //초기 환율값 USD/KRW
+  const [exchangeData, setExchangeData] = useState([]); // 환율 데이터를 관리
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -20,6 +21,10 @@ const ViewChart = () => {
       console.log('초기 currency 값과 다를 때/업데이트');
     }
   }, [location.search]);
+
+  const handleDataLoaded = (data) => {
+    setExchangeData(data);
+  };
 
   const changeChart = () => {
     console.log(chartState);
@@ -37,15 +42,15 @@ const ViewChart = () => {
       <button>30D</button>
       {chartState ? (
         <div>
-          <Apex type={'line'} currency={currency} />
+          <Apex type={'line'} currency={currency} onDataLoaded={handleDataLoaded} />
         </div>
       ) : (
         <div>
-          <Apex type={'bar'} currency={currency} />
+          <Apex type={'bar'} currency={currency} onDataLoaded={handleDataLoaded} />
         </div>
       )}
       <div>
-        <Table />
+        <Table exchangeData={exchangeData} />
       </div>
     </div>
   );

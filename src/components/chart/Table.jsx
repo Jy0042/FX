@@ -1,33 +1,5 @@
-import { useState, useEffect } from 'react';
-import { readChartData } from '../../utils/api';
-
-const Table = () => {
-  const [exchange, setExchange] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [items, setItems] = useState('');
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await readChartData();
-  //       setExchange(res);
-  //       console.log('환율데이터', res[0].fx_rate);
-  //       // console.log('items: ', exchange);
-  //       if (!res) {
-  //         throw new Error('Failed to fetch posts');
-  //       }
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log('Updated exchange data:', exchange);
-  // }, [exchange]); // exchange 상태가 업데이트될 때 실행
+const Table = ({ exchangeData }) => {
+  console.log('Table에서의 currency: ', exchangeData);
 
   const headers = [
     {
@@ -48,7 +20,8 @@ const Table = () => {
     },
   ];
 
-  // const items = exchange;
+  const sortedData = [...exchangeData].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const limitedData = sortedData.slice(0, 20);
 
   return (
     <div className="container mt-4">
@@ -63,13 +36,17 @@ const Table = () => {
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {/* {exchange.map((item, index) => (
+          {limitedData.map((item, index) => (
             <tr key={index}>
               {headers.map((header) => (
-                <td key={header.value}>{item[header.value]}</td>
+                <td key={header.value}>
+                  {item[header.value].length > 10
+                    ? item[header.value].slice(0, 10)
+                    : item[header.value]}
+                </td>
               ))}
             </tr>
-          ))} */}
+          ))}
         </tbody>
       </table>
     </div>
