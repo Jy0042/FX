@@ -14,17 +14,16 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 // 세션 정보를 읽어와서 회원만 즐겨찾는 환율 세트 저장 가능하게 해야 함
 // 로그인 기능 제작 전이라서 일단 임의 사용자 사용
 
-// 통화 목록
-router.get('/currencies', async (req, res) => {
+async function getAvailableCurrencies() {
   try {
     // conn = await dbPool.getConnection();
     conn = await getDBConnection();
     const rows = await conn.query(`
-      SELECT currency_code AS currencyCode, currency
-      FROM available_currencies
-      ORDER BY rank;
-    `);
-    debugDb(rows);
+    SELECT currency_code AS currencyCode, currency
+    FROM available_currencies
+    ORDER BY rank;
+  `);
+    debugDb('(getAvailableCurrencies 함수 안) rows:', rows);
     // 통화 코드, 통화명, 국기 아이콘 URL
     const availableCurrencies = rows.map((row) => {
       row.flagURL = `https://flagcdn.com/w40/${(row.currencyCode).slice(0, 2).toLowerCase()}.png`;
@@ -33,7 +32,8 @@ router.get('/currencies', async (req, res) => {
     if (!availableCurrencies || availableCurrencies.length === 0) {
       res.status(404).json({ message: '통화 목록이 없습니다.' });
     }
-    res.status(200).json(availableCurrencies);
+    debugLog('(getAvailableCurrencies 함수 안) availableCurrencies:', availableCurrencies);
+    return availableCurrencies;
   } catch (error) {
     console.error('통화 목록 조회 중 오류:', error.message);
     res.status(500).json({ message: '통화 목록을 가져올 수 없습니다.' });
@@ -42,6 +42,18 @@ router.get('/currencies', async (req, res) => {
       // await conn.release(); // 커넥션 풀에 반환
       await conn.close(); // 커넥션 연결 닫기
     }
+  }
+}
+const availableCurrencies = await getAvailableCurrencies();
+
+// 통화 목록
+router.get('/currencies', async (req, res) => {
+  if (availableCurrencies) {
+    debugLog(availableCurrencies);
+    return res.status(200).json(availableCurrencies);
+  } else {
+    const availableCurrencies = await getAvailableCurrencies();
+    res.status(200).json(availableCurrencies);
   }
 });
 
@@ -179,7 +191,6 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
       WHERE u.user_id = ?
       ORDER BY sort_order;
     `, [userId]);
-    debugLog('userCurrencyPairs:', userCurrencyPairs);
     if (userCurrencyPairs.length > 0) {
       res.status(200).json({
         message: '즐겨찾는 환율 세트 조회가 완료되었습니다.',

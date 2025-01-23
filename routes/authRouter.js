@@ -109,9 +109,16 @@ router.delete('/logout', (req, res) => {
     req.session.destroy((err) => {
       if (!err) {
         res.clearCookie('connect.sid'); // 세션 쿠키 제거
-        res.status(200).json({
-          isSuccess: true,
-          message: '로그아웃 성공',
+        req.session.regenerate(function (err) { // 세션 재생성으로 세션 고착 방지
+          if (err) {
+            console.error(err);
+            next(err);
+          } else {
+            res.status(200).json({
+              isSuccess: true,
+              message: '로그아웃 성공',
+            });
+          }
         });
       } else {
         console.error('세션 삭제 중 오류 발생:', err);
