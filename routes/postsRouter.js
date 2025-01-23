@@ -1,6 +1,7 @@
 import express from 'express';
 import debug from 'debug';
-import dbPool from './db.js';
+import { getDBConnection } from './db.js';
+// import dbPool from './db.js';
 // import { getUser } from './userRouter.js';
 
 const debugLog = new debug('log');
@@ -15,7 +16,8 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 
 async function getPost(postId) {
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const [post] = await conn.query(`
       SELECT
             p.post_id,
@@ -41,7 +43,8 @@ async function getPost(postId) {
     debugDb(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 연결 닫기
     }
   }
 }
@@ -50,7 +53,8 @@ async function getPost(postId) {
 router.post('/', async (req, res) => {
   const { author, title, content, image } = req.body;
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const result = await conn.query(`
       INSERT INTO posts (author, title, content, image)
       VALUES (?, ?, ?, ?);
@@ -69,7 +73,8 @@ router.post('/', async (req, res) => {
     debugDb(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -96,7 +101,8 @@ router.get('/:id', async (req, res) => {
     debugDb(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -109,7 +115,8 @@ router.put('/:id', async (req, res) => {
     // const user = await getUser(userId);
     const { user } = req.session;
     // if (user?.user_id) {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const result = await conn.query(`
       UPDATE posts
       SET title = ?,
@@ -130,7 +137,8 @@ router.put('/:id', async (req, res) => {
     debugDb(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -142,7 +150,8 @@ router.delete('/:id', async (req, res) => {
     // const user = await getUser(userId);
     const { user } = req.session;
     // if (user?.user_id) {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const result = await conn.query(`
       DELETE FROM posts
       WHERE post_id = ?
@@ -161,7 +170,8 @@ router.delete('/:id', async (req, res) => {
     debugDb(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });
@@ -174,7 +184,8 @@ router.get('/', async (req, res) => {
   // q: 검색어, search_type: 검색 조건(title, content, all, nickname),
   // sort: 정렬 조건(latest, read, comments, likes), page: 검색할 페이지(위치)
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const posts = await conn.query(`
       SELECT
             p.post_id,
@@ -206,7 +217,8 @@ router.get('/', async (req, res) => {
     debugDb(error);
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release();
+      await conn.close();
     }
   }
 });

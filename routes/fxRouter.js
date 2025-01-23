@@ -1,7 +1,8 @@
 import express from 'express';
 import axios from 'axios';
 import debug from 'debug';
-import dbPool from './db.js';
+import { getDBConnection } from './db.js';
+// import dbPool from './db.js';
 
 const debugLog = new debug('log');
 const debugError = new debug('error');
@@ -13,38 +14,47 @@ let conn; // DB Connection Pool로부터 얻어온 커넥션을 저장할 변수
 // 세션 정보를 읽어와서 회원만 즐겨찾는 환율 세트 저장 가능하게 해야 함
 // 로그인 기능 제작 전이라서 일단 임의 사용자 사용
 
-// 통화 목록
-router.get('/currencies', async (req, res) => {
+// 통화 목록 조회
+async function getAvailableCurrencies() {
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     const rows = await conn.query(`
-      SELECT currency_code AS currencyCode, currency
-      FROM available_currencies
-      ORDER BY rank;
-    `);
-    debugDb(rows);
+    SELECT currency_code AS currencyCode, currency
+    FROM available_currencies
+    ORDER BY rank;
+  `);
+    debugDb('(getAvailableCurrencies 함수 안) rows:', rows);
     // 통화 코드, 통화명, 국기 아이콘 URL
-    // const availableCurrencies = rows.map(([currency_code, currency]) => ({
-    //   currency_code,
-    //   currency,
-    //   flag: `https://flagcdn.com/w40/${code.slice(0, 2).toLowerCase()}.png`,
-    // }));
     const availableCurrencies = rows.map((row) => {
       row.flagURL = `https://flagcdn.com/w40/${row.currencyCode.slice(0, 2).toLowerCase()}.png`;
       return row;
     });
-    debugLog('availableCurrencies:', availableCurrencies);
     if (!availableCurrencies || availableCurrencies.length === 0) {
       res.status(404).json({ message: '통화 목록이 없습니다.' });
     }
-    res.status(200).json(availableCurrencies);
+    debugLog('(getAvailableCurrencies 함수 안) availableCurrencies:', availableCurrencies);
+    return availableCurrencies;
   } catch (error) {
     console.error('통화 목록 조회 중 오류:', error.message);
     res.status(500).json({ message: '통화 목록을 가져올 수 없습니다.' });
   } finally {
     if (conn) {
-      await conn.release();
+      // await conn.release(); // 커넥션 풀에 반환
+      await conn.close(); // 커넥션 연결 닫기
     }
+  }
+}
+const availableCurrencies = await getAvailableCurrencies();
+
+// 통화 목록
+router.get('/currencies', async (req, res) => {
+  if (availableCurrencies) {
+    debugLog(availableCurrencies);
+    return res.status(200).json(availableCurrencies);
+  } else {
+    const availableCurrencies = await getAvailableCurrencies();
+    res.status(200).json(availableCurrencies);
   }
 });
 
@@ -64,7 +74,16 @@ router.get('/convert', async (req, res) => {
       res.status(404).json({ message: '환전 정보가 존재하지 않습니다.' });
     }
   } catch (error) {
-    console.error('환전 계산 오류:', error.message);
+    if (error.response) { // HTTP 응답에서 오류 발생
+      debugError(error.response.data);
+      debugError(error.response.status);
+      debugError(error.response.headers);
+    } else if (error.request) { // HTTP 요청에서 오류 발생
+      debugError(error.request);
+    } else { // HTTP 요청하는 중에 오류 발생
+      debugError('Error', error.message);
+    }
+    debugError(error.config);
     res.status(500).send();
   }
 });
@@ -77,8 +96,8 @@ router.put('/users/:userId/user-currency-pair', async (req, res) => {
   debugLog(newCurrencyPairs);
   try {
     const currencyMapper = {};
-    conn = await dbPool.getConnection();
-    // conn = await getDBConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     debugDb('커넥션 얻어오기 성공');
 
     // 사용 가능한 통화 정보 가져오기
@@ -147,7 +166,10 @@ router.put('/users/:userId/user-currency-pair', async (req, res) => {
       res.status(500).json({ message: error.message || 'Unknown Error' });
     }
   } finally {
-    if (conn) await conn.release();
+    if (conn) {
+      // await conn.release();
+      await conn.close();
+    }
   }
 });
 
@@ -155,7 +177,8 @@ router.put('/users/:userId/user-currency-pair', async (req, res) => {
 router.get('/users/:userId/user-currency-pair', async (req, res) => {
   const { userId } = req.params;
   try {
-    conn = await dbPool.getConnection();
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
     // 기준/목표 통화 코드, 정렬 순서, 알림 메일 발송을 위한 설정 금액과 조건(LT(<=) or GT(>=))
     const userCurrencyPairs = await conn.query(
       `
@@ -170,10 +193,7 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
       JOIN available_currencies t ON u.target_id = t.currency_id
       WHERE u.user_id = ?
       ORDER BY sort_order;
-    `,
-      [userId]
-    );
-
+    `, [userId]);
     if (userCurrencyPairs.length > 0) {
       res.status(200).json({
         message: '즐겨찾는 환율 세트 조회가 완료되었습니다.',
@@ -188,7 +208,10 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
     console.error('조회 오류:', error.message);
     res.status(500).json({ message: 'Unknown Error' });
   } finally {
-    if (conn) await conn.release();
+    if (conn) {
+      // await conn.release();
+      await conn.close();
+    }
   }
 });
 
@@ -196,9 +219,9 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
 router.get('/history', async (req, res) => {
   const { source, target } = req.query;
   try {
-    conn = await dbPool.getConnection();
-    const fxHistory = await conn.query(
-      `
+    // conn = await dbPool.getConnection();
+    conn = await getDBConnection();
+    const fxHistory = await conn.query(`
         SELECT
           s.currency_code AS source_currency_code,
           t.currency_code AS target_currency_code,
@@ -231,7 +254,10 @@ router.get('/history', async (req, res) => {
     console.error('히스토리 조회 오류:', error.message);
     res.status(500).json({ message: 'Unknown Error' });
   } finally {
-    if (conn) await conn.release();
+    if (conn) {
+      // await conn.release();
+      await conn.close();
+    }
   }
 });
 
