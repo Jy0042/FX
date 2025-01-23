@@ -88,13 +88,8 @@ router.post('/login', async (req, res) => {
           }
           // req.session.userId = user.user_id;
           // req.session.profileImage = user.profile_image; // 최대 64KB 소용량이라서 세션에 저장
-<<<<<<< HEAD
-          return res.status(201).json({ isLoggedIn: true });
-        }
-=======
         });
         return res.status(201).json({ isLoggedIn: true });
->>>>>>> feature/32-web-server
       });
     } else {
       // 입력 정보에 해당하는 회원 정보 없음
