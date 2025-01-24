@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BsSearch, BsBell, BsPersonCircle } from 'react-icons/bs';
+import { BsSearch, BsPersonCircle, BsBellFill, BsBoxArrowRight } from 'react-icons/bs';
 import Dropdown from 'react-bootstrap/Dropdown';
+import axios from 'axios';
 
 const UserMenu = ({ handleLogout, userId }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -12,7 +15,8 @@ const UserMenu = ({ handleLogout, userId }) => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        // 여기서 사용자 데이터를 불러올 수도 있지만, 프로필 이미지는 사용하지 않음
+        const response = await axios.get(`/api/v1/users/${userId}`, { withCredentials: true });
+        setUserName(response.data.user?.nickname || '사용자');
       } catch (error) {
         console.error('유저 데이터 로드 실패:', error.message);
       } finally {
@@ -23,38 +27,58 @@ const UserMenu = ({ handleLogout, userId }) => {
     fetchUserData();
   }, [userId]);
 
+  const handleToggle = (isOpen) => {
+    setIsMenuOpen(isOpen);
+  };
+
   return (
     <div className="d-flex align-items-center">
       <button className="btn btn-link text-dark p-0 me-3">
         <BsSearch size={20} />
       </button>
       <button className="btn btn-link text-dark p-0 me-3">
-        <BsBell size={20} />
+        <BsBellFill size={20} />
       </button>
-      <Dropdown align="end">
-        <Dropdown.Toggle as="div" className="d-flex align-items-center cursor-pointer">
+      <Dropdown onToggle={(isOpen) => setIsMenuOpen(isOpen)}>
+        <Dropdown.Toggle
+          as="div"
+          className="d-flex align-items-center cursor-pointer position-relative dropdown-toggle"
+        >
           {isLoading ? (
             <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: '#f0f0f0',
-              }}
+              className="spinner-border text-secondary"
+              style={{ width: '32px', height: '32px' }}
             />
           ) : (
-            <BsPersonCircle size={32} />
+            <>
+              <BsPersonCircle size={28} className="text-dark" />
+              <span className="ms-2 text-primary user-name">{userName}</span>
+              <span
+                className={`dropdown-toggle-icon ms-2 ${isMenuOpen ? 'rotate-up' : 'rotate-down'}`}
+              ></span>
+            </>
           )}
         </Dropdown.Toggle>
-        <Dropdown.Menu>
+        <Dropdown.Menu
+          className={`dropdown-menu custom-dropdown-menu ${isMenuOpen ? 'menu-open' : ''}`}
+        >
           <Dropdown.Item as={Link} to="/profile">
-            내 프로필
+            마이페이지
           </Dropdown.Item>
-          <Dropdown.Item as={Link} to="/settings">
-            설정
+          <Dropdown.Item as={Link} to="/feed">
+            나의 피드
+          </Dropdown.Item>
+          <Dropdown.Item as={Link} to="/notifications">
+            알림 목록
           </Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
+          <button
+            className="btn btn-dark w-100 d-flex align-items-center justify-content-center logout-button"
+            onClick={handleLogout}
+          >
+            <BsBoxArrowRight className="me-2" />
+            로그아웃
+          </button>
         </Dropdown.Menu>
       </Dropdown>
     </div>

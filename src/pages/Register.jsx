@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RegisterForm from '../components/forms/RegisterForm';
+import RegisterForm from '../components/register/RegisterForm';
 import ModalComponent from '../components/common/ModalComponent';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../utils/api';

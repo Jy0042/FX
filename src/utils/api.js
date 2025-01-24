@@ -31,7 +31,7 @@ const handleError = (error) => {
 export const loginUser = async ({ email, password, rememberMe }) => {
   try {
     const response = await api.post('/auth/login', { email, password, rememberMe });
-    console.log('로그인 응답:', response.data);
+    //  console.log('로그인 응답:', response.data);
 
     // 응답 데이터 처리
     const { isLoggedIn } = response.data || {};
@@ -50,7 +50,7 @@ export const loginUser = async ({ email, password, rememberMe }) => {
 export const checkSession = async () => {
   try {
     const response = await api.get('/auth');
-    console.log('세션 상태 확인 응답:', response.data);
+    // console.log('세션 상태 확인 응답:', response.data);
 
     return response.data; // 세션 상태 반환
   } catch (error) {
@@ -62,7 +62,7 @@ export const checkSession = async () => {
 export const logoutUser = async () => {
   try {
     const response = await api.delete('/auth/logout');
-    console.log('로그아웃 응답:', response.data);
+    // console.log('로그아웃 응답:', response.data);
 
     return response.data;
   } catch (error) {
@@ -72,12 +72,12 @@ export const logoutUser = async () => {
 
 // 환율 계산 API 요청
 export const getRate = async (from, to, amount) => {
-  console.log('환율 계산 API 호출:', { from, to, amount }); // 디버깅용 로그
+  // console.log('환율 계산 API 호출:', { from, to, amount }); // 디버깅용 로그
   try {
     const response = await api.get('/fx/convert', {
       params: { from, to, amount },
     });
-    console.log('API 응답 데이터:', response.data); // 디버깅용 로그
+    //  console.log('API 응답 데이터:', response.data); // 디버깅용 로그
 
     const { convertedAmount, to: targetCurrency } = response.data;
     if (!convertedAmount) {
@@ -85,7 +85,7 @@ export const getRate = async (from, to, amount) => {
       throw new Error('환율 계산 결과가 유효하지 않습니다.');
     }
 
-    console.log('환율 계산 결과:', { convertedAmount, targetCurrency });
+    // console.log('환율 계산 결과:', { convertedAmount, targetCurrency });
     return { convertedAmount, targetCurrency };
   } catch (error) {
     console.error('환율 계산 중 오류 발생:', error.message);
@@ -135,9 +135,9 @@ export const saveCurrencyPair = async (userId, currencySet) => {
   }
 
   try {
-    console.log('환율 쌍 저장 요청 데이터:', currencySet); // 디버깅용 로그
+    //console.log('환율 쌍 저장 요청 데이터:', currencySet); // 디버깅용 로그
     const response = await api.put(`/fx/users/${userId}/user-currency-pair`, currencySet);
-    console.log('환율 쌍 저장 응답 데이터:', response.data);
+    //console.log('환율 쌍 저장 응답 데이터:', response.data);
     return response.data;
   } catch (error) {
     console.error('환율 쌍 저장 중 오류 발생:', error.message);

@@ -16,7 +16,7 @@ const CalculatorList = ({ calculators, setCalculators, isAuthenticated }) => {
     <div className="row justify-content-center">
       {calculators.map((calculator) => (
         <Calculator
-          key={calculator.id}
+          key={calculator?.id || Math.random()} // 방어적 코딩
           calculator={calculator}
           onUpdate={(updatedCalculator) => handleUpdate(calculator.id, updatedCalculator)}
           onRemove={isAuthenticated ? () => handleRemove(calculator.id) : null}

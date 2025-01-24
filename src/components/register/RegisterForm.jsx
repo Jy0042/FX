@@ -1,6 +1,6 @@
 import React from 'react';
-import InputComponent from '../common/InputComponent';
-import CheckboxComponent from '../CheckboxComponent';
+import InputComponent from './InputComponent';
+import CheckboxComponent from '../register/CheckboxComponent';
 import termsData from '../../assets/legal/terms.json';
 import privacyData from '../../assets/legal/privacy.json';
 
