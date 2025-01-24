@@ -24,7 +24,7 @@ const Header = () => {
   };
 
   return (
-    <header className="header bg-white shadow-sm">
+    <header className="header bg-white shadow-sm sticky-top">
       <nav className="navbar navbar-expand-lg">
         <div className="container">
           <button
