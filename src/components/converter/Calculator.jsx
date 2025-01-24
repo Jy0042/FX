@@ -112,7 +112,7 @@ const Calculator = ({ calculator, onUpdate, onRemove, isAuthenticated }) => {
       <ModalComponent
         show={showModal}
         title="❗️ 계산기 삭제"
-        body="정말 이 계산기를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다."
+        body={`정말 이 계산기를 삭제하시겠습니까?\n삭제 후 저장하기 버튼을 누르시면 복구할 수 없습니다.`}
         onClose={() => setShowModal(false)} // 취소 버튼 클릭 시 모달 닫기
         onConfirm={handleDelete} // 확인 버튼 클릭 시 삭제
       />

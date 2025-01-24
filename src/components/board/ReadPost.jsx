@@ -114,7 +114,7 @@ const ReadPost = () => {
               </div>
 
               <div className="d-flex px-4">
-                <p className="card-text my-4">{post.content}</p>
+                <p className="card-text my-4 content-container">{post.content}</p>
               </div>
               <div className="card-footer d-flex justify-content-start align-items-center">
                 <img src={good} alt="좋아요 아이콘" className="me-1" />

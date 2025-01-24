@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import ButtonComponent from '../common/ButtonComponent';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../utils/api';
@@ -21,12 +22,9 @@ const LoginModal = () => {
       const loginData = await loginUser({ email, password, rememberMe });
       if (loginData?.isLoggedIn) {
         login(); // 상태 업데이트
-        // 모달 닫기
         const modalElement = document.getElementById('loginModal');
         const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
         if (modalInstance) modalInstance.hide();
-
-        // 페이지 새로고침
         navigate(0); // 전체 페이지를 새로고침
       } else {
         throw new Error('로그인 실패');
@@ -36,7 +34,7 @@ const LoginModal = () => {
     }
   };
 
-  return (
+  const modalContent = (
     <div
       className="modal login-modal"
       id="loginModal"
@@ -115,6 +113,8 @@ const LoginModal = () => {
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default LoginModal;
