@@ -3,9 +3,9 @@ import axios from 'axios';
 
 // Axios 기본 설정
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000/api/v1', // 공통 URL
-  timeout: 10000, // 요청 시간 제한
-  withCredentials: true, // 쿠키 전달 허용
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1', // 환경변수 적용
+  timeout: 10000,
+  withCredentials: true,
 });
 
 // 에러 처리 공통 함수

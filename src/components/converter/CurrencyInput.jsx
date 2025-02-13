@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
+import api from '../../utils/api';
 
 const CurrencyInput = ({ selectedCurrency, setSelectedCurrency }) => {
   const [currencies, setCurrencies] = useState([]);
@@ -9,7 +10,7 @@ const CurrencyInput = ({ selectedCurrency, setSelectedCurrency }) => {
   useEffect(() => {
     const fetchCurrencies = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/fx/currencies`);
+        const response = await api.get('/fx/currencies');
         setCurrencies(response.data);
       } catch (error) {
         console.error('통화 목록 요청 오류:', error.message);
