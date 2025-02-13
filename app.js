@@ -82,7 +82,7 @@ app.use((err, req, res, next) => {
   res.send(process.env.NODE_ENV !== 'production' ? err.message : 'Internal Server Error');
 });
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`F(x).com server is running on http://localhost:${PORT}`);
 });
 

@@ -9,7 +9,7 @@ const CurrencyInput = ({ selectedCurrency, setSelectedCurrency }) => {
   useEffect(() => {
     const fetchCurrencies = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/fx/currencies');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/fx/currencies`);
         setCurrencies(response.data);
       } catch (error) {
         console.error('통화 목록 요청 오류:', error.message);
