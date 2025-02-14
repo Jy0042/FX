@@ -1,9 +1,12 @@
 import axios from 'axios';
 // import multer from 'multer';
 
-// Axios 기본 설정
+// 환경변수 적용 (Vite + Express 환경 모두 지원)
+const baseURL =
+  import.meta.env.VITE_API_URL || process.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1', // 환경변수 적용
+  baseURL: `${baseURL}/api/v1`,
   timeout: 10000,
   withCredentials: true,
 });

@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.development' });
+// NODE_ENV가 'production'이면 `.env.production`, 그 외는 `.env.development`
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: envFile });
 import path from 'path';
 import express from 'express';
 import session from 'express-session';
@@ -15,7 +17,7 @@ import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
 import commentsRouter from './routes/commentsRouter.js';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const app = express();
 const debugLog = new debug('log');
 const debugError = new debug('error');
@@ -42,7 +44,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: 'http://localhost:5173', // 프론트엔드의 주소
+    origin: ['http://localhost:5173', 'http://3.82.152.92'], // 프론트엔드의 주소
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
     allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
     credentials: true, // 쿠키를 포함한 요청 허용

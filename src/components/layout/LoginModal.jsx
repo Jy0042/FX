@@ -7,7 +7,7 @@ import useAuth from '../../hooks/useAuth';
 
 const LoginModal = () => {
   const [email, setEmail] = useState('admin@admin.com');
-  const [password, setPassword] = useState('admin');
+  const [password, setPassword] = useState('1234');
   const [rememberMe, setRememberMe] = useState(false);
   const [loginError, setLoginError] = useState(null);
 

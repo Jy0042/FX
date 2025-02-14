@@ -75,13 +75,16 @@ router.get('/convert', async (req, res) => {
       res.status(404).json({ message: '환전 정보가 존재하지 않습니다.' });
     }
   } catch (error) {
-    if (error.response) { // HTTP 응답에서 오류 발생
+    if (error.response) {
+      // HTTP 응답에서 오류 발생
       debugError(error.response.data);
       debugError(error.response.status);
       debugError(error.response.headers);
-    } else if (error.request) { // HTTP 요청에서 오류 발생
+    } else if (error.request) {
+      // HTTP 요청에서 오류 발생
       debugError(error.request);
-    } else { // HTTP 요청하는 중에 오류 발생
+    } else {
+      // HTTP 요청하는 중에 오류 발생
       debugError('Error', error.message);
     }
     debugError(error.config);
@@ -194,7 +197,9 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
       JOIN available_currencies t ON u.target_id = t.currency_id
       WHERE u.user_id = ?
       ORDER BY sort_order;
-    `, [userId]);
+    `,
+      [userId]
+    );
     if (userCurrencyPairs.length > 0) {
       res.status(200).json({
         message: '즐겨찾는 환율 세트 조회가 완료되었습니다.',
@@ -219,11 +224,34 @@ router.get('/users/:userId/user-currency-pair', async (req, res) => {
 // 환율 히스토리 조회
 router.get('/history', async (req, res) => {
   const { source, target } = req.query;
+  let conn; // 🔥 연결을 요청마다 새로 가져오도록 수정
+
   try {
-    // conn = await dbPool.getConnection();
     conn = await getDBConnection();
-    const fxHistory = await conn.query(`
-        SELECT
+
+    // 🔹 source_id와 target_id 가져오기
+    const [sourceRow] = await conn.query(
+      `SELECT currency_id FROM available_currencies WHERE currency_code = ?`,
+      [source]
+    );
+    const [targetRow] = await conn.query(
+      `SELECT currency_id FROM available_currencies WHERE currency_code = ?`,
+      [target]
+    );
+
+    if (!sourceRow || !targetRow) {
+      console.error(`⛔️ 유효하지 않은 통화 코드: ${source}, ${target}`);
+      return res.status(404).json({ message: '해당 통화가 존재하지 않습니다.' });
+    }
+
+    const sourceId = sourceRow.currency_id;
+    const targetId = targetRow.currency_id;
+    console.log(`🔎 조회할 source_id: ${sourceId}, target_id: ${targetId}`);
+
+    // 🔹 환율 히스토리 조회
+    const fxHistory = await conn.query(
+      `
+        SELECT 
           s.currency_code AS source_currency_code,
           t.currency_code AS target_currency_code,
           h.fx_rate,
@@ -231,28 +259,28 @@ router.get('/history', async (req, res) => {
         FROM fx_rate_history h
         JOIN available_currencies s ON h.source_id = s.currency_id
         JOIN available_currencies t ON h.target_id = t.currency_id
-        WHERE s.currency_code = ?
-        AND t.currency_code = ?
+        WHERE h.source_id = ? AND h.target_id = ?
         ORDER BY h.date ASC;
-        `, [source, target]);
+      `,
+      [sourceId, targetId]
+    );
+
     if (fxHistory.length > 0) {
-      res.status(200).json({
-        message: '환율 히스토리 조회가 완료되었습니다.',
-        fxHistory,
-      });
+      res.status(200).json({ message: '환율 히스토리 조회 완료', fxHistory });
     } else {
-      res.status(404).json({ message: '환율 히스토리가 저장된 게 없습니다.' });
+      console.error(`⚠️ 환율 데이터가 없음: source_id=${sourceId}, target_id=${targetId}`);
+      res.status(404).json({ message: '환율 히스토리가 존재하지 않습니다.' });
     }
-    // } else {
-    //   res.status(404).json({ message: '환율 정보가 존재하지 않습니다.' });
-    // }
   } catch (error) {
-    console.error('히스토리 조회 오류:', error.message);
+    console.error(`❌ 환율 히스토리 조회 오류: ${error.message}`);
     res.status(500).json({ message: 'Unknown Error' });
   } finally {
     if (conn) {
-      // await conn.release();
-      await conn.close();
+      try {
+        await conn.close(); // 🔥 안전하게 연결 닫기
+      } catch (err) {
+        console.error('🔴 연결 닫기 오류:', err.message);
+      }
     }
   }
 });
