@@ -26,6 +26,7 @@ backend/
 # Credentials
 .env
 .env.development
+.env.production
 
 # Editor directories and files
 .vscode/*
@@ -38,3 +39,4 @@ backend/
 *.njsproj
 *.sln
 *.sw?
+.env.production
