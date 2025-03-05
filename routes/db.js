@@ -4,7 +4,7 @@ import mariadb from 'mariadb';
 import { errorMonitor } from 'events';
 
 // ✅ 환경 변수 로드
-dotenv.config({ path: path.resolve(process.cwd(), '.env.production') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env.development') });
 
 // ✅ MariaDB Connection Pool 생성
 const dbPool = mariadb.createPool({
