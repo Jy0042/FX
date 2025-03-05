@@ -18,31 +18,60 @@ let availableCurrencies;
 
 // 통화 목록 조회
 async function getAvailableCurrencies() {
+  let conn; // 🔥 함수 내부에서 conn 선언 (finally 블록에서 참조 가능)
   try {
-    if (!availableCurrencies) {
-      // conn = await dbPool.getConnection();
-      conn = await getDBConnection();
-      const rows = await conn.query(`
+    conn = await getDBConnection(); // 🔹 DB 연결
+
+    const rows = await conn.query(`
       SELECT currency_code AS currencyCode, currency
       FROM available_currencies
       ORDER BY rank;
-      `);
-      // 통화 코드, 통화명, 국기 아이콘 URL
-      availableCurrencies = rows.map((row) => {
-        row.flagURL = `https://flagcdn.com/w40/${row.currencyCode.slice(0, 2).toLowerCase()}.png`;
-        return row;
-      });
-      return availableCurrencies;
+    `);
+
+    console.log('🔎 SQL 실행 결과:', rows); // ✅ DB 조회 결과 확인
+
+    if (!rows || rows.length === 0) {
+      console.error('⛔️ 통화 데이터 없음!');
+      return null; // 🔥 빈 배열이 아니라 `null`을 반환해서 에러 처리 가능하게 함
     }
+
+    // 🔹 통화 코드, 통화명, 국기 아이콘 URL 추가
+    const result = rows.map((row) => ({
+      currencyCode: row.currencyCode,
+      currency: row.currency,
+      flagURL: `https://flagcdn.com/w40/${row.currencyCode.slice(0, 2).toLowerCase()}.png`,
+    }));
+
+    console.log('✅ 최종 변환된 통화 목록:', result);
+
+    return result; // ✅ 올바르게 변환된 데이터 반환
   } catch (error) {
-    debugDb('통화 목록 조회 중 오류:', error.message);
+    console.error('❌ 통화 목록 조회 중 오류:', error.message);
+    return null; // 🔥 에러 발생 시 `null` 반환
   } finally {
     if (conn) {
-      // await conn.release(); // 커넥션 풀에 반환
-      await conn.close(); // 커넥션 연결 닫기
+      try {
+        await conn.close(); // ✅ 안전하게 연결 닫기
+      } catch (err) {
+        console.error('🔴 DB 연결 닫기 오류:', err.message);
+      }
     }
   }
 }
+
+// API 라우트에서 호출
+router.get('/currencies', async (req, res) => {
+  try {
+    const currencies = await getAvailableCurrencies();
+    if (!currencies || currencies.length === 0) {
+      return res.status(404).json({ message: '통화 목록이 없습니다.' });
+    }
+    return res.status(200).json(currencies);
+  } catch (error) {
+    console.error('❌ 통화 목록 조회 중 오류:', error.message);
+    return res.status(500).json({ message: '서버 내부 오류' });
+  }
+});
 availableCurrencies = await getAvailableCurrencies();
 
 // 통화 목록

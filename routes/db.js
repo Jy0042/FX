@@ -1,32 +1,51 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.development' });
+import path from 'path';
 import mariadb from 'mariadb';
+import { errorMonitor } from 'events';
 
-// MariaDB Connection 생성
+// ✅ 환경 변수 로드
+dotenv.config({ path: path.resolve(process.cwd(), '.env.production') });
 
-export async function getDBConnection() {
-  return await mariadb.createConnection({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-  });
-  // return conn;
-}
-
-// MariaDB Connection Pool 생성
-const pool = mariadb.createPool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+// ✅ MariaDB Connection Pool 생성
+const dbPool = mariadb.createPool({
+  host: process.env.DB_HOST || '127.0.0.1',
+  port: Number(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  connectionLimit: 10, // 커넥션 갯수 상한선
-  idleTimeout: 20, // 커넥션이 반환된 후 idle timeout 시간. wait_timeout 시스템 변수보다 작아야 한다.
-  // leakDetectionTimeout: 5, // 풀에서 빌려온 커넥션에 대해서 몇 초뒤부터 로깅할지 설정.
-  // 이상하게 설정 시간과 무관하게 바로 메시지가 나오고, 양도 너무 많아서 DB 오류가 없을 때는 비활성화
-  trace: true, // 개발시 initial stack trace 용도
+  connectionLimit: 20, // 🔥 50 → 20 (과부하 방지)
+  acquireTimeout: 15000, // 🔥 30초 → 15초 (대기 시간 단축)
+  idleTimeoutMillis: 5000, // 🔥 미사용 연결 5초 후 자동 해제
+  waitForConnections: true, // 연결 부족 시 대기
+  queueLimit: 0, // 대기열 제한 없음
 });
 
-export default Object.freeze(pool);
+console.log(`${dbPool} db연결 완료`);
+
+// ✅ MariaDB 개별 Connection 생성
+async function getDBConnection() {
+  try {
+    const connection = await dbPool.getConnection();
+    console.log('✅ DB 개별 연결 성공');
+    return connection;
+  } catch (error) {
+    console.error(`❌ DB 개별 연결 실패22222 ${error.message} ${error.code} ${error.sqlState}`);
+    throw error;
+  }
+}
+
+// ✅ DB 연결 테스트 함수
+async function testDBConnection() {
+  let conn;
+  try {
+    conn = await getDBConnection();
+    console.log('✅ MariaDB 연결 확인 완료');
+    conn.release();
+  } catch (error) {
+    console.error('❌ MariaDB 연결 확인 실패:', error.message);
+  }
+}
+
+// ✅ 모듈 내보내기
+export { getDBConnection, dbPool, testDBConnection };
+export default dbPool;

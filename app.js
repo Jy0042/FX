@@ -1,7 +1,14 @@
 import dotenv from 'dotenv';
-// NODE_ENV가 'production'이면 `.env.production`, 그 외는 `.env.development`
+import fs from 'fs';
+
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
-dotenv.config({ path: envFile });
+
+if (fs.existsSync(envFile)) {
+  dotenv.config({ path: envFile });
+} else {
+  console.warn(`⚠️ Warning: ${envFile} 파일을 찾을 수 없습니다.`);
+}
+
 import path from 'path';
 import express from 'express';
 import session from 'express-session';
@@ -17,7 +24,7 @@ import authRouter from './routes/authRouter.js';
 import postsRouter from './routes/postsRouter.js';
 import commentsRouter from './routes/commentsRouter.js';
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const app = express();
 const debugLog = new debug('log');
 const debugError = new debug('error');
@@ -42,14 +49,15 @@ app.use(
     },
   })
 );
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'http://3.82.152.92'], // 프론트엔드의 주소
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
-    allowedHeaders: ['Content-Type', 'Authorization'], // 허용할 헤더
-    credentials: true, // 쿠키를 포함한 요청 허용
-  })
-);
+
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // 환경변수에서 관리
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // __dirname은 CommonJS에서 제공하는 전역변수라서, ESM에서는 아래처럼 직접 설정
 // 해결책 1. import.meta Object의 속성 사용 (Node.js 20.10 이상)
